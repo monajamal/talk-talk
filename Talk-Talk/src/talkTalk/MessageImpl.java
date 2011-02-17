@@ -1,9 +1,10 @@
-package rmi;
+package talkTalk;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.Vector;
 
 @SuppressWarnings("serial")
 public class MessageImpl extends UnicastRemoteObject implements Message {
@@ -12,7 +13,7 @@ public class MessageImpl extends UnicastRemoteObject implements Message {
 	}
 
 	@Override
-	public String messageDistant() throws RemoteException {
+	public void sendMsg(String m) throws RemoteException {
 		InetAddress addr;
 		String hostName = null;
 		try {
@@ -21,6 +22,11 @@ public class MessageImpl extends UnicastRemoteObject implements Message {
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
 		}
-		return "Message : Hello World from ["+hostName+"] !";
+		System.out.println(hostName+":"+m);
+	}
+	@Override
+	public Vector<String> searchContact(String pseudo) throws RemoteException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
