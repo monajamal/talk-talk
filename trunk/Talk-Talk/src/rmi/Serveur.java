@@ -9,7 +9,7 @@ import java.util.TimerTask;
 
 public class Serveur {
 	public static void main(String[] args) {
-		// éuivalent du processus rmiregistry
+		// Ã©quivalent du processus rmiregistry
 		try {
 			LocateRegistry.createRegistry(1099);
 		} catch (RemoteException e) {
@@ -25,7 +25,7 @@ public class Serveur {
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		}
-		// 5 secondes après je stop le serveur
+		// 5 secondes aprÃ¨s je stop le serveur
 		TimerTask stopServeur = new TimerTask() {
 			@Override
 			public void run() {

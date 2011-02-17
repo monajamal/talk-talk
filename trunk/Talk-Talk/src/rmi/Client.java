@@ -9,7 +9,7 @@ public class Client {
 	public static void main(String[] args) {
 		Message b;
 		try {
-			b = (Message)Naming.lookup("//"+args[0]+"/Message");
+			b = (Message)Naming.lookup("rmi://"+args[0]+"/Message");
 			System.out.println("Client : "+b.messageDistant());
 			
 		} catch (MalformedURLException e) {
