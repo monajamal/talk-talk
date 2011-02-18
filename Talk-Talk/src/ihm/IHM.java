@@ -144,9 +144,9 @@ public class IHM extends JFrame {
 		this.jp_bottom = new JPanel();
 		/** Paramétrage des éléments  **/
 		this.jtabp_onglet.addTab("Person 1", Resources.getImageIcon("images/dispo.png",TalkTalk.class), this.jtp_conversation[0], "Person 1");
-		this.jtabp_onglet.addTab("Person 2", this.jtp_conversation[1]);
-		this.jtabp_onglet.addTab("Person 3", this.jtp_conversation[2]);
-		this.jtabp_onglet.addTab("Person 4", this.jtp_conversation[3]);
+		this.jtabp_onglet.addTab("Person 2", Resources.getImageIcon("images/dispo.png",TalkTalk.class), this.jtp_conversation[1]);
+		this.jtabp_onglet.addTab("Person 3", Resources.getImageIcon("images/dispo.png",TalkTalk.class), this.jtp_conversation[2]);
+		this.jtabp_onglet.addTab("Person 4", Resources.getImageIcon("images/dispo.png",TalkTalk.class), this.jtp_conversation[3]);
 		
 		
 		
