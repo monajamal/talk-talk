@@ -20,7 +20,7 @@ public class SaisieControle {
 	public static String saisieString(String message) {
 		Scanner scanner=new Scanner(System.in);
 		String texte;
-		scanner.useDelimiter("\n");			// pour utiliser \n comme Scanner
+		scanner.useDelimiter("\n");			// pour utiliser \n comme délimiteur
 		System.out.print(message+" : ");
 		texte=scanner.next();
 		return texte;
