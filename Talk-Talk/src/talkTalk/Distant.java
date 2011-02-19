@@ -4,7 +4,7 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.Vector;
 
-public interface Message extends Remote {
-	public void sendMsg(String m) throws RemoteException;
+public interface Distant extends Remote {
+	public boolean sendMsg(String expediteur, String msg) throws RemoteException;
 	public Vector<String> searchContact(String pseudo) throws RemoteException;
 }
