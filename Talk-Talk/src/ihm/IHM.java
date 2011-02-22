@@ -1,11 +1,18 @@
 package ihm;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseListener;
+import java.util.Vector;
 
+import javax.swing.ImageIcon;
+import javax.swing.JCheckBox;
 import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -15,11 +22,9 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
-import javax.swing.JTextPane;
 import javax.swing.KeyStroke;
-import javax.swing.SwingConstants;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.Document;
+import javax.swing.ListCellRenderer;
+import javax.swing.event.ListSelectionListener;
 
 import talkTalk.TalkTalk;
 import utils.Resources;
@@ -35,6 +40,7 @@ public class IHM extends JFrame {
 			protected JMenuItem jmi_copier;
 			protected JMenuItem jmi_coller;
 			protected JMenuItem jmi_rechercher;
+			protected JMenuItem jmi_preferences;
 		protected JMenu jm_affichage;
 			protected JCheckBoxMenuItem jckmi_contact;
 			protected JCheckBoxMenuItem jckmi_image;
@@ -44,16 +50,20 @@ public class IHM extends JFrame {
 			protected JMenuItem jmi_help;
 			protected JMenuItem jmi_aProposDe;
 	
-	protected JPanel jp_top;
-		protected JTabbedPane jtabp_onglet;
 	protected JPanel jp_left;
-		protected JList jlst_contact;
+		protected JComboBox jcb_statut;
+		protected JList jlst_contact;protected JScrollPane jsp_contact;
 	protected JPanel jp_center;
-		protected JTextPane[] jtp_conversation;protected JScrollPane[] jsp_conversation;
-		protected JTextPane jtp_ecrire;protected JScrollPane jsp_ecrire;
-	protected JPanel jp_right;
-		protected JLabel jl_image;
+		protected JTabbedPane jtabp_onglet;
+			protected Vector<JConversation> jc_fenetre;
 	protected JPanel jp_bottom;
+		protected JHyperTextLink jl_pub;
+		protected JCheckBox jchk_fastwriting;
+	
+	protected String[] statut = {"Disponible","Absent","Occupé","Hors ligne"};
+	protected String[] images = {"images/statut/dispo.png","images/statut/absent.png","images/statut/occupe.png","images/statut/offline.png"};
+	protected String[] contacts = {"Damien","Marie-Hélène","FastWriting","Schtroumpfette","Plop","Tux"};
+	protected String[] temp = {"images/statut/dispo.png","images/statut/absent.png","images/statut/occupe.png","images/statut/offline.png","images/statut/dispo.png","images/statut/dispo.png"};
 	
 	public IHM(String titre) {
 		/** Titre **/
@@ -62,10 +72,12 @@ public class IHM extends JFrame {
 		//Divers.setLookAndFeel(this);
 		/** Événement **/
 		ActionListener action = new Event(this);
+		MouseListener mouse = new Event(this);
+		ListSelectionListener listSelection = new Event(this);
 		/** Barre de Menu **/
 		creeBarreDeMenu(action);
 		/** Interface **/
-		creeInterface(action);
+		creeInterface(action,mouse,listSelection);
 		/** Zone de notification **/
 		menuContextuel();
 		/** Fenêtre **/
@@ -81,38 +93,49 @@ public class IHM extends JFrame {
 				this.jmi_copier = new JMenuItem("Copier",KeyEvent.VK_C);
 				this.jmi_coller = new JMenuItem("Coller",KeyEvent.VK_O);
 				this.jmi_rechercher = new JMenuItem("Rechercher",KeyEvent.VK_R);
+				this.jmi_preferences = new JMenuItem("Préférences",KeyEvent.VK_P);
 			this.jm_affichage = new JMenu("Affichage");
-				this.jckmi_contact = new JCheckBoxMenuItem("Panneau de contacts");
-				this.jckmi_image = new JCheckBoxMenuItem("Panneau d'images");
+				this.jckmi_contact = new JCheckBoxMenuItem("Panneau de contacts",true);
+				this.jckmi_image = new JCheckBoxMenuItem("Panneau d'images",true);
 			this.jm_contacts = new JMenu("Contacts");
 				this.jmi_gestionContacts = new JMenuItem("Gestion des contacts");
 			this.jm_help = new JMenu("?");
 				this.jmi_help = new JMenuItem("Aide",KeyEvent.VK_A);
 				this.jmi_aProposDe = new JMenuItem("A propos de ...",KeyEvent.VK_P);
 		/** Paramétrage des éléments  **/
+		// Fichier
 		this.jmi_quitter.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, ActionEvent.CTRL_MASK));
-		
+		// Edition
 		this.jmi_couper.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, ActionEvent.CTRL_MASK));
+		this.jmi_couper.setEnabled(false);
 		this.jmi_copier.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.CTRL_MASK));
+		this.jmi_coller.setEnabled(false);
 		this.jmi_coller.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, ActionEvent.CTRL_MASK));
+		
 		this.jmi_rechercher.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F, ActionEvent.CTRL_MASK));
-		
-		
+		this.jmi_preferences.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, ActionEvent.CTRL_MASK));
+		// Help
 		this.jmi_help.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F1,0));
-		
 		/** Action sur les éléments   **/
+		// Fichier
 		this.jmi_quitter.addActionListener(action);
+		// Edition
+		this.jmi_couper.addActionListener(action);
+		this.jmi_copier.addActionListener(action);
+		this.jmi_coller.addActionListener(action);
+		this.jmi_rechercher.addActionListener(action);
+		this.jmi_preferences.addActionListener(action);
+		// Affichage
+		this.jckmi_contact.addActionListener(action);
+		this.jckmi_image.addActionListener(action);
+		// Contacts
+		this.jmi_gestionContacts.addActionListener(action);
+		// Help
 		this.jmi_help.addActionListener(action);
 		this.jmi_aProposDe.addActionListener(action);
 		/** Montage des éléments      **/
 		this.setJMenuBar(this.jmb_menubar);
 			this.jmb_menubar.add(this.jm_fichier);
-				this.jm_fichier.add(new JMenuItem("Nouveau",KeyEvent.VK_N));
-				this.jm_fichier.insertSeparator(1);
-				this.jm_fichier.add(new JMenuItem("Ouvrir"));
-				this.jm_fichier.add(new JMenuItem("Enregistrer"));
-				this.jm_fichier.add(new JMenuItem("Enregistrer sous..."));
-				this.jm_fichier.insertSeparator(5);
 				this.jm_fichier.add(this.jmi_quitter);
 			this.jmb_menubar.add(this.jm_edition);
 				this.jm_edition.add(this.jmi_couper);
@@ -120,59 +143,71 @@ public class IHM extends JFrame {
 				this.jm_edition.add(this.jmi_coller);
 				this.jm_edition.insertSeparator(3);
 				this.jm_edition.add(this.jmi_rechercher);
+				this.jm_edition.insertSeparator(5);
+				this.jm_edition.add(this.jmi_preferences);
 			this.jmb_menubar.add(this.jm_affichage);
 				this.jm_affichage.add(this.jckmi_contact);
 				this.jm_affichage.add(this.jckmi_image);
+			this.jmb_menubar.add(this.jm_contacts);
+				this.jm_contacts.add(this.jmi_gestionContacts);
 			this.jmb_menubar.add(this.jm_help);
 				this.jm_help.add(this.jmi_help);
 				this.jm_help.insertSeparator(1);
 				this.jm_help.add(this.jmi_aProposDe);
 	}
-	public void creeInterface(ActionListener action) {
-		String[] contacts = {"Damien","Marie-Hélène","FastWriting","Schtroumpfette","Plop","Tux"};
+	public void creeInterface(ActionListener action,MouseListener mouse,ListSelectionListener listSelection) {
+		//Disponibilité
+		Integer[] plop = {0,1,2,3};
+		//liste de contacts
+		Integer[] plop2 = {0,1,2,3,4,5};
+		
 		/** Création des éléments     **/
-		this.jp_top = new JPanel();
-			this.jtabp_onglet = new JTabbedPane();
-		this.jp_left = new JPanel();
-			this.jlst_contact = new JList(contacts);
+		this.jp_left = new JPanel(new BorderLayout());
+			this.jcb_statut = new JComboBox(plop);
+			this.jlst_contact = new JList(plop2);this.jsp_contact = new JScrollPane(this.jlst_contact);
 		this.jp_center = new JPanel(new BorderLayout());
-			this.jtp_conversation = new JTextPane[4];this.jsp_conversation = new JScrollPane[4];
-			for(int i=0;i<4;i++){this.jtp_conversation[i] = new JTextPane();this.jsp_conversation[i] = new JScrollPane(this.jtp_conversation[i]);}
-			this.jtp_ecrire = new JTextPane();this.jsp_ecrire = new JScrollPane(this.jtp_ecrire);
-		this.jp_right = new JPanel();
-			this.jl_image = new JLabel(Resources.getImageIcon("images/profil.png",TalkTalk.class),SwingConstants.CENTER);
-		this.jp_bottom = new JPanel();
+			this.jtabp_onglet = new JTabbedPane();
+				this.jc_fenetre = new Vector<JConversation>();
+		this.jp_bottom = new JPanel(new BorderLayout());
+			this.jl_pub = new JHyperTextLink("Publicité de nos partenaires !","http://code.google.com/p/talk-talk/");
+			this.jchk_fastwriting = new JCheckBox("Utiliser FastWriting");
 		/** Paramétrage des éléments  **/
-		this.jtabp_onglet.addTab("Person 1", Resources.getImageIcon("images/dispo.png",TalkTalk.class), this.jtp_conversation[0], "Person 1");
-		this.jtabp_onglet.addTab("Person 2", Resources.getImageIcon("images/dispo.png",TalkTalk.class), this.jtp_conversation[1]);
-		this.jtabp_onglet.addTab("Person 3", Resources.getImageIcon("images/dispo.png",TalkTalk.class), this.jtp_conversation[2]);
-		this.jtabp_onglet.addTab("Person 4", Resources.getImageIcon("images/dispo.png",TalkTalk.class), this.jtp_conversation[3]);
-		
-		
-		
-		this.jtp_ecrire.setEditable(true);
-		Document d = this.jtp_conversation[1].getDocument();
+		// Panneau de gauche
+		this.jp_left.setPreferredSize(new Dimension(200,0));
+		// Liste de disponibilité
+		ComboBoxRenderer renderer = new ComboBoxRenderer(statut,images,TalkTalk.class);
+		renderer.setPreferredSize(new Dimension(16,16));
+		this.jcb_statut.setRenderer(renderer);
+		// Liste de contact
+		ComboBoxRenderer renderer2 = new ComboBoxRenderer(contacts,temp,TalkTalk.class);
+		renderer2.setPreferredSize(new Dimension(16,16));
+		this.jlst_contact.setCellRenderer(renderer2);
+		// Panneau d'onglets
+		/*Document d = this.jtp_conversation[1].getDocument();
 		try {
 			d.insertString(d.getLength(), "Damien: Coucou\n", null);
 			d.insertString(d.getLength(), "    MH: Hello", null);
 		} catch (BadLocationException e) {
 			e.printStackTrace();
-		}
+		}*/
+		this.jc_fenetre.add(new JConversation("MH",null,Resources.getImageIcon("images/tux.png",TalkTalk.class),Resources.getImageIcon("images/schtroumpfette.png",TalkTalk.class)));
+		this.jc_fenetre.add(new JConversation("Tux",null,Resources.getImageIcon("images/tux.png",TalkTalk .class),Resources.getImageIcon("images/profil.png",TalkTalk.class)));
+		this.jc_fenetre.add(new JConversation("Inconnu",null,Resources.getImageIcon("images/tux.png",TalkTalk .class),Resources.getImageIcon("images/profil.png",TalkTalk.class)));
+		actuTab();
 		
-		
-		this.jtabp_onglet.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);//scroll horitonzal des onglets
+		this.jtabp_onglet.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);//scroll horizontal des onglets
 		/** Action sur les éléments   **/
+		this.jlst_contact.addMouseListener(mouse);
+		//this.jlst_contact.addListSelectionListener(listSelection);
 		/** Montage des éléments      **/
-		this.add(this.jp_top,BorderLayout.NORTH);
-			this.jp_top.add(this.jtabp_onglet);
 		this.add(this.jp_left,BorderLayout.WEST);
-			this.jp_left.add(this.jlst_contact);
+			this.jp_left.add(this.jcb_statut,BorderLayout.NORTH);
+			this.jp_left.add(this.jsp_contact,BorderLayout.CENTER);
 		this.add(this.jp_center,BorderLayout.CENTER);
 			this.jp_center.add(this.jtabp_onglet,BorderLayout.CENTER);
-			this.jp_center.add(this.jsp_ecrire,BorderLayout.SOUTH);
-		this.add(this.jp_right,BorderLayout.EAST);
-			this.jp_right.add(this.jl_image);
 		this.add(this.jp_bottom,BorderLayout.SOUTH);
+			this.jp_bottom.add(this.jl_pub,BorderLayout.WEST);
+			this.jp_bottom.add(this.jchk_fastwriting,BorderLayout.EAST);
 	}
 	public void menuContextuel() {
 		/** Création des éléments     **/
@@ -187,11 +222,77 @@ public class IHM extends JFrame {
 		this.setResizable(true);											// Fenêtre redimensionnable
 		/** Dimension : choisir entre pack() ou setSize(width,height) **/
 		//this.pack();														// Auto-dimensionner
-		this.setSize(500,375);												// Dimensionner la fenêtre
+		this.setSize(700,550);												// Dimensionner la fenêtre
 		//this.setExtendedState(MAXIMIZED_BOTH);							// Mettre en mode taille écran
 		/** ----------------------------------------------------- **/
 		this.setLocationRelativeTo(null);									// Positionner la fenêtre
 		this.setIconImage(Resources.getImage("images/icon.png",TalkTalk.class));// Image dans la barre des tâches
 		this.setVisible(true);												// Rendre la fenêtre visible
+	}
+	
+	public void actuTab() {
+		for (int i=0;i<this.jc_fenetre.size();i++) {
+			this.jtabp_onglet.addTab(this.jc_fenetre.get(i).getName(),Resources.getImageIcon("images/statut/dispo.png",TalkTalk.class),this.jc_fenetre.get(i),this.jc_fenetre.get(i).getName());
+		}
+	}
+	
+	class ComboBoxRenderer extends JLabel implements ListCellRenderer {
+		
+		private String[] textes;
+		private String[] images;
+		ImageIcon[] img;
+		
+		public ComboBoxRenderer(String[] textes,String[] images,Class<?> c) {
+			// Vérification qu'il n'y pas de différence de taille entre les tableaux textes et images
+			if (textes.length>images.length) {
+				int i;
+				String[] tmp = new String[textes.length];
+				for (i=0;i<images.length;i++) tmp[i]=images[i];
+				for (int j=i;j<tmp.length;j++) tmp[i]=null;
+				images=tmp;
+			} else if (images.length>textes.length) {
+				int i;
+				String[] tmp = new String[images.length];
+				for (i=0;i<textes.length;i++) tmp[i]=textes[i];
+				for (int j=i;j<tmp.length;j++) tmp[i]=null;
+				textes=tmp;
+			}
+			// Enregistrement des textes et images pour le composant
+			this.textes=textes;
+			this.images=images;
+			// Génération des ImageIcon a partir de l'adresse
+			this.img = new ImageIcon[textes.length];
+			for (int i=0;i<textes.length;i++) {
+				if (this.images[i]!=null) {
+					this.img[i]=Resources.getImageIcon(images[i],c);
+				} else this.img[i]=null;
+			}
+			
+			// Paramétrage général du composant
+			this.setOpaque(true);
+			this.setHorizontalAlignment(LEFT);
+			this.setVerticalAlignment(CENTER);
+		}
+		/*
+		 * Cette méthode trouve le texte et l'image correspond à l'élément sélectionner,
+		 * et retourne le composant avec le texte et l'image.
+		 */
+		public Component getListCellRendererComponent(JList list,Object value,int index,boolean isSelected,boolean cellHasFocus) {
+			// L'index Sélectionner (le paramètre "index" n'est pas toujours valide, il faut donc se fier a "value");
+			int selectedIndex = ((Integer)value).intValue();
+			// Couleur de l'élément en fonction de s'il est sélectionner ou pas
+			if (isSelected) {
+				this.setBackground(list.getSelectionBackground());
+				this.setForeground(list.getSelectionForeground());
+			} else {
+				this.setBackground(list.getBackground());
+				this.setForeground(list.getForeground());
+			}
+			// Attribuer l'image et le texte (ne pose pas de problème si l'un ou l'autre est null);
+			this.setIcon(this.img[selectedIndex]);
+			this.setText(this.textes[selectedIndex]);
+			// Renvoi le composant
+			return this;
+		}
 	}
 }
