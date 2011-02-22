@@ -9,7 +9,7 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Scanner;
 
-public class Contact {
+public abstract class  Contact {
 
 	public static final int CONTACT_UNKNOW = 0;
 	public static final int CONTACT_GROUP = 1;
@@ -26,20 +26,22 @@ public class Contact {
 	}
 	
 	public int getType(){
-		return CONTACT_UNKNOW;
+		if (this instanceof ContactAddr) {
+			return CONTACT_NORMAL;
+		} else if (this instanceof ContactGroup){
+			return CONTACT_GROUP;
+		} else {
+			return CONTACT_UNKNOW;
+		}
 	}
 	
-	public String getString(){
-		return "?";
-	}
+	public abstract String getString();
 	
-	public String getAddr() {
-		return null;
-	}
+	public abstract String getAddr();
 	
-	public List<String> getMembres() {
-		return null;
-	}
+	public abstract List<String> getMembres();
+	
+	public abstract Distant getDistant() ;
 	
 	public static Hashtable<String,Contact> parseContact(){
 		Hashtable<String,Contact> contacts = new Hashtable<String,Contact>();
@@ -71,7 +73,7 @@ public class Contact {
 						addr = l.substring(l.indexOf(':')+1,l.length()).replace(" ","");
 						//System.out.println(pseudo+ "---"+addr);
 						if (addr.equals("?")){
-							c = new Contact(pseudo);
+							c = new ContactUnknow(pseudo);
 						} else {
 							c = new ContactAddr(pseudo,addr);
 						}
@@ -107,5 +109,10 @@ public class Contact {
 			e.printStackTrace();
 		}
 	}
+
+	public abstract void setDistant(Distant d);
+	
+	
+	
 }
     

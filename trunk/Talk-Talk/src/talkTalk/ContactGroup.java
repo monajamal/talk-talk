@@ -12,14 +12,10 @@ public class ContactGroup extends Contact {
 		this.membres = new ArrayList<String>();
 		// TODO Auto-generated constructor stub
 	}
-	public ContactGroup(String pseudo, String addr) {
-		super(pseudo);
-	}
 
 	public ContactGroup(Contact c) {
 		super(c.getPseudo());
 	}
-
 
 	public int getType(){
 		return CONTACT_GROUP;
@@ -39,5 +35,21 @@ public class ContactGroup extends Contact {
 			s+=membre+",";
 		}
 		return s.substring(0,s.length()-1);
+	}
+	@Override
+	public String getAddr() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public Distant getDistant() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setDistant(Distant d) {
+		// TODO Auto-generated method stub
+		
 	}
 }
