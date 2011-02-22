@@ -2,11 +2,15 @@ package talkTalk;
 
 import java.net.InetAddress;
 import java.net.MalformedURLException;
+import java.net.NetworkInterface;
+import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.rmi.Naming;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
+import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Vector;
 
 import utils.SaisieControle;
@@ -24,7 +28,7 @@ public class TalkTalk {
 		if (args.length==1) pseudo=args[0]; else pseudo="namelessTalk";
 
 		
-		/*Enumeration<NetworkInterface> interfaces = null;
+		Enumeration<NetworkInterface> interfaces = null;
 		try {
 			interfaces = NetworkInterface.getNetworkInterfaces();
 			while (interfaces.hasMoreElements()) {  // carte reseau trouvee
@@ -48,21 +52,22 @@ public class TalkTalk {
 		} catch (SocketException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
-		}*/
+		}
 
 		
 
-		InetAddress addr = InetAddress.getLocalHost();
-		hostname = new String(addr.getHostAddress());
+		//InetAddress addr = InetAddress.getLocalHost();
+		//hostname = new String(addr.getHostAddress());
 		
 		image=null;
 		statut="dispo";
 		friend = new Vector<String>();
+		friends = Contact.parseContact();
 		
 		System.out.println("Je suis "+pseudo+" et je suis connecté sur ["+hostname+"] !");
-		System.out.println("Mes amis sont "+print(friend));
+		System.out.println("Mes amis sont "+print(friends));
 		
-		friends = Contact.parseContact();
+		
 		//Contact.saveContact(friends);
 		
 		// équivalent du processus rmiregistry
@@ -93,8 +98,9 @@ public class TalkTalk {
 				System.exit(0);
 			} else if (saisie.contains("/add")) {
 				saisie=saisie.replaceAll("/add ", "");
-				friend.add(saisie);
-				System.out.println("Mes amis sont "+print(friend));
+				
+				//friend.add(saisie);
+				System.out.println("Mes amis sont "+print(friends));
 			} else if (saisie.contains("/contact")) {
 				System.out.println("recherche du contact....echec !");
 			} else if (saisie.contains("/image")) {
@@ -103,7 +109,7 @@ public class TalkTalk {
 				System.out.println("pas implémenté !");
 			} else if (saisie.contains("/send")) {
 				saisie=saisie.replaceAll("/send ", "");
-				Envoi env = new Envoi(saisie.substring(0, saisie.indexOf(' ')),saisie.substring(saisie.indexOf(' ')));
+				Envoi env = new Envoi(saisie.substring(0, saisie.indexOf(' ')),saisie.substring(saisie.indexOf(' ')+1));
 				env.start();
 				/*Distant b;
 				try {
@@ -124,14 +130,32 @@ public class TalkTalk {
 			}
 		}
 	}
-	public static String print(Vector<String> friend) {
+	public static String print(Hashtable<String,Contact> friend) {
 		String res="{ ";
+		int i=0;
+		for (String nom : friend.keySet())
+		{
+			if (i!=0) res+=", ";
+			res += nom;
+			Contact c = friend.get(nom);
+			if (c.getType()==Contact.CONTACT_GROUP) {
+				res += " : ";
+				List<String> list  = c.getMembres();
+				for (String membre : list) {
+					res += membre+" ";
+				}
+			}
+			i++;
+		}
+		res+=" }";
+		return res;
+		/*String res="{ ";
 		for (int i=0;i<friend.size();i++) {
 			if (i!=0) res+=", ";
 			res+=friend.get(i);
 		}
 		res+=" }";
-		return res;
+		return res;*/
 	}
 }
 //Debug.start(args);

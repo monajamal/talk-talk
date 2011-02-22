@@ -4,6 +4,7 @@ import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
+import java.util.List;
 
 public class Envoi extends Thread {
 
@@ -23,27 +24,62 @@ public class Envoi extends Thread {
 		c = TalkTalk.friends.get(dest);
 		if (c==null || c.getType() == Contact.CONTACT_UNKNOW){
 			//TODO Recherche du destinataire
-			System.out.println("Destinataire inconnu");
+			System.out.println("Destinataire inconnu : "+dest);
 		} else if (c.getType() == Contact.CONTACT_NORMAL){
-			addr = c.getAddr();
+			boolean again = true; //Recommencer ou pas l'envoi
+			boolean first = true; //Premier essai
+			while (again) {
+				try {
+					System.out.println("Envoi de "+msg+" à "+c.getAddr());
+					if (c.getDistant() == null || !first){
+						//On va faire le lookup ou c'est la deuxieme fois
+						again = false; //On ne recommence pas
+					}
+					first = false; //Plus la premiere fois
+					envoiMsg(c,msg); //On envoie
+					again = false; //Envoi réussi on recommence pas
+				}catch (RemoteException e) {
+					c.setDistant(null); //On enleve l'interface distante, c'est pas la bonne
+					if (!again) { //Si on a deja fait toutes nos tentatives
+						System.out.println("Erreur : Le message suivant n'a pas pu être remis à "+dest+" : \n"+msg);
+					}
+					
+				} 
+			}
+		} else if (c.getType() == Contact.CONTACT_GROUP){
+			List<String> list  = c.getMembres();
+			Envoi env;
+			for (String nom : list) {
+				env = new Envoi(nom,msg);
+				env.start();
+			}
+		}
+	}
+	/**
+	 * 
+	 * @param c
+	 * @param msg
+	 * @return true si on a du cherche la classe distante, false sinon
+	 * @throws RemoteException
+	 */
+	public boolean envoiMsg(Contact c, String msg) throws RemoteException{
+		Distant d = c.getDistant();
+		String addr = c.getAddr();
+		boolean res = false;
+		if (d == null ) {//On a pas encore cherché l'interface distante
+			res = true;
 			try {
-				System.out.println("Envoi de "+msg+" à "+addr);
 				d = (Distant)Naming.lookup("rmi://"+addr+"/TalkTalk");
-				d.sendMsg(TalkTalk.pseudo,msg);
-			}catch (MalformedURLException e) {
-				System.out.println("1");
+			} catch (MalformedURLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			} catch (RemoteException e) {
-				// TODO Auto-generated catch block
-				System.out.println("Erreur : Le message suivant n'a pas pu être remis à "+dest+" : \n"+msg);
-				//e.printStackTrace();
 			} catch (NotBoundException e) {
 				// TODO Auto-generated catch block
-				System.out.println("3");
 				e.printStackTrace();
-			} 
-			
-		}
+			}
+			c.setDistant(d);
+		} 
+		d.sendMsg(TalkTalk.pseudo,msg);
+		return res;
 	}
 }
