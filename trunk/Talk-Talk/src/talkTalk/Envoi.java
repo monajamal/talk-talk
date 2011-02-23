@@ -19,8 +19,6 @@ public class Envoi extends Thread {
 	
 	public void run(){
 		Contact c;
-		String addr;
-		Distant d;
 		c = TalkTalk.friends.get(dest);
 		if (c==null || c.getType() == Contact.CONTACT_UNKNOW){
 			//TODO Recherche du destinataire
@@ -42,6 +40,7 @@ public class Envoi extends Thread {
 					c.setDistant(null); //On enleve l'interface distante, c'est pas la bonne
 					if (!again) { //Si on a deja fait toutes nos tentatives
 						System.out.println("Erreur : Le message suivant n'a pas pu être remis à "+dest+" : \n"+msg);
+						e.printStackTrace();
 					}
 					
 				} 
