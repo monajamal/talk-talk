@@ -11,8 +11,7 @@ import java.rmi.registry.LocateRegistry;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
-import java.util.Vector;
-
+import java.util.Properties;
 import utils.SaisieControle;
 
 public class TalkTalk {
@@ -21,13 +20,15 @@ public class TalkTalk {
 	public static String hostname;
 	public static String image;
 	public static String statut;
-	public static Vector<String> friend;
 	public static Hashtable<String,Contact> friends;
 	
 	public static void main(String[] args) throws UnknownHostException {
 		if (args.length==1) pseudo=args[0]; else pseudo="namelessTalk";
 
+		//InetAddress addr = InetAddress.getLocalHost();
+		//hostname = new String(addr.getHostAddress());
 		
+		//On cherche une interface correcte
 		Enumeration<NetworkInterface> interfaces = null;
 		try {
 			interfaces = NetworkInterface.getNetworkInterfaces();
@@ -37,10 +38,10 @@ public class TalkTalk {
 				while (ienum.hasMoreElements()) {  // retourne l adresse IPv4 et IPv6
 					InetAddress ia = ienum.nextElement();
 					String adress = ia.getHostAddress().toString();
-					System.out.println("Adresse : "+adress);
+					//System.out.println("Adresse : "+adress);
 					if( adress.length() < 16){          //On s'assure ainsi que l'adresse IP est bien IPv4
 						if(adress.startsWith("127")){  //Ce n'est pas l'adresse IP Local' 
-							System.out.println("127 " +ia.getHostAddress());
+							//System.out.println("127 " +ia.getHostAddress());
 						} else {
 							hostname = ia.getHostAddress();
 						}
@@ -50,18 +51,15 @@ public class TalkTalk {
 			}
 			
 		} catch (SocketException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 
-		
-
-		//InetAddress addr = InetAddress.getLocalHost();
-		//hostname = new String(addr.getHostAddress());
+		// Rmi doit ecouter sur la bonne interface
+		Properties p = System.getProperties();
+		p.setProperty("java.rmi.server.hostname",hostname);
 		
 		image=null;
 		statut="dispo";
-		friend = new Vector<String>();
 		friends = Contact.parseContact();
 		
 		System.out.println("Je suis "+pseudo+" et je suis connecté sur ["+hostname+"] !");
@@ -98,8 +96,10 @@ public class TalkTalk {
 				System.exit(0);
 			} else if (saisie.contains("/add")) {
 				saisie=saisie.replaceAll("/add ", "");
-				
-				//friend.add(saisie);
+				if (saisie.indexOf(' ')!=-1) {
+					Contact c = new ContactAddr(saisie.substring(0, saisie.indexOf(' ')),saisie.substring(saisie.indexOf(' ')+1));
+					friends.put(saisie.substring(0, saisie.indexOf(' ')),c);
+				}
 				System.out.println("Mes amis sont "+print(friends));
 			} else if (saisie.contains("/contact")) {
 				System.out.println("recherche du contact....echec !");
@@ -109,8 +109,10 @@ public class TalkTalk {
 				System.out.println("pas implémenté !");
 			} else if (saisie.contains("/send")) {
 				saisie=saisie.replaceAll("/send ", "");
-				Envoi env = new Envoi(saisie.substring(0, saisie.indexOf(' ')),saisie.substring(saisie.indexOf(' ')+1));
-				env.start();
+				if (saisie.indexOf(' ')!=-1) {
+					Envoi env = new Envoi(saisie.substring(0, saisie.indexOf(' ')),saisie.substring(saisie.indexOf(' ')+1));
+					env.start();
+				}
 				/*Distant b;
 				try {
 					System.out.println("moi: "+saisie);
