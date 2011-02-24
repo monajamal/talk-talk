@@ -12,10 +12,7 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.Enumeration;
 import java.util.Hashtable;
-import java.util.List;
 import java.util.Properties;
-
-import utils.SaisieControle;
 
 public class TalkTalk {
 	
@@ -25,6 +22,8 @@ public class TalkTalk {
 	public static String statut;
 	public static Hashtable<String,Contact> friends;
 	public final static int portObject = 3000;
+	public static Affichage aff;
+	public static SaisieConsole saisieconsole;
 	
 	public static void main(String[] args) throws UnknownHostException {
 		if (args.length==1) pseudo=args[0]; else pseudo="namelessTalk";
@@ -34,32 +33,7 @@ public class TalkTalk {
 		//hostname = new String(addr.getHostAddress());
 		
 		//On cherche une interface correcte (plus sûr)
-		Enumeration<NetworkInterface> interfaces = null;
-		InetAddress addr = null;
-		try {
-			interfaces = NetworkInterface.getNetworkInterfaces();
-			while (interfaces.hasMoreElements()) {  // carte reseau trouvee
-				NetworkInterface interfaceN = (NetworkInterface)interfaces.nextElement(); 
-				Enumeration<InetAddress> ienum = interfaceN.getInetAddresses();
-				while (ienum.hasMoreElements()) {  // retourne l adresse IPv4 et IPv6
-					InetAddress ia = ienum.nextElement();
-					String adress = ia.getHostAddress().toString();
-					//System.out.println("Adresse : "+adress);
-					if( adress.length() < 16){          //On s'assure ainsi que l'adresse IP est bien IPv4
-						if(adress.startsWith("127")){  //C'est localhost
-							//System.out.println("127 " +ia.getHostAddress());
-						} else {
-							addr = ia;
-						}
-					}
-					
-				} 
-			}
-			
-		} catch (SocketException e1) {
-			e1.printStackTrace();
-		}
-		
+		InetAddress addr = getBestAddr();
 		if (addr == null) {
 			System.out.println("Etes vous bien connecte quelque part ?");
 			System.exit(-1);
@@ -75,10 +49,8 @@ public class TalkTalk {
 		image=null;
 		statut="dispo";
 		friends = Contact.parseContact();
-		
-		System.out.println("Je suis "+pseudo+" et je suis connecté sur ["+hostname+"] !");
-		System.out.println("Mes amis sont "+print(friends));
-		
+		//Creation de l'affichage
+		aff = new AffichageConsole();
 		
 		//Contact.saveContact(friends);
 		
@@ -104,59 +76,68 @@ public class TalkTalk {
 			e.printStackTrace();
 		}
 		
-		//Debut de l'ecoute de la console
-		String saisie = "";
-		while (saisie!=null) {
-			saisie = SaisieControle.saisieString("Commande ?");
-			if (saisie.contains("/quit")) {
-				saisie=null;
-				
-				System.out.println("SERVEUR ["+hostname+"] : Server down !");
-				System.exit(0);
-			} else if (saisie.contains("/add")) {
-				saisie=saisie.replaceAll("/add ", "");
-				if (saisie.indexOf(' ')!=-1) {
-					Contact c = new ContactAddr(saisie.substring(0, saisie.indexOf(' ')),saisie.substring(saisie.indexOf(' ')+1));
-					friends.put(saisie.substring(0, saisie.indexOf(' ')),c);
-				}
-				System.out.println("Mes amis sont "+print(friends));
-			} else if (saisie.contains("/contact")) {
-				System.out.println("recherche du contact....echec !");
-			} else if (saisie.contains("/image")) {
-				System.out.println("pas implémenté !");
-			} else if (saisie.contains("/file")) {
-				System.out.println("pas implémenté !");
-			} else if (saisie.contains("/send")) {
-				saisie=saisie.replaceAll("/send ", "");
-				if (saisie.indexOf(' ')!=-1) {
-					Envoi env = new Envoi(saisie.substring(0, saisie.indexOf(' ')),saisie.substring(saisie.indexOf(' ')+1));
-					env.start();
-				}
-			} else {
-				System.out.println("Commande inconnue");
-			}
+		//Creation des interfaces de saisie et lancement
+		saisieconsole = new SaisieConsole();
+		saisieconsole.start();
+		try {
+			saisieconsole.join();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
+		
 	}
-	public static String print(Hashtable<String,Contact> friend) {
-		String res="{ ";
-		int i=0;
-		for (String nom : friend.keySet())
-		{
-			if (i!=0) res+=", ";
-			res += nom;
-			Contact c = friend.get(nom);
-			if (c.getType()==Contact.CONTACT_GROUP) {
-				res += " : ";
-				List<String> list  = c.getMembres();
-				for (String membre : list) {
-					res += membre+" ";
-				}
+	
+	/**
+	 * Cherche une interface non ipv6 et non localhost
+	 * @return l'adresse de l'interface trouve ou null
+	 */
+	private static InetAddress getBestAddr() {
+		Enumeration<NetworkInterface> interfaces = null;
+		InetAddress addr = null;
+		try {
+			interfaces = NetworkInterface.getNetworkInterfaces();
+			while (interfaces.hasMoreElements()) {  // carte reseau trouvee
+				NetworkInterface interfaceN = (NetworkInterface)interfaces.nextElement(); 
+				Enumeration<InetAddress> ienum = interfaceN.getInetAddresses();
+				while (ienum.hasMoreElements()) {  // retourne l adresse IPv4 et IPv6
+					InetAddress ia = ienum.nextElement();
+					String adress = ia.getHostAddress().toString();
+					//System.out.println("Adresse : "+adress);
+					if( adress.length() < 16){          //On s'assure ainsi que l'adresse IP est bien IPv4
+						if(adress.startsWith("127")){  //C'est localhost
+							//System.out.println("127 " +ia.getHostAddress());
+						} else {
+							addr = ia;
+						}
+					}
+					
+				} 
 			}
-			i++;
+			
+		} catch (SocketException e1) {
+			e1.printStackTrace();
 		}
-		res+=" }";
-		return res;
+		return addr;
+	}
+	
+	public static void envoyerMessage(String dest, String message) {
+		Envoi env = new Envoi(dest,message);
+		env.start();
+	}
+	
+	public static void ajouterContact(String pseudo, String address){
+		Contact c = new ContactAddr(pseudo,address);
+		TalkTalk.friends.put(pseudo,c);
+	}
+	
+	public static void exit() {
+		saisieconsole.exit();
+		System.exit(0);
 	}
 }
+
+
+
 //Debug.start(args);
 //Debug.addLog("*** START ***");
