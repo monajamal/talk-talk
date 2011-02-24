@@ -22,13 +22,14 @@ public class Envoi extends Thread {
 		c = TalkTalk.friends.get(dest);
 		if (c==null || c.getType() == Contact.CONTACT_UNKNOW){
 			//TODO Recherche du destinataire
+			TalkTalk.aff.afficherDestinataireInconnu(dest);
 			System.out.println("Destinataire inconnu : "+dest);
 		} else if (c.getType() == Contact.CONTACT_NORMAL){
 			boolean again = true; //Recommencer ou pas l'envoi
 			boolean first = true; //Premier essai
 			while (again) {
 				try {
-					System.out.println("Envoi de "+msg+" à "+c.getAddr());
+					TalkTalk.aff.afficherMessageEnvoye(c.getAddr(), msg);
 					if (c.getDistant() == null || !first){
 						//On va faire le lookup ou c'est la deuxieme fois
 						again = false; //On ne recommence pas
@@ -39,7 +40,7 @@ public class Envoi extends Thread {
 				}catch (RemoteException e) {
 					c.setDistant(null); //On enleve l'interface distante, c'est pas la bonne
 					if (!again) { //Si on a deja fait toutes nos tentatives
-						System.out.println("Erreur : Le message suivant n'a pas pu être remis à "+dest+" : \n"+msg);
+						TalkTalk.aff.afficherErreurRecu(dest, msg);
 						e.printStackTrace();
 					}
 					

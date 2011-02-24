@@ -13,7 +13,7 @@ public class DistantImpl implements Distant {
 
 	@Override
 	public boolean sendMsg(String expediteur, String msg) throws RemoteException {
-		System.out.println(expediteur+" : "+msg);
+		TalkTalk.aff.afficherMessageRecu(expediteur, msg);
 		return true;
 	}
 	@Override
