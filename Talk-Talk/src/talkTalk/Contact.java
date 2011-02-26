@@ -25,15 +25,7 @@ public abstract class  Contact {
 		return pseudo;
 	}
 	
-	public int getType(){
-		if (this instanceof ContactAddr) {
-			return CONTACT_NORMAL;
-		} else if (this instanceof ContactGroup){
-			return CONTACT_GROUP;
-		} else {
-			return CONTACT_UNKNOW;
-		}
-	}
+	public abstract int getType();
 	
 	public abstract String getString();
 	
@@ -73,7 +65,7 @@ public abstract class  Contact {
 						addr = l.substring(l.indexOf(':')+1,l.length()).replace(" ","");
 						//System.out.println(pseudo+ "---"+addr);
 						if (addr.equals("?")){
-							c = new ContactUnknow(pseudo);
+							c = new ContactAddr(pseudo);
 						} else {
 							c = new ContactAddr(pseudo,addr);
 						}

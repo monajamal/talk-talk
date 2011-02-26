@@ -10,6 +10,7 @@ public class ContactAddr extends Contact {
 	
 	public ContactAddr(String pseudo) {
 		super(pseudo);
+		address = null;
 		setDistant(null);
 	}
 
@@ -31,7 +32,11 @@ public class ContactAddr extends Contact {
 	}
 	
 	public int getType(){
-		return CONTACT_NORMAL;
+		if (address !=null) {
+			return CONTACT_NORMAL;
+		} else {
+			return CONTACT_UNKNOW;
+		}
 	}
 
 	@Override

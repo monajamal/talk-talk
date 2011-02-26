@@ -47,7 +47,6 @@ public class ContactGroup extends Contact {
 		return null;
 	}
 
-	@Override
 	public void setDistant(Distant d) {
 		// TODO Auto-generated method stub
 		
