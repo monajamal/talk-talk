@@ -1,9 +1,13 @@
 package talkTalk;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.NetworkInterface;
 import java.net.SocketException;
+import java.net.URL;
 import java.net.UnknownHostException;
 import java.rmi.Naming;
 import java.rmi.Remote;
@@ -21,17 +25,16 @@ public class TalkTalk {
 	public static String image;
 	public static String statut;
 	public static Hashtable<String,Contact> friends;
+	public final static int portRegistry = 1099;
 	public final static int portObject = 3000;
 	public static Affichage aff;
 	public static SaisieConsole saisieconsole;
+	public static final String PAGE_IP="http://monip.org";
+	public static final boolean NAT = true;
 	
 	public static void main(String[] args) throws UnknownHostException {
 		if (args.length==1) pseudo=args[0]; else pseudo="namelessTalk";
 
-		//Pour choisir l'interface par defaut
-		//InetAddress addr = InetAddress.getLocalHost();
-		//hostname = new String(addr.getHostAddress());
-		
 		//On cherche une interface correcte (plus sûr)
 		InetAddress addr = getBestAddr();
 		if (addr == null) {
@@ -42,9 +45,16 @@ public class TalkTalk {
 		hostname = addr.getHostName();
 		// Rmi doit ecouter sur la bonne interface
 		Properties p = System.getProperties();
-		p.setProperty("java.rmi.server.hostname",addr.getHostAddress());
-		//On remplace par l'adresse ip publique si on veut utiliser du nat
-		//p.setProperty("java.rmi.server.hostname","stggw1.homeip.net");
+		String publicIP;
+		if (NAT) {
+			publicIP = getPublicIP();
+			p.setProperty("java.rmi.server.hostname",publicIP);
+			System.out.println("IP Publique : "+publicIP);
+			System.out.println("Ouvrez les ports "+portRegistry+" et "+portObject+" vers "+addr.getHostAddress());
+		} else {
+			p.setProperty("java.rmi.server.hostname",addr.getHostAddress());
+		}
+		
 		
 		image=null;
 		statut="dispo";
@@ -52,13 +62,10 @@ public class TalkTalk {
 		//Creation de l'affichage
 		aff = new AffichageConsole();
 		
-		//Contact.saveContact(friends);
-		
 		//Lancement du registry
 		try {
-			LocateRegistry.createRegistry(1099);
+			LocateRegistry.createRegistry(portRegistry);
 		} catch (RemoteException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		
@@ -66,9 +73,7 @@ public class TalkTalk {
 		try {
 			DistantImpl objLocal = new DistantImpl();
 			Remote stub = UnicastRemoteObject.exportObject(objLocal,portObject);
-			Naming.rebind("rmi://"+hostname+"/TalkTalk", stub);
-			//Si on veut utiliser du nat, il faut remplacer hostname par l'ip publique
-			//Naming.rebind("rmi://stggw1.homeip.net:1099/TalkTalk", objLocal);
+			Naming.rebind("rmi://"+hostname+":"+portRegistry+"/TalkTalk", stub);
 			System.out.println("SERVEUR ["+hostname+"] : Server ready !");
 		} catch (RemoteException e) {
 			e.printStackTrace();
@@ -82,7 +87,6 @@ public class TalkTalk {
 		try {
 			saisieconsole.join();
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -117,6 +121,33 @@ public class TalkTalk {
 			
 		} catch (SocketException e1) {
 			e1.printStackTrace();
+		}
+		return addr;
+	}
+	
+private static String getPublicIP() {
+		String addr = null;
+		try {
+
+			HttpURLConnection httpcon = (HttpURLConnection) new URL(PAGE_IP).openConnection();
+			httpcon.connect();
+			if(httpcon.getResponseCode()!=HttpURLConnection.HTTP_OK) {//?chec de la connection
+				System.out.println("Recuperation de l'adresse publique : erreur\n"+httpcon.getResponseMessage());
+				System.exit(-1);
+			} else {//Lecture de la réponse
+				InputStream is;
+				is = httpcon.getInputStream();
+
+				int len = httpcon.getContentLength();
+				int i;
+				String s = "";
+				for (i=0;i<len;i++){
+					s+=((char)is.read());
+				}
+				addr = s.substring(s.indexOf("<BR>IP : ")+9,s.indexOf("<br></font>"));
+			}
+		} catch (IOException e) {
+			return null;
 		}
 		return addr;
 	}
