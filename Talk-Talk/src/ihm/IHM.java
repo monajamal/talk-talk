@@ -21,7 +21,9 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
+import javax.swing.JTextArea;
 import javax.swing.KeyStroke;
 import javax.swing.ListCellRenderer;
 import javax.swing.event.ListSelectionListener;
@@ -53,17 +55,24 @@ public class IHM extends JFrame {
 	protected JPanel jp_left;
 		protected JComboBox jcb_statut;
 		protected JList jlst_contact;protected JScrollPane jsp_contact;
+	protected JSplitPane jslip;
 	protected JPanel jp_center;
 		protected JTabbedPane jtabp_onglet;
+			protected JTextArea jta_log;
 			protected Vector<JConversation> jc_fenetre;
 	protected JPanel jp_bottom;
 		protected JHyperTextLink jl_pub;
+		protected JLabel jl_temp;
 		protected JCheckBox jchk_fastwriting;
+	
+	int size_split=200;
 	
 	protected String[] statut = {"Disponible","Absent","Occupé","Hors ligne"};
 	protected String[] images = {"images/statut/dispo.png","images/statut/absent.png","images/statut/occupe.png","images/statut/offline.png"};
-	protected String[] contacts = {"Damien","Marie-Hélène","FastWriting","Schtroumpfette","Plop","Tux"};
-	protected String[] temp = {"images/statut/dispo.png","images/statut/absent.png","images/statut/occupe.png","images/statut/offline.png","images/statut/dispo.png","images/statut/dispo.png"};
+	
+	//STATIC DATA
+	protected String[] contacts = {"Damien","Marie-Hélène","FastWriting","Schtroumpfette","Plop","Groupe 1","Tux"};
+	protected String[] temp = {"images/statut/dispo.png","images/statut/absent.png","images/statut/occupe.png","images/statut/offline.png","images/statut/dispo.png","images/groupe.png","images/statut/dispo.png"};
 	
 	public IHM(String titre) {
 		/** Titre **/
@@ -156,10 +165,8 @@ public class IHM extends JFrame {
 				this.jm_help.add(this.jmi_aProposDe);
 	}
 	public void creeInterface(ActionListener action,MouseListener mouse,ListSelectionListener listSelection) {
-		//Disponibilité
-		Integer[] plop = {0,1,2,3};
-		//liste de contacts
-		Integer[] plop2 = {0,1,2,3,4,5};
+		/*Disponibilité*/Integer[] plop = {0,1,2,3};
+		/*liste de contacts*/Integer[] plop2 = {0,1,2,3,4,5,6};
 		
 		/** Création des éléments     **/
 		this.jp_left = new JPanel(new BorderLayout());
@@ -167,13 +174,18 @@ public class IHM extends JFrame {
 			this.jlst_contact = new JList(plop2);this.jsp_contact = new JScrollPane(this.jlst_contact);
 		this.jp_center = new JPanel(new BorderLayout());
 			this.jtabp_onglet = new JTabbedPane();
+				this.jta_log = new JTextArea("Log");
 				this.jc_fenetre = new Vector<JConversation>();
 		this.jp_bottom = new JPanel(new BorderLayout());
 			this.jl_pub = new JHyperTextLink("Publicité de nos partenaires !","http://code.google.com/p/talk-talk/");
+			this.jl_temp = new JLabel("    [hostname + ip + port]    ");
 			this.jchk_fastwriting = new JCheckBox("Utiliser FastWriting");
+		this.jslip = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,this.jp_left,this.jp_center);/* JSplitPane à la fin */
+		
 		/** Paramétrage des éléments  **/
+		this.jslip.setDividerLocation(size_split);
 		// Panneau de gauche
-		this.jp_left.setPreferredSize(new Dimension(200,0));
+		//this.jp_left.setPreferredSize(new Dimension(300,0));
 		// Liste de disponibilité
 		ComboBoxRenderer renderer = new ComboBoxRenderer(statut,images,TalkTalk.class);
 		renderer.setPreferredSize(new Dimension(16,16));
@@ -190,24 +202,29 @@ public class IHM extends JFrame {
 		} catch (BadLocationException e) {
 			e.printStackTrace();
 		}*/
-		this.jc_fenetre.add(new JConversation("MH",null,Resources.getImageIcon("images/tux.png",TalkTalk.class),Resources.getImageIcon("images/schtroumpfette.png",TalkTalk.class)));
-		this.jc_fenetre.add(new JConversation("Tux",null,Resources.getImageIcon("images/tux.png",TalkTalk .class),Resources.getImageIcon("images/profil.png",TalkTalk.class)));
-		this.jc_fenetre.add(new JConversation("Inconnu",null,Resources.getImageIcon("images/tux.png",TalkTalk .class),Resources.getImageIcon("images/profil.png",TalkTalk.class)));
-		actuTab();
+		this.jtabp_onglet.add("log",this.jta_log);
+		//this.jc_fenetre.add(new JConversation("MH",null,Resources.getImageIcon("images/tux.png",TalkTalk.class),Resources.getImageIcon("images/schtroumpfette.png",TalkTalk.class)));
+		//this.jc_fenetre.add(new JConversation("Tux",null,Resources.getImageIcon("images/tux.png",TalkTalk .class),Resources.getImageIcon("images/profil.png",TalkTalk.class)));
+		//this.jc_fenetre.add(new JConversation("Inconnu",null,Resources.getImageIcon("images/tux.png",TalkTalk .class),Resources.getImageIcon("images/profil.png",TalkTalk.class)));
+		actuTab(action);
 		
 		this.jtabp_onglet.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);//scroll horizontal des onglets
 		/** Action sur les éléments   **/
 		this.jlst_contact.addMouseListener(mouse);
 		//this.jlst_contact.addListSelectionListener(listSelection);
+		
+		//this.jc_fenetre.get(0).jb_wizz.addActionListener(action);
 		/** Montage des éléments      **/
-		this.add(this.jp_left,BorderLayout.WEST);
+		//this.add(this.jp_left,BorderLayout.WEST);
 			this.jp_left.add(this.jcb_statut,BorderLayout.NORTH);
 			this.jp_left.add(this.jsp_contact,BorderLayout.CENTER);
-		this.add(this.jp_center,BorderLayout.CENTER);
+		//this.add(this.jp_center,BorderLayout.CENTER);
 			this.jp_center.add(this.jtabp_onglet,BorderLayout.CENTER);
 		this.add(this.jp_bottom,BorderLayout.SOUTH);
 			this.jp_bottom.add(this.jl_pub,BorderLayout.WEST);
+			this.jp_bottom.add(this.jl_temp,BorderLayout.CENTER);
 			this.jp_bottom.add(this.jchk_fastwriting,BorderLayout.EAST);
+		this.add(this.jslip,BorderLayout.CENTER);
 	}
 	public void menuContextuel() {
 		/** Création des éléments     **/
@@ -230,9 +247,10 @@ public class IHM extends JFrame {
 		this.setVisible(true);												// Rendre la fenêtre visible
 	}
 	
-	public void actuTab() {
+	public void actuTab(ActionListener action) {
 		for (int i=0;i<this.jc_fenetre.size();i++) {
 			this.jtabp_onglet.addTab(this.jc_fenetre.get(i).getName(),Resources.getImageIcon("images/statut/dispo.png",TalkTalk.class),this.jc_fenetre.get(i),this.jc_fenetre.get(i).getName());
+			this.jc_fenetre.get(i).jb_wizz.addActionListener(action);
 		}
 	}
 	
