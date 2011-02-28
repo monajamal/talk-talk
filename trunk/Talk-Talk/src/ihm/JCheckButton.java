@@ -1,6 +1,7 @@
 package ihm;
 
 import java.awt.Dimension;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -14,7 +15,6 @@ import javax.swing.border.BevelBorder;
 public class JCheckButton extends JButton {
 	
 	private boolean enfonce;
-	private boolean lock;
 	private ActionListener actionListener;
 	
 	public JCheckButton(String text, Icon icon) {
@@ -26,10 +26,8 @@ public class JCheckButton extends JButton {
 		
 		/** Paramètres **/
 		this.setEnfonce(false);
-		this.setLock(false);
-		
 		//this.setMargin(new Insets(25,25,25,25));
-		this.setPreferredSize(new Dimension(20,20));
+		this.setPreferredSize(new Dimension(25,25));
 		
 		this.addActionListener(null);
 	}
@@ -44,12 +42,6 @@ public class JCheckButton extends JButton {
 	public boolean isEnfonce() {
 		return enfonce;
 	}
-	public void setLock(boolean lock) {
-		this.lock = lock;
-	}
-	public boolean isLock() {
-		return lock;
-	}
 	public void addActionListener(ActionListener actionListener) {
 		this.actionListener = actionListener;
 	}
@@ -59,17 +51,15 @@ public class JCheckButton extends JButton {
 }
 class Event_JTouche implements MouseListener {
 	JCheckButton jp;
+	boolean lock;
 	public Event_JTouche(JCheckButton jp) {
 		this.jp=jp;
+		this.lock=false;
 	}
 	
 	@Override
 	public void mouseClicked(MouseEvent arg0) {
-		Object obj = arg0.getSource();
-		if (obj instanceof JCheckButton) {
-			JCheckButton jt = (JCheckButton)obj;
-			
-		}
+		
 	}
 	@Override
 	public void mouseEntered(MouseEvent arg0) {
@@ -84,9 +74,7 @@ class Event_JTouche implements MouseListener {
 		Object obj = arg0.getSource();
 		if (obj instanceof JCheckButton) {
 			JCheckButton jt = (JCheckButton)obj;
-			
 			jt.setEnfonce(true);
-			
 		}
 	}
 	@Override
@@ -94,15 +82,14 @@ class Event_JTouche implements MouseListener {
 		Object obj = arg0.getSource();
 		if (obj instanceof JCheckButton) {
 			JCheckButton jt = (JCheckButton)obj;
-			
-			if (jt.isLock()) {
+			if (lock) {
 				jt.setEnfonce(false);
-				jt.setLock(false);
+				lock=false;
 			} else {
-				jt.setLock(true);
+				lock=true;
 			}
-			
-			
+			ActionEvent e = new ActionEvent(jp,1,"JCheckButton_stateChanged");
+			jp.getActionListener().actionPerformed(e);
 		}
 	}
 }
