@@ -1,10 +1,12 @@
+/**
+ * Thread permettant l'envoi d'un message.
+ */
 package talkTalk;
 
 import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
-import java.util.List;
 
 public class Envoi extends Thread {
 
@@ -18,68 +20,58 @@ public class Envoi extends Thread {
 	}
 	
 	public void run(){
-		Contact c;
-		c = TalkTalk.friends.get(dest);
-		if (c==null || c.getType() == Contact.CONTACT_UNKNOW){
+		Contact destinataire = null;
+		for (Contact c :TalkTalk.friends){
+			if (c.getPseudo().equals(dest)) {
+				destinataire = c;
+				break;
+			}
+		}
+		if (destinataire==null || destinataire.getType() == Contact.CONTACT_UNKNOW){
 			//TODO Recherche du destinataire
 			TalkTalk.aff.afficherDestinataireInconnu(dest);
-			System.out.println("Destinataire inconnu : "+dest);
-		} else if (c.getType() == Contact.CONTACT_NORMAL){
-			boolean again = true; //Recommencer ou pas l'envoi
-			boolean first = true; //Premier essai
-			while (again) {
-				try {
-					TalkTalk.aff.afficherMessageEnvoye(c.getAddr(), msg);
-					if (c.getDistant() == null || !first){
-						//On va faire le lookup ou c'est la deuxieme fois
-						again = false; //On ne recommence pas
-					}
-					first = false; //Plus la premiere fois
-					envoiMsg(c,msg); //On envoie
-					again = false; //Envoi réussi on recommence pas
-				}catch (RemoteException e) {
-					c.setDistant(null); //On enleve l'interface distante, c'est pas la bonne
-					if (!again) { //Si on a deja fait toutes nos tentatives
-						TalkTalk.aff.afficherErreurRecu(dest, msg);
-						e.printStackTrace();
-					}
-					
-				} 
+		} else if (destinataire.getType() == Contact.CONTACT_NORMAL){
+			TalkTalk.aff.afficherMessageEnvoye(destinataire, msg);
+			int i=0;
+			boolean res;
+			do {
+				res = envoiMsg(destinataire,msg);
+				i++;
+			} while (i<2 && !res);
+			if (!res){
+				TalkTalk.aff.afficherErreurEnvoi(dest, msg);
 			}
-		} else if (c.getType() == Contact.CONTACT_GROUP){
+			
+			
+		}/* else if (c.getType() == Contact.CONTACT_GROUP){
 			List<String> list  = c.getMembres();
 			Envoi env;
 			for (String nom : list) {
 				env = new Envoi(nom,msg);
 				env.start();
 			}
-		}
+		}*/
 	}
-	/**
-	 * 
-	 * @param c
-	 * @param msg
-	 * @return true si on a du cherche la classe distante, false sinon
-	 * @throws RemoteException
-	 */
-	public boolean envoiMsg(Contact c, String msg) throws RemoteException{
+	
+	public boolean envoiMsg(Contact c, String msg) {
 		Distant d = c.getDistant();
-		String addr = c.getAddr();
-		boolean res = false;
+		String addr = c.getAddr().toString();
 		if (d == null ) {//On a pas encore cherché l'interface distante
-			res = true;
 			try {
 				d = (Distant)Naming.lookup("rmi://"+addr+"/TalkTalk");
+				d.sendMsg(TalkTalk.pseudo,TalkTalk.adressePerso,msg);
 			} catch (MalformedURLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				c.setDistant(null); //On enleve l'interface distante, c'est pas la bonne
+				return false;
 			} catch (NotBoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				c.setDistant(null); //On enleve l'interface distante, c'est pas la bonne
+				return false;
+			} catch (RemoteException e) {
+				c.setDistant(null); //On enleve l'interface distante, c'est pas la bonne
+				return false;
 			}
 			c.setDistant(d);
 		} 
-		d.sendMsg(TalkTalk.pseudo,msg);
-		return res;
+		return true;
 	}
 }
