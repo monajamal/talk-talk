@@ -1,3 +1,6 @@
+/**
+ * Représente un contact qui n'est pas un groupe.
+ */
 package talkTalk;
 
 import java.util.List;
@@ -5,7 +8,7 @@ import java.util.List;
 
 public class ContactAddr extends Contact {
 	
-	private String address;
+	private Adresse address;
 	private Distant distant;
 	
 	public ContactAddr(String pseudo) {
@@ -18,16 +21,24 @@ public class ContactAddr extends Contact {
 		super(c.getPseudo());
 	}
 	
-	public ContactAddr(String pseudo, String addr) {
+	public ContactAddr(String pseudo, String addr, int port) {
+		super(pseudo);
+		this.address = new Adresse(addr,port);
+	}
+	
+	public ContactAddr(String pseudo, Adresse addr) {
 		super(pseudo);
 		this.address = addr;
 	}
-	
-	public void setAddr(String addr) {
-		this.address = addr;
+
+	public void setAddr(String addr, int port) {
+		this.address = new Adresse(addr, port);
+		if (addr==null){
+			distant=null;
+		}
 	}
 
-	public String getAddr() {
+	public Adresse getAddr() {
 		return address;
 	}
 	
@@ -39,10 +50,7 @@ public class ContactAddr extends Contact {
 		}
 	}
 
-	@Override
-	public String getString() {
-		return address;
-	}
+	
 
 	public void setDistant(Distant distant) {
 		this.distant = distant;
@@ -54,9 +62,9 @@ public class ContactAddr extends Contact {
 
 	@Override
 	public List<String> getMembres() {
-		// TODO Auto-generated method stub
 		return null;
 	}
+
 	
 
 }

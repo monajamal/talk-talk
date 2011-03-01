@@ -1,3 +1,7 @@
+/**
+ * Représente un contact de groupe
+ */
+
 package talkTalk;
 
 import java.util.ArrayList;
@@ -28,16 +32,9 @@ public class ContactGroup extends Contact {
 	public void addMembres(String membre){
 		membres.add(membre);
 	}
+
 	@Override
-	public String getString() {
-		String s = "";
-		for (String membre : membres){
-			s+=membre+",";
-		}
-		return s.substring(0,s.length()-1);
-	}
-	@Override
-	public String getAddr() {
+	public Adresse getAddr() {
 		// TODO Auto-generated method stub
 		return null;
 	}

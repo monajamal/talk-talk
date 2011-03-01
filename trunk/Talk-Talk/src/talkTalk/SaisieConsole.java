@@ -1,14 +1,17 @@
+/**
+ * Classe permettant la saisie de commandes sur la console.
+ */
 package talkTalk;
 
-import java.util.Hashtable;
 import java.util.List;
+import java.util.Vector;
 
 import utils.SaisieControle;
 
 public class SaisieConsole extends Thread {
 	
 	public void run() {
-		System.out.println("Je suis "+TalkTalk.pseudo+" et je suis connecté sur ["+TalkTalk.hostname+"] !");
+		System.out.println("Je suis "+TalkTalk.pseudo+" et je suis connecté sur ["+TalkTalk.adressePerso+"] !");
 		System.out.println("Mes amis sont "+print(TalkTalk.friends));
 		String saisie = "";
 		while (saisie!=null) {
@@ -19,12 +22,15 @@ public class SaisieConsole extends Thread {
 				TalkTalk.exit();
 			} else if (saisie.startsWith("/add")) {
 				saisie=saisie.replaceAll("/add ", "");
-				if (saisie.indexOf(' ')!=-1) {
-					String pseudo = saisie.substring(0, saisie.indexOf(' ')).replace(" ", "");
-					String addr = saisie.substring(saisie.indexOf(' ')+1).replace(" ", "");
-					TalkTalk.ajouterContact(pseudo, addr);
+				
+				String tab[] = saisie.split(" ");
+				if (tab.length==3) {
+					TalkTalk.ajouterContact(tab[0], tab[1], Integer.parseInt(tab[2]));
+					System.out.println("Mes amis sont "+print(TalkTalk.friends));
+				} else {
+					System.out.println("Echec lors de l'ajout");
 				}
-				System.out.println("Mes amis sont "+print(TalkTalk.friends));
+				
 			} else if (saisie.startsWith("/contact")) {
 				System.out.println("recherche du contact....echec !");
 			} else if (saisie.startsWith("/image")) {
@@ -45,14 +51,14 @@ public class SaisieConsole extends Thread {
 		}
 	}
 	
-	public static String print(Hashtable<String,Contact> friend) {
+	public static String print(Vector<Contact> friends) {
 		String res="{ ";
 		int i=0;
-		for (String nom : friend.keySet())
+		for (Contact c : friends)
 		{
 			if (i!=0) res+=", ";
-			res += nom;
-			Contact c = friend.get(nom);
+			res += c.getPseudo();
+			
 			if (c.getType()==Contact.CONTACT_GROUP) {
 				res += " : ";
 				List<String> list  = c.getMembres();
@@ -67,6 +73,6 @@ public class SaisieConsole extends Thread {
 	}
 	
 	public void exit() {
-		System.out.println("SERVEUR ["+TalkTalk.hostname+"] : Server down !");
+		System.out.println("SERVEUR ["+TalkTalk.adressePerso+"] : Server down !");
 	}
 }
