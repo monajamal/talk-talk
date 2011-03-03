@@ -21,13 +21,19 @@ import java.util.Enumeration;
 import java.util.Properties;
 import java.util.Vector;
 
+import commun.Contact;
+import commun.Groupe;
+import commun.Personne;
+
 public class TalkTalk {
 	
 	public static Adresse adressePerso; //Mon adresse ou me contacter
 	public static String pseudo; //Mon pseudo
 	public static String image; //Mon image (non implémenté)
 	public static String statut; //Mon statut (non implémenté)
-	public static Vector<Contact> friends; //La liste de mes contacts
+	//public static Vector<Contact> friends; //La liste de mes contacts
+	public static Vector<Personne> friends;
+	public static Vector<Groupe> groupes;
 	public final static int portRegistry = 1099; //Le port du serveur de nom 
 	public final static int portObject = 3000; //Le port de l'objet
 	public static Affichage aff; //Interface d'affichage
@@ -63,8 +69,10 @@ public class TalkTalk {
 		//Initialisation des paramètres
 		image=null;
 		statut="dispo";
-		friends = Contact.parseContact();
-		Contact.saveContact(friends);
+		friends = new Vector<Personne>();
+		groupes = new Vector<Groupe>();
+		Contact.parseContact(friends,groupes);
+		Contact.saveContact(friends,groupes);
 		//Creation de l'affichage
 		aff = new AffichageConsole();
 		
@@ -117,8 +125,12 @@ public class TalkTalk {
 	 * @param port le port
 	 */
 	public static void ajouterContact(String pseudo, String address, int port){
-		Contact c = new ContactAddr(pseudo,address,1099);
-		TalkTalk.friends.add(c);
+		
+		//TODO : verifier que pseudo n'existe pas encore
+		
+		Personne p = new Personne(pseudo,new Adresse(address,1099));
+		TalkTalk.friends.add(p);
+		Contact.saveContact(friends, groupes);
 	}
 	/**
 	 * Quitte l'application.
@@ -171,7 +183,7 @@ public class TalkTalk {
 
 			HttpURLConnection httpcon = (HttpURLConnection) new URL(PAGE_IP).openConnection();
 			httpcon.connect();
-			if(httpcon.getResponseCode()!=HttpURLConnection.HTTP_OK) {//?chec de la connection
+			if(httpcon.getResponseCode()!=HttpURLConnection.HTTP_OK) {//Echec de la connection
 				System.out.println("Recuperation de l'adresse publique : erreur\n"+httpcon.getResponseMessage());
 				System.exit(-1);
 			} else {//Lecture de la réponse

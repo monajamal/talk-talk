@@ -7,7 +7,7 @@ package talkTalk;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ContactGroup extends Contact {
+public class ContactGroup extends Contact2 {
 
 	private List<String> membres;
 	
@@ -17,7 +17,7 @@ public class ContactGroup extends Contact {
 		// TODO Auto-generated constructor stub
 	}
 
-	public ContactGroup(Contact c) {
+	public ContactGroup(Contact2 c) {
 		super(c.getPseudo());
 	}
 

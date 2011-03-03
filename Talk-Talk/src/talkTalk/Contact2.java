@@ -12,7 +12,8 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.Vector;
 
-public abstract class  Contact {
+
+public abstract class  Contact2 {
 
 	public static final String FIC_CONTACT = "./data/contact";
 	public static final int CONTACT_UNKNOW = 0;
@@ -20,7 +21,7 @@ public abstract class  Contact {
 	public static final int CONTACT_NORMAL = 2;
 	private String pseudo;
 
-	public Contact(String pseudo)
+	public Contact2(String pseudo)
 	{
 		this.pseudo = pseudo;
 	}
@@ -50,8 +51,8 @@ public abstract class  Contact {
 	 * Lit le fichier de contact
 	 * @return la liste des contacts lu
 	 */
-	public static Vector<Contact> parseContact(){
-		Vector<Contact> contacts = new Vector<Contact>();
+	public static Vector<Contact2> parseContact(){
+		Vector<Contact2> contacts = new Vector<Contact2>();
 		File f = new File(FIC_CONTACT);
 		Scanner sc;
 		try {
@@ -59,7 +60,7 @@ public abstract class  Contact {
 			sc.useDelimiter("\n|\r\n");
 			String l ="";
 			String[] tab;
-			Contact c;
+			Contact2 c;
 			while (sc.hasNext()){
 				l = sc.next();
 				tab = l.split(";");
@@ -119,11 +120,11 @@ public abstract class  Contact {
 	 * Sauvegarde la liste de contacts dans le fichier
 	 * @param contacts la liste de contacts actuelle
 	 */
-	public static void saveContact(Vector<Contact> contacts) {
+	public static void saveContact(Vector<Contact2> contacts) {
 		PrintWriter fout;
 		try {
 			fout = new PrintWriter(new FileWriter(FIC_CONTACT,false));
-			for (Contact c : contacts) {
+			for (Contact2 c : contacts) {
 				if (c.getType() == CONTACT_GROUP) {
 					fout.print("G;");
 					fout.print(c.getPseudo()+";");
@@ -218,6 +219,7 @@ public abstract class  Contact {
 			e.printStackTrace();
 		}
 	}*/
+
 
 	
 	

@@ -8,29 +8,53 @@ import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 
+import commun.Personne;
+
 public class Envoi extends Thread {
 
-	private String dest;
+	private String pseudo_dest;
+	private Personne destinataire;
 	private String msg;
-	
+
+	/**
+	 * Creation d'un thread d'envoi avec le nom du contact
+	 * @param dest le destinataire
+	 * @param msg le message
+	 */
 	public Envoi(String dest, String msg){
 		super();
-		this.dest = dest;
+		this.pseudo_dest = dest;
 		this.msg = msg;
 	}
-	
+
+	/**
+	 * Création d'un thread d'envoi avec la classe Personne
+	 * @param dest le destinataire
+	 * @param msg le message
+	 */
+	public Envoi(Personne dest, String msg) {
+		super();
+		this.destinataire = dest;
+		this.msg = msg;
+	}
+	/**
+	 * Envoie le message
+	 */
 	public void run(){
-		Contact destinataire = null;
-		for (Contact c :TalkTalk.friends){
-			if (c.getPseudo().equals(dest)) {
-				destinataire = c;
-				break;
+		if (destinataire == null) { //On doit rechercher le contact
+			synchronized(TalkTalk.friends) {
+				for (Personne p :TalkTalk.friends){
+					if (p.getPseudo().equals(pseudo_dest)) {
+						destinataire = p;
+						break;
+					}
+				} 
 			}
 		}
-		if (destinataire==null || destinataire.getType() == Contact.CONTACT_UNKNOW){
+		if (destinataire==null || destinataire.getAddress() == null){
 			//TODO Recherche du destinataire
-			TalkTalk.aff.afficherDestinataireInconnu(dest);
-		} else if (destinataire.getType() == Contact.CONTACT_NORMAL){
+			TalkTalk.aff.afficherDestinataireInconnu(pseudo_dest);
+		} else {
 			TalkTalk.aff.afficherMessageEnvoye(destinataire, msg);
 			int i=0;
 			boolean res;
@@ -39,38 +63,35 @@ public class Envoi extends Thread {
 				i++;
 			} while (i<2 && !res);
 			if (!res){
-				TalkTalk.aff.afficherErreurEnvoi(dest, msg);
+				TalkTalk.aff.afficherErreurEnvoi(pseudo_dest, msg);
 			}
-			
-			
-		}/* else if (c.getType() == Contact.CONTACT_GROUP){
-			List<String> list  = c.getMembres();
-			Envoi env;
-			for (String nom : list) {
-				env = new Envoi(nom,msg);
-				env.start();
-			}
-		}*/
+		}
 	}
-	
-	public boolean envoiMsg(Contact c, String msg) {
-		Distant d = c.getDistant();
-		String addr = c.getAddr().toString();
+
+	/**
+	 * Essaie un envoi de message
+	 * @param destinataire le destinataire
+	 * @param msg le message 
+	 * @return true si l'envoi c'est bien passé, false sinon
+	 */
+	public boolean envoiMsg(Personne destinataire, String msg) {
+		Distant d = destinataire.getDistant();
+		String addr = destinataire.getAddress().toString();
 		if (d == null ) {//On a pas encore cherché l'interface distante
 			try {
 				d = (Distant)Naming.lookup("rmi://"+addr+"/TalkTalk");
 				d.sendMsg(TalkTalk.pseudo,TalkTalk.adressePerso,msg);
 			} catch (MalformedURLException e) {
-				c.setDistant(null); //On enleve l'interface distante, c'est pas la bonne
+				destinataire.setDistant(null); //On enlève l'interface distante, c'est pas la bonne
 				return false;
 			} catch (NotBoundException e) {
-				c.setDistant(null); //On enleve l'interface distante, c'est pas la bonne
+				destinataire.setDistant(null); //On enlève l'interface distante, c'est pas la bonne
 				return false;
 			} catch (RemoteException e) {
-				c.setDistant(null); //On enleve l'interface distante, c'est pas la bonne
+				destinataire.setDistant(null); //On enlève l'interface distante, c'est pas la bonne
 				return false;
 			}
-			c.setDistant(d);
+			destinataire.setDistant(d);
 		} 
 		return true;
 	}

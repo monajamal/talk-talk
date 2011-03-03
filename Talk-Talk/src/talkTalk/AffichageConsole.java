@@ -4,6 +4,8 @@
 
 package talkTalk;
 
+import commun.Personne;
+
 public class AffichageConsole implements Affichage{
 
 	@Override
@@ -13,7 +15,7 @@ public class AffichageConsole implements Affichage{
 	}
 
 	@Override
-	public void afficherMessageRecu(Contact expediteur, String msg) {
+	public void afficherMessageRecu(Personne expediteur, String msg) {
 		System.out.println("> "+expediteur.getPseudo()+" : "+msg);
 	}
 
@@ -24,7 +26,7 @@ public class AffichageConsole implements Affichage{
 	}
 
 	@Override
-	public void afficherMessageEnvoye(Contact destinataire, String msg) {
+	public void afficherMessageEnvoye(Personne destinataire, String msg) {
 		System.out.println("Envoi de "+msg+" à "+destinataire.getPseudo());
 	}
 
