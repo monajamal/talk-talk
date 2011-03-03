@@ -3,10 +3,11 @@
  */
 package talkTalk;
 
-import java.util.List;
 import java.util.Vector;
 
 import utils.SaisieControle;
+
+import commun.Personne;
 
 public class SaisieConsole extends Thread {
 	
@@ -51,21 +52,13 @@ public class SaisieConsole extends Thread {
 		}
 	}
 	
-	public static String print(Vector<Contact> friends) {
+	public static String print(Vector<Personne> friends) {
 		String res="{ ";
 		int i=0;
-		for (Contact c : friends)
+		for (Personne p : friends)
 		{
 			if (i!=0) res+=", ";
-			res += c.getPseudo();
-			
-			if (c.getType()==Contact.CONTACT_GROUP) {
-				res += " : ";
-				List<String> list  = c.getMembres();
-				for (String membre : list) {
-					res += membre+" ";
-				}
-			}
+			res += p.getPseudo();
 			i++;
 		}
 		res+=" }";

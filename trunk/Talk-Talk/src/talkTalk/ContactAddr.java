@@ -6,7 +6,7 @@ package talkTalk;
 import java.util.List;
 
 
-public class ContactAddr extends Contact {
+public class ContactAddr extends Contact2 {
 	
 	private Adresse address;
 	private Distant distant;
@@ -17,7 +17,7 @@ public class ContactAddr extends Contact {
 		setDistant(null);
 	}
 
-	public ContactAddr(Contact c) {
+	public ContactAddr(Contact2 c) {
 		super(c.getPseudo());
 	}
 	

@@ -4,6 +4,8 @@ import java.rmi.RemoteException;
 import java.util.List;
 import java.util.Vector;
 
+import commun.Personne;
+
 public class DistantImpl implements Distant {
 	
 	private static final long serialVersionUID = -4154160384111399024L;
@@ -20,24 +22,25 @@ public class DistantImpl implements Distant {
 	@Override
 	public void sendMsg(String expediteur, Adresse addr_exp, String m)
 			throws RemoteException {
-		Contact exp = null;
-		for (Contact c :TalkTalk.friends){
-			if (c.getType()==Contact.CONTACT_NORMAL && c.getAddr().equals(addr_exp)) {
-				exp = c;
+		Personne exp = null;
+		for (Personne p :TalkTalk.friends){
+			if (p.getAddress().equals(addr_exp)) {
+				exp = p;
 				break;
 			}
 		}
 		if (exp==null) { //On a pas trouvé l'ip dans les contacts
-			for (Contact c :TalkTalk.friends){ //On cherche le pseudo
-				if (c.getType()==Contact.CONTACT_UNKNOW && c.getPseudo().equals(expediteur)) {
-					exp = c;
+			for (Personne p :TalkTalk.friends){ //On cherche le pseudo
+				if (p.getPseudo().equals(expediteur)) {
+					exp = p;
+					p.setAddress(addr_exp);//MAJ a la reception de message
 					break;
 				}
 			}
 		}
 		
 		if (exp==null) {
-			exp = new ContactAddr(expediteur,addr_exp);
+			exp = new Personne(expediteur,addr_exp);
 		}
 		TalkTalk.aff.afficherMessageRecu(exp, m);
 		

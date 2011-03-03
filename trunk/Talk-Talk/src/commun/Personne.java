@@ -1,5 +1,8 @@
 package commun;
 
+import talkTalk.Adresse;
+import talkTalk.Distant;
+
 public class Personne extends Contact {
 	
 	public static final int AVAILABLE = 1;
@@ -13,19 +16,28 @@ public class Personne extends Contact {
 	private int statut;
 	private String image_perso;
 	private String msg_perso;
-	private String ip;
-	private int port;
 	private String dns;
+	private Adresse address;
+	private Distant distant;
 	
-	public Personne(String pseudo,String alias,int statut,String image_perso,String msg_perso,String ip,int port,String dns) {
+	public Personne(String pseudo,String alias,int statut,String image_perso,String msg_perso,Adresse addr,String dns) {
 		this.setPseudo(pseudo);
 		this.setAlias(alias);
 		this.setStatut(statut);
 		this.setImage_perso(image_perso);
 		this.setMsg_perso(msg_perso);
-		this.setIp(ip);
-		this.setPort(port);
+		this.setAddress(addr);
 		this.setDns(dns);
+	}
+	public Personne(String pseudo, Adresse addr) {
+		this.setPseudo(pseudo);
+		this.setAddress(addr);
+		this.setAlias(null);
+		this.setStatut(OFFLINE);
+		this.setImage_perso(null);
+		this.setMsg_perso(null);
+		this.setAddress(addr);
+		this.setDns(null);
 	}
 	public void setPseudo(String pseudo) {
 		this.pseudo = pseudo;
@@ -57,18 +69,7 @@ public class Personne extends Contact {
 	public String getMsg_perso() {
 		return msg_perso;
 	}
-	public void setIp(String ip) {
-		this.ip = ip;
-	}
-	public String getIp() {
-		return ip;
-	}
-	public void setPort(int port) {
-		this.port = port;
-	}
-	public int getPort() {
-		return port;
-	}
+	
 	public void setDns(String dns) {
 		this.dns = dns;
 	}
@@ -94,5 +95,17 @@ public class Personne extends Contact {
 	@Override
 	public int getType() {
 		return Contact.FRIEND;
+	}
+	public void setAddress(Adresse address) {
+		this.address = address;
+	}
+	public Adresse getAddress() {
+		return address;
+	}
+	public void setDistant(Distant distant) {
+		this.distant = distant;
+	}
+	public Distant getDistant() {
+		return distant;
 	}
 }
