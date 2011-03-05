@@ -2,7 +2,6 @@ package ihm;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GraphicsEnvironment;
@@ -24,12 +23,19 @@ import javax.swing.text.Document;
 import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
 
+import commun.Groupe;
+import commun.Personne;
+
 import talkTalk.TalkTalk;
 import utils.Resources;
 
 @SuppressWarnings("serial")
 public class JConversation extends JPanel {
 	
+	private Personne f;
+	private Groupe p;
+	
+	private int index;
 	private String name;
 	private Document doc;
 	private Icon icon_perso;
@@ -53,8 +59,8 @@ public class JConversation extends JPanel {
 			protected JSmiley[] js_smiley;
 			protected JCoolButton jb_send;
 	
-	
-	public JConversation(String name,Document doc,Icon icon_perso,Icon icon_ami) {
+	// Nom de la personne ou du groupe, ??, Image perso, image de l'ami
+	public JConversation(int index,String name,Document doc,Icon icon_perso,Icon icon_ami) {
 		this.setName(name);
 		this.setDoc(doc);
 		this.setIcon_perso(icon_perso);
@@ -120,41 +126,26 @@ public class JConversation extends JPanel {
 				for (int i=0;i<this.js_smiley.length;i++) this.js_smiley[i] = new JSmiley(Resources.getImageIcon("images/smiley/smiley_"+(i+1)+".png",TalkTalk.class),smile[i]);
 				this.jb_send = new JCoolButton("Envoyer");
 		
-		//this.jcc = new JColorChooser(Color.BLACK);
 		/** Paramétrage des éléments  **/
-		// paramètres du JColorChooser
-		/*AbstractColorChooserPanel[] panels = this.jcc.getChooserPanels();
-		for (int i=0; i<panels.length; i++) {
-		  String tmpString = panels[i].getClass().getName();
-		  if (tmpString.equals("javax.swing.colorchooser.DefaultRGBChooserPanel") ||
-				  tmpString.equals("javax.swing.colorchooser.DefaultSwatchChooserPanel")) {//DefaultHSBChooserPanel
-			  this.jcc.removeChooserPanel(panels[i]);
-		  }
-		}*/
-		
-		this.jtp_ecrire.setForeground(couleur);
-		
 		this.setLayout(new BorderLayout());
 		//this.jtp_conversation.setDocument(this.doc);
-		
+		this.jtp_conversation.setEditable(false);
 		this.jl_image_ami.setPreferredSize(new Dimension(128,128));
 		this.jl_image_perso.setPreferredSize(new Dimension(128,128));
-		
-		
-		this.jtp_conversation.setEditable(false);
+		this.jtp_ecrire.setForeground(couleur);
 		this.jtp_ecrire.setEditable(true);
+		
 		/** Action sur les éléments   **/
+		this.jtp_ecrire.addKeyListener(key);
+		this.jb_wizz.addActionListener(action);
 		this.jchkb_gras.addActionListener(action);
 		this.jchkb_italique.addActionListener(action);
 		this.jchkb_souligne.addActionListener(action);
 		this.jb_police.addActionListener(action);
 		this.jb_couleur.addActionListener(action);
-		
 		for (int i=0;i<this.js_smiley.length;i++) this.js_smiley[i].addActionListener(action);
-		
-		this.jb_wizz.addActionListener(action);
-		this.jtp_ecrire.addKeyListener(key);
 		this.jb_send.addActionListener(action);
+		
 		/** Montage des éléments      **/
 		this.add(this.jsp_conversation,BorderLayout.CENTER);
 		this.add(this.jp_right,BorderLayout.EAST);
@@ -178,6 +169,12 @@ public class JConversation extends JPanel {
 		/** Paramétrage des éléments  **/
 		/** Action sur les éléments   **/
 		/** Montage des éléments      **/
+	}
+	public void setIndex(int index) {
+		this.index = index;
+	}
+	public int getIndex() {
+		return index;
 	}
 	public void setName(String name) {
 		this.name = name;
@@ -219,13 +216,29 @@ class Event_JConversation implements ActionListener, KeyListener {
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
 		Object obj = arg0.getSource();
-		if (obj instanceof JSmiley) {
+		if (obj instanceof JCheckButton) {
+			JCheckButton jchkb = (JCheckButton)obj;
+			if (jchkb==jc.jchkb_gras || jchkb==jc.jchkb_italique) {	// Changement de gras et italique
+				Font f=jc.jtp_ecrire.getFont();
+				if (jc.jchkb_gras.isEnfonce() && jc.jchkb_italique.isEnfonce()) {
+					f=f.deriveFont(Font.BOLD|Font.ITALIC);
+				} else if (jc.jchkb_gras.isEnfonce()) {
+					f=f.deriveFont(Font.BOLD);
+				} else if (jc.jchkb_italique.isEnfonce()) {
+					f=f.deriveFont(Font.ITALIC);
+				} else {
+					f=f.deriveFont(Font.PLAIN);
+				}
+				jc.jtp_ecrire.setFont(f);
+			} else if (jchkb==jc.jchkb_souligne) {					// Changement de souligné
+				
+			}
+		} else if (obj instanceof JSmiley) {	// Si on insert un smiley
 			JSmiley js = (JSmiley)obj;
 			
-			//System.out.println("ici");
 			jc.jtp_ecrire.insertIcon(js.getIcon());//FIXME : cette fonction empeche de mettre 2 fois de suite le même smiley
-			Component c =new JButton("plop");
-			jc.jtp_ecrire.insertComponent(c);
+			//Component c =new JButton("plop");
+			//jc.jtp_ecrire.insertComponent(c);
 			//jc.jtp_ecrire.getDocument().insertString(jc.jtp_ecrire.getDocument().getLength(), js.getToolTipText(), null);
 			
 		} else if (obj instanceof JButton) {
@@ -273,20 +286,6 @@ class Event_JConversation implements ActionListener, KeyListener {
 					e.printStackTrace();
 				}*/
 				jc.jtp_ecrire.setText("");
-			} else if (jb==jc.jchkb_gras || jb==jc.jchkb_italique) {	// Changement de gras et italique
-				Font f=jc.jtp_ecrire.getFont();
-				if (jc.jchkb_gras.isEnfonce() && jc.jchkb_italique.isEnfonce()) {
-					f=f.deriveFont(Font.BOLD|Font.ITALIC);
-				} else if (jc.jchkb_gras.isEnfonce()) {
-					f=f.deriveFont(Font.BOLD);
-				} else if (jc.jchkb_italique.isEnfonce()) {
-					f=f.deriveFont(Font.ITALIC);
-				} else {
-					f=f.deriveFont(Font.PLAIN);
-				}
-				jc.jtp_ecrire.setFont(f);
-			} else if (jb==jc.jchkb_souligne) {
-				
 			} else if (jb==jc.jb_police) {
 				GraphicsEnvironment environment = GraphicsEnvironment.getLocalGraphicsEnvironment();
 				/** Liste de toutes les polices : */

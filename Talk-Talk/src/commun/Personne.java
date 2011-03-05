@@ -16,18 +16,16 @@ public class Personne extends Contact {
 	private int statut;
 	private String image_perso;
 	private String msg_perso;
-	private String dns;
 	private Adresse address;
 	private Distant distant;
 	
-	public Personne(String pseudo,String alias,int statut,String image_perso,String msg_perso,Adresse addr,String dns) {
+	public Personne(String pseudo,String alias,int statut,String image_perso,String msg_perso,Adresse addr) {
 		this.setPseudo(pseudo);
 		this.setAlias(alias);
 		this.setStatut(statut);
 		this.setImage_perso(image_perso);
 		this.setMsg_perso(msg_perso);
 		this.setAddress(addr);
-		this.setDns(dns);
 	}
 	public Personne(String pseudo, Adresse addr) {
 		this.setPseudo(pseudo);
@@ -37,7 +35,6 @@ public class Personne extends Contact {
 		this.setImage_perso(null);
 		this.setMsg_perso(null);
 		this.setAddress(addr);
-		this.setDns(null);
 	}
 	public void setPseudo(String pseudo) {
 		this.pseudo = pseudo;
@@ -70,12 +67,6 @@ public class Personne extends Contact {
 		return msg_perso;
 	}
 	
-	public void setDns(String dns) {
-		this.dns = dns;
-	}
-	public String getDns() {
-		return dns;
-	}
 	@Override
 	public String getName() {
 		return this.getPseudo();
