@@ -10,17 +10,15 @@ import java.net.UnknownHostException;
 
 public class Adresse implements Serializable {
 	
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -7825853973143121036L;
+	
 	private String addr;
 	private int port;
 	private String nomDns;
 	
 	public Adresse(String addr, int port) {
 		this.setAddr(addr);
-		this.port = port;
+		this.setPort(port);
 	}
 	public void setAddr(String addr) {
 		if (!addr.matches("^(25[0-5]|2[0-4]\\d|[0-1]?\\d?\\d)(\\.(25[0-5]|2[0-4]\\d|[0-1]?\\d?\\d)){3}$")) {
@@ -32,7 +30,6 @@ public class Adresse implements Serializable {
 				}
 				this.addr = in[0].getHostAddress();
 			} catch (UnknownHostException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		} else {

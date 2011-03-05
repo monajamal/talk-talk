@@ -67,12 +67,12 @@ public class IHM extends JFrame {
 	
 	int size_split=200;
 	
-	protected String[] statut = {"Disponible","Absent","Occupé","Hors ligne"};
-	protected String[] images = {"images/statut/dispo.png","images/statut/absent.png","images/statut/occupe.png","images/statut/offline.png"};
+	protected String[] statut = {"Disponible","Absent","Occupé","Invisible","Se déconnecter"};
+	protected String[] images = {"images/statut/dispo.png","images/statut/absent.png","images/statut/occupe.png","images/statut/invisible.png","images/statut/offline.png"};
 	
 	//STATIC DATA
-	protected String[] contacts = {"Damien","Marie-Hélène","FastWriting","Schtroumpfette","Plop","Groupe 1","Tux"};
-	protected String[] temp = {"images/statut/dispo.png","images/statut/absent.png","images/statut/occupe.png","images/statut/offline.png","images/statut/dispo.png","images/groupe.png","images/statut/dispo.png"};
+	//protected String[] contacts = {"Damien","Marie-Hélène","FastWriting","Schtroumpfette","Plop","Groupe 1","Tux"};
+	//protected String[] temp = {"images/statut/dispo.png","images/statut/absent.png","images/statut/occupe.png","images/statut/offline.png","images/statut/dispo.png","images/groupe.png","images/statut/dispo.png"};
 	
 	public IHM(String titre) {
 		/** Titre **/
@@ -165,13 +165,24 @@ public class IHM extends JFrame {
 				this.jm_help.add(this.jmi_aProposDe);
 	}
 	public void creeInterface(ActionListener action,MouseListener mouse,ListSelectionListener listSelection) {
-		/*Disponibilité*/Integer[] plop = {0,1,2,3};
-		/*liste de contacts*/Integer[] plop2 = {0,1,2,3,4,5,6};
+		/*Disponibilité*/
+		Integer[] dataStatut = new Integer[statut.length];
+		for (int i=0;i<statut.length;i++) dataStatut[i]=i;
+		/*liste de contacts*/
+		Integer[] dataContact = new Integer[MainTalkTalk.ami.size()];
+		String[] nomContact = new String[MainTalkTalk.ami.size()];
+		String[] imgContact = new String[MainTalkTalk.ami.size()];
+		for (int i=0;i<MainTalkTalk.ami.size();i++) {
+			dataContact[i]=i;
+			nomContact[i]=MainTalkTalk.ami.get(i).getName();
+			imgContact[i]=MainTalkTalk.ami.get(i).getImg();
+		}
+		
 		
 		/** Création des éléments     **/
 		this.jp_left = new JPanel(new BorderLayout());
-			this.jcb_statut = new JComboBox(plop);
-			this.jlst_contact = new JList(plop2);this.jsp_contact = new JScrollPane(this.jlst_contact);
+			this.jcb_statut = new JComboBox(dataStatut);
+			this.jlst_contact = new JList(dataContact);this.jsp_contact = new JScrollPane(this.jlst_contact);
 		this.jp_center = new JPanel(new BorderLayout());
 			this.jtabp_onglet = new JTabbedPane();
 				this.jta_log = new JTextArea("Log");
@@ -191,7 +202,7 @@ public class IHM extends JFrame {
 		renderer.setPreferredSize(new Dimension(16,16));
 		this.jcb_statut.setRenderer(renderer);
 		// Liste de contact
-		ComboBoxRenderer renderer2 = new ComboBoxRenderer(contacts,temp,TalkTalk.class);
+		ComboBoxRenderer renderer2 = new ComboBoxRenderer(nomContact,imgContact,TalkTalk.class);
 		renderer2.setPreferredSize(new Dimension(16,16));
 		this.jlst_contact.setCellRenderer(renderer2);
 		// Panneau d'onglets
@@ -249,7 +260,14 @@ public class IHM extends JFrame {
 	
 	public void actuTab(ActionListener action) {
 		for (int i=0;i<this.jc_fenetre.size();i++) {
-			this.jtabp_onglet.addTab(this.jc_fenetre.get(i).getName(),Resources.getImageIcon("images/statut/dispo.png",TalkTalk.class),this.jc_fenetre.get(i),this.jc_fenetre.get(i).getName());
+			//this.jlst_contact
+			
+			//this.jc_fenetre.get(i).getIndex()
+			
+			this.jtabp_onglet.addTab(this.jc_fenetre.get(i).getName(),
+					Resources.getImageIcon("images/statut/dispo.png",TalkTalk.class),
+					this.jc_fenetre.get(i),this.jc_fenetre.get(i).getName());
+			
 			this.jc_fenetre.get(i).jb_wizz.addActionListener(action);
 		}
 	}

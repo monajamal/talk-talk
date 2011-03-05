@@ -83,13 +83,16 @@ public class Event implements ActionListener, ListSelectionListener, MouseListen
 				// Cherche si un onglet est déjà ouvert
 				boolean exist=false;
 				for (int i=0;i<ihm.jc_fenetre.size();i++) {
-					if (ihm.jc_fenetre.get(i).getName().equals(ihm.contacts[jlst.getSelectedIndex()])) {
+					if (ihm.jc_fenetre.get(i).getName().equals(MainTalkTalk.ami.get(jlst.getSelectedIndex()).getName())) {
 						exist=true;
 					}
 				}
 				// Si NON, ouvrir l'onglet
 				if (!exist) {
-					ihm.jc_fenetre.add(new JConversation(ihm.contacts[jlst.getSelectedIndex()],null,Resources.getImageIcon("images/tux.png",TalkTalk .class),Resources.getImageIcon("images/profil.png",TalkTalk.class)));
+					ihm.jc_fenetre.add(
+							new JConversation(jlst.getSelectedIndex(),MainTalkTalk.ami.get(jlst.getSelectedIndex()).getName(),null,
+									Resources.getImageIcon("images/tux.png",TalkTalk .class),
+									Resources.getImageIcon("images/profil.png",TalkTalk.class)));
 					ihm.actuTab(this);
 				}
 			}
