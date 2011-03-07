@@ -23,39 +23,45 @@ public class DistantImpl implements Distant {
 	public void sendMsg(String expediteur, Adresse addr_exp, String m)
 			throws RemoteException {
 		Personne exp = null;
-		for (Personne p :TalkTalk.friends){
-			if (p.getAddress().equals(addr_exp)) {
-				exp = p;
-				break;
-			}
-		}
-		if (exp==null) { //On a pas trouvé l'ip dans les contacts
-			for (Personne p :TalkTalk.friends){ //On cherche le pseudo
-				if (p.getPseudo().equals(expediteur)) {
-					exp = p;
-					p.setAddress(addr_exp);//MAJ a la reception de message
-					break;
-				}
-			}
-		}
+		
+		exp = TalkTalk.friends.get(expediteur);
 		
 		if (exp==null) {
 			exp = new Personne(expediteur,addr_exp);
+			TalkTalk.friends.put(expediteur,exp);
+		} else {
+			exp.setAddress(addr_exp);
 		}
-		TalkTalk.aff.afficherMessageRecu(exp, m);
+		TalkTalk.ihm.afficherMessageRecu(exp, m);
 		
 	}
 
 	@Override
 	public void sendWizz(String pseudo, Adresse addr_exp)
 			throws RemoteException {
-		// TODO Auto-generated method stub
+		Personne exp = null;
+		exp = TalkTalk.friends.get(pseudo);
+		
+		if (exp==null) {
+			exp = new Personne(pseudo,addr_exp);
+			TalkTalk.friends.put(pseudo,exp);
+		} else {
+			exp.setAddress(addr_exp);
+		}// TODO Auto-generated method stub
+		TalkTalk.ihm.afficherWizzRecu(exp);
 		
 	}
 
 	@Override
 	public void sendMsgGr(String pseudo, Adresse addr_exp, String m,
 			List<Adresse> grp) throws RemoteException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void sendWizzGr(String pseudo, Adresse addrExp, List<Adresse> grp)
+			throws RemoteException {
 		// TODO Auto-generated method stub
 		
 	}

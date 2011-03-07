@@ -6,7 +6,7 @@ package talkTalk;
 
 import commun.Personne;
 
-public interface Affichage {
+public interface IHM extends Runnable {
 	
 	/**
 	 * Fonction appelée lors de la reception d'un message
@@ -14,6 +14,11 @@ public interface Affichage {
 	 * @param msg le message
 	 */
 	public void afficherMessageRecu(Personne exp, String msg);
+	/**
+	 * Afficher le wizz recu.
+	 * @param exp l'expediteur du wizz
+	 */
+	public void afficherWizzRecu(Personne exp);
 	/**
 	 * Fonction appelée lorsqu'un message est envoyé
 	 * @param destinataire le destinataire 
@@ -31,4 +36,8 @@ public interface Affichage {
 	 * @param destinataire 
 	 */
 	public void afficherDestinataireInconnu(String destinataire);
+	/**
+	 * Appelée pour fermer l'ihm
+	 */
+	public void exit();
 }

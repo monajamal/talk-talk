@@ -35,5 +35,6 @@ public interface Distant extends Remote {
 	 * @throws RemoteException
 	 */
 	public void sendMsgGr(String pseudo,Adresse addr_exp,String m,List<Adresse> grp) throws RemoteException;
+	public void sendWizzGr(String pseudo,Adresse addr_exp,List<Adresse> grp) throws RemoteException;
 
 }

@@ -3,14 +3,41 @@
  */
 package talkTalk;
 
-import java.util.Vector;
+import java.util.Map;
 
 import utils.SaisieControle;
 
 import commun.Personne;
 
-public class SaisieConsole extends Thread {
+public class Console implements IHM{
 	
+	@Override
+	public void afficherErreurEnvoi(String destinataire, String msg) {
+		System.out.println("Erreur : Le message suivant n'a pas pu être remis à "+destinataire+" : \n"+msg);
+		
+	}
+
+	@Override
+	public void afficherMessageRecu(Personne expediteur, String msg) {
+		System.out.println("> "+expediteur.getPseudo()+" : "+msg);
+	}
+
+	@Override
+	public void afficherDestinataireInconnu(String destinataire) {
+		// TODO Auto-generated method stub
+		System.out.println("Destinataire inconnu : "+destinataire);
+	}
+
+	@Override
+	public void afficherMessageEnvoye(Personne destinataire, String msg) {
+		System.out.println("Envoi de "+msg+" à "+destinataire.getPseudo());
+	}
+
+	@Override
+	public void afficherWizzRecu(Personne exp) {
+		System.out.println(exp.getPseudo()+" vous a envoyé un wizz");
+		
+	}
 	public void run() {
 		System.out.println("Je suis "+TalkTalk.pseudo+" et je suis connecté sur ["+TalkTalk.adressePerso+"] !");
 		System.out.println("Mes amis sont "+print(TalkTalk.friends));
@@ -45,20 +72,26 @@ public class SaisieConsole extends Thread {
 					String msg = saisie.substring(saisie.indexOf(' ')+1);
 					TalkTalk.envoyerMessage(dest, msg);
 				}
-			} else {
+			}else if (saisie.startsWith("/wizz")) {
+				saisie=saisie.replaceAll("/wizz ", "");
+				String dest = saisie;
+				TalkTalk.envoyerWizz(dest);
+				
+			}
+			else {
 				System.out.println("Commande inconnue");
 			}
-			yield();
+			//yield();
 		}
 	}
 	
-	public static String print(Vector<Personne> friends) {
+	public static String print(Map<String,Personne> friends) {
 		String res="{ ";
 		int i=0;
-		for (Personne p : friends)
+		for (String pseudo : friends.keySet())
 		{
 			if (i!=0) res+=", ";
-			res += p.getPseudo();
+			res += pseudo;
 			i++;
 		}
 		res+=" }";

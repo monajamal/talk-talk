@@ -88,6 +88,9 @@ public class Personne extends Contact {
 		return Contact.FRIEND;
 	}
 	public void setAddress(Adresse address) {
+		if (address==null || !address.equals(this.address)) {
+			this.distant = null;
+		}
 		this.address = address;
 	}
 	public Adresse getAddress() {
