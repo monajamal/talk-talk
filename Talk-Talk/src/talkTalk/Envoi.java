@@ -15,9 +15,8 @@ import commun.Personne;
 public class Envoi extends Thread {
 
 	private final static int NB_TENTATIVES = 2;
-	private String pseudo_dest;
 	private Personne destinataire;
-	private String msg; //Si null c'est un wizz
+	private String msg = null; //Si null c'est un wizz
 	private Groupe grp = null; // Si non null, c'est un envoi de groupe
 	//private List<Adresse> addr_grp;
 	//private boolean wizz; //Wizz ou message ?
@@ -76,29 +75,24 @@ public class Envoi extends Thread {
 	 * Envoie le message
 	 */
 	public void run(){
-		/*if (destinataire == null) { //On doit rechercher le contact
-			synchronized(TalkTalk.friends) {
-				for (Personne p :TalkTalk.friends){
-					if (p.getPseudo().equals(pseudo_dest)) {
-						destinataire = p;
-						break;
-					}
-				} 
-			}
-		}*/
-		if (destinataire==null || (destinataire.getType()==Contact.FRIEND && ((Personne)destinataire).getAddress() == null)){
+		if (destinataire==null) {
+			//Jamais la je crois, a vérifier
+		} else if (destinataire.getType()==Contact.FRIEND && ((Personne)destinataire).getAddress() == null){
 			//TODO Recherche du destinataire
-			TalkTalk.ihm.afficherDestinataireInconnu(pseudo_dest);
+			TalkTalk.ihm.afficherDestinataireInconnu(destinataire.getName());
 		} else {
 			TalkTalk.ihm.afficherMessageEnvoye(destinataire, msg);
 			int i=0;
-			boolean res;
+			boolean res=false;
 			do {
 				res = envoiMsg();
+				if (!res){
+					System.out.println("jklj");
+				}
 				i++;
 			} while (i<NB_TENTATIVES && !res);
 			if (!res){
-				TalkTalk.ihm.afficherErreurEnvoi(pseudo_dest, msg);
+				TalkTalk.ihm.afficherErreurEnvoi(destinataire.getName(), msg);
 			}
 		}
 	}
@@ -112,30 +106,31 @@ public class Envoi extends Thread {
 	public boolean envoiMsg() {
 		Distant d = this.destinataire.getDistant();
 		String addr = this.destinataire.getAddress().toString();
-		if (d == null ) {//On a pas encore cherché l'interface distante
-			try {
+
+		try {
+			if (d == null ) {//On a pas encore cherché l'interface distante
 				d = (Distant)Naming.lookup("rmi://"+addr+"/TalkTalk");
-				if (this.msg == null && this.grp ==null) {
-					d.sendWizz(TalkTalk.pseudo, TalkTalk.adressePerso);
-				} else if (this.msg != null && this.grp ==null)  {
-					d.sendMsg(TalkTalk.pseudo,TalkTalk.adressePerso,msg);
-				} else if (this.msg == null && this.grp !=null)  {//TODO comment construire la liste d'adresse ?
-					//d.sendMsgGrp(TalkTalk.pseudo,TalkTalk.adressePerso,msg);
-				} else if (this.msg != null && this.grp ==null)  {
-					//d.sendMsgGrp(TalkTalk.pseudo,TalkTalk.adressePerso,msg);
-				}
-			} catch (MalformedURLException e) {
-				destinataire.setDistant(null); //On enlève l'interface distante, c'est pas la bonne
-				return false;
-			} catch (NotBoundException e) {
-				destinataire.setDistant(null); //On enlève l'interface distante, c'est pas la bonne
-				return false;
-			} catch (RemoteException e) {
-				destinataire.setDistant(null); //On enlève l'interface distante, c'est pas la bonne
-				return false;
 			}
-			destinataire.setDistant(d);
+			if (this.msg == null && this.grp ==null) {
+				d.sendWizz(TalkTalk.pseudo, TalkTalk.adressePerso);
+			} else if (this.msg != null && this.grp ==null)  {
+				d.sendMsg(TalkTalk.pseudo,TalkTalk.adressePerso,msg);
+			} else if (this.msg == null && this.grp !=null)  {//TODO comment construire la liste d'adresse ?
+				//d.sendMsgGrp(TalkTalk.pseudo,TalkTalk.adressePerso,msg);
+			} else if (this.msg != null && this.grp ==null)  {
+				//d.sendMsgGrp(TalkTalk.pseudo,TalkTalk.adressePerso,msg);
+			}
+		} catch (MalformedURLException e) {
+			destinataire.setDistant(null); //On enlève l'interface distante, c'est pas la bonne
+			return false;
+		} catch (NotBoundException e) {
+			destinataire.setDistant(null); //On enlève l'interface distante, c'est pas la bonne
+			return false;
+		} catch (RemoteException e) {
+			destinataire.setDistant(null); //On enlève l'interface distante, c'est pas la bonne
+			return false;
 		} 
+		destinataire.setDistant(d);
 		return true;
 	}
 }
