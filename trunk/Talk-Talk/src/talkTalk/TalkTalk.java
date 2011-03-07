@@ -17,9 +17,12 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.Collections;
 import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.Map;
 import java.util.Properties;
-import java.util.Vector;
 
 import commun.Contact;
 import commun.Groupe;
@@ -31,13 +34,14 @@ public class TalkTalk {
 	public static String pseudo; //Mon pseudo
 	public static String image; //Mon image (non implémenté)
 	public static String statut; //Mon statut (non implémenté)
-	//public static Vector<Contact> friends; //La liste de mes contacts
-	public static Vector<Personne> friends;
-	public static Vector<Groupe> groupes;
+	public static Map<String,Personne> friends;
+	public static Map<String,Groupe> groupes;
+	//public static Vector<Personne> friends;
+	//public static Vector<Groupe> groupes;
 	public final static int portRegistry = 1099; //Le port du serveur de nom 
 	public final static int portObject = 3000; //Le port de l'objet
-	public static Affichage aff; //Interface d'affichage
-	public static SaisieConsole saisieconsole; //Interface de sortie à la console
+	public static IHM ihm; //Interface d'affichage
+	//public static Console saisieconsole; //Interface de sortie à la console
 	public static final String PAGE_IP="http://monip.org"; //Page permettant de connaitre son ip publique
 	public static final boolean NAT = false; //Utilisation d'un nat ?
 	
@@ -69,12 +73,12 @@ public class TalkTalk {
 		//Initialisation des paramètres
 		image=null;
 		statut="dispo";
-		friends = new Vector<Personne>();
-		groupes = new Vector<Groupe>();
+		friends = Collections.synchronizedMap(new Hashtable<String,Personne>());
+		groupes = Collections.synchronizedMap(new Hashtable<String,Groupe>());
 		Contact.parseContact(friends,groupes);
 		Contact.saveContact(friends,groupes);
 		//Creation de l'affichage
-		aff = new AffichageConsole();
+
 		
 		//Lancement du registry
 		try {
@@ -96,10 +100,12 @@ public class TalkTalk {
 		}
 		
 		//Creation des interfaces de saisie et lancement
-		saisieconsole = new SaisieConsole();
-		saisieconsole.start();
+		ihm = new Console();
+		
+		Thread IHM_Thread = new Thread(ihm);
+		IHM_Thread.start();
 		try {
-			saisieconsole.join();
+			IHM_Thread.join();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -115,8 +121,72 @@ public class TalkTalk {
 	 * @param message le message à envoyer
 	 */
 	public static void envoyerMessage(String dest, String message) {
-		Envoi env = new Envoi(dest,message);
-		env.start();
+		Personne p = friends.get(dest);
+		Groupe g;
+		if (p!=null){
+			envoyerMessage(p,message);
+		} else {
+			g = groupes.get(dest);
+			if (g!=null){
+				envoyerMessage(g,message);
+			} else {
+				ihm.afficherDestinataireInconnu(dest);
+			}
+		}
+	}
+	/**
+	 * Envoie un wizz
+	 * @param dest le pseudo du destinataire
+	 */
+	public static void envoyerWizz(String dest) {
+		Personne p = friends.get(dest);
+		Groupe g;
+		if (p!=null){
+			envoyerWizz(p);
+		} else {
+			g = groupes.get(dest);
+			if (g!=null){
+				envoyerWizz(g);
+			} else {
+				ihm.afficherDestinataireInconnu(dest);
+			}
+		}
+	}
+	/**
+	 * Envoie un message (groupe ou personne)
+	 * @param dest la classe de contact du destinataire
+	 * @param message le message à envoyer
+	 */
+	public static void envoyerMessage(Contact dest, String message) {
+		if (dest.getType()==Contact.FRIEND) {
+			Envoi env = new Envoi((Personne)dest,message);
+			env.start();
+		} else if (dest.getType()==Contact.GROUPE) {
+			List<Personne> membres = ((Groupe) dest).getMembres();
+			Envoi env;
+			for (Personne p : membres) {
+				env = new Envoi(p,(Groupe)dest,message);
+				env.start();
+			}
+		}
+		
+	}
+	/**
+	 * Envoie un wizz (groupe ou personne)
+	 * @param dest la classe de contact du destinataire
+	 */
+	public static void envoyerWizz(Contact dest) {
+		if (dest.getType()==Contact.FRIEND) {
+			Envoi env = new Envoi((Personne)dest);
+			env.start();
+		}  else if (dest.getType()==Contact.GROUPE) {
+			List<Personne> membres = ((Groupe) dest).getMembres();
+			Envoi env;
+			for (Personne p : membres) {
+				env = new Envoi(p,(Groupe)dest);
+				env.start();
+			}
+		}
 	}
 	/**
 	 * Ajoute un contact
@@ -129,7 +199,7 @@ public class TalkTalk {
 		//TODO : verifier que pseudo n'existe pas encore
 		
 		Personne p = new Personne(pseudo,new Adresse(address,1099));
-		TalkTalk.friends.add(p);
+		TalkTalk.friends.put(pseudo,p);
 		Contact.saveContact(friends, groupes);
 	}
 	/**
@@ -137,9 +207,10 @@ public class TalkTalk {
 	 * Appele la fonction exit() sur les interfaces de saisie.
 	 */
 	public static void exit() {
-		saisieconsole.exit();
+		ihm.exit();
 		System.exit(0);
 	}
+	
 	
 	/**
 	 * Cherche une interface non ipv6 et non localhost

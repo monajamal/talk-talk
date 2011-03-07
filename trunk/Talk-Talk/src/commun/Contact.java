@@ -6,8 +6,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
-import java.util.Vector;
 
 import talkTalk.Adresse;
 
@@ -22,7 +22,7 @@ public abstract class Contact {
 	public abstract String getImg();
 	public abstract int getType();
 	
-	public static void parseContact(Vector<Personne> friends, Vector<Groupe> groupes) {
+	public static void parseContact(Map<String,Personne> friends, Map<String,Groupe> groupes) {
 		File f = new File(FIC_CONTACT);
 		Scanner sc;
 		Groupe grp;
@@ -44,7 +44,7 @@ public abstract class Contact {
 					if (tab.length>=3) {
 						pseudo = tab[1];
 						if (tab[2].equals("?")){
-							friends.add(new Personne(pseudo,null));
+							friends.put(pseudo,new Personne(pseudo,null));
 						} else {
 							ip = tab[2];
 
@@ -53,7 +53,7 @@ public abstract class Contact {
 							} else {
 								port = 1099;
 							}
-							friends.add(new Personne(pseudo,new Adresse(ip,port)));
+							friends.put(pseudo,new Personne(pseudo,new Adresse(ip,port)));
 						}
 					} else {
 						System.out.println("Erreur de lecture du fichier de configuration");
@@ -65,19 +65,14 @@ public abstract class Contact {
 						String tabMembre[] = tab[2].split(",");
 						for (int i=0;i<tabMembre.length;i++) {
 							//Recherche du membre
-							for (Personne p : friends) {
-								if (p.getPseudo().equals(tabMembre[i])){
-									membre = p;
-									break;
-								}
-							}
+							membre = friends.get(tabMembre[i]);
 							if (membre != null) {
 								grp.addMembre(membre);
 							} else {
 								System.out.println("Cette personne n'existe pas : "+tabMembre[i]);
 							}
 						}
-						groupes.add(grp);
+						groupes.put(tab[1],grp);
 					} else {
 						System.out.println("Erreur de lecture du fichier de configuration");
 					}
@@ -93,12 +88,13 @@ public abstract class Contact {
 		}
 		
 	}
-	public static void saveContact(Vector<Personne> friends,
-			Vector<Groupe> groupes) {
+	public static void saveContact(Map<String,Personne> friends, Map<String,Groupe> groupes) {
 		PrintWriter fout;
 		try {
 			fout = new PrintWriter(new FileWriter(FIC_CONTACT,false));
-			for (Personne p : friends) {
+			Personne p;
+			for (String pseudo : friends.keySet()){
+				p = friends.get(pseudo);
 				fout.print("C;");
 				fout.print(p.getPseudo()+";");
 				if (p.getAddress()!=null){
@@ -109,7 +105,10 @@ public abstract class Contact {
 				}
 				fout.println();
 			}
-			for (Groupe g : groupes) {
+			Groupe g;
+			for (String grp_name : groupes.keySet())
+			{
+				g = groupes.get(grp_name);
 				fout.print("G;");
 				fout.print(g.getName()+";");
 				List<Personne> list = g.getMembres();
@@ -120,8 +119,9 @@ public abstract class Contact {
 						fout.print(list.get(i).getPseudo()+",");
 					}
 				}
-				fout.close();
+				fout.println();
 			}
+			fout.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
