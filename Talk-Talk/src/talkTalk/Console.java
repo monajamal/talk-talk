@@ -24,7 +24,6 @@ public class Console implements IHM{
 
 	@Override
 	public void afficherDestinataireInconnu(String destinataire) {
-		// TODO Auto-generated method stub
 		System.out.println("Destinataire inconnu : "+destinataire);
 	}
 
@@ -38,7 +37,7 @@ public class Console implements IHM{
 		System.out.println(exp.getPseudo()+" vous a envoyé un wizz");
 		
 	}
-	public void run() {
+	public void start() {
 		System.out.println("Je suis "+TalkTalk.pseudo+" et je suis connecté sur ["+TalkTalk.adressePerso+"] !");
 		System.out.println("Mes amis sont "+print(TalkTalk.friends));
 		String saisie = "";

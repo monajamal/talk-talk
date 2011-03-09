@@ -8,7 +8,6 @@ import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 
-import commun.Contact;
 import commun.Groupe;
 import commun.Personne;
 
@@ -19,19 +18,7 @@ public class Envoi extends Thread {
 	private String msg = null; //Si null c'est un wizz
 	private Groupe grp = null; // Si non null, c'est un envoi de groupe
 	//private List<Adresse> addr_grp;
-	//private boolean wizz; //Wizz ou message ?
 	
-	/**
-	 * Creation d'un thread d'envoi avec le nom du contact
-	 * @param dest le destinataire
-	 * @param msg le message
-	 */
-	/*public Envoi(String dest, String msg){
-		super();
-		this.pseudo_dest = dest;
-		this.msg = msg;
-	}*/
-
 	/**
 	 * Création d'un thread d'envoi avec la classe Personne
 	 * @param dest le destinataire
@@ -44,27 +31,28 @@ public class Envoi extends Thread {
 	}
 	/**
 	 * Envoie d'un wizz (sans message)
-	 * @param dest le pseudo du destinataire
-	 */
-	/*public Envoi(String dest) {
-		this.pseudo_dest = dest;
-		this.msg = null;
-	}*/
-	/**
-	 * Envoie d'un wizz (sans message)
 	 * @param dest le destinataire
 	 */
 	public Envoi(Personne dest) {
 		this.destinataire = dest;
 		this.msg = null;
 	}
-
+	/**
+	 * Envoi un wizz à une personne d'un groupe
+	 * @param p le destinataire
+	 * @param grp le groupe concerné
+	 */
 	public Envoi(Personne p, Groupe grp) {
 		this.destinataire = p;
 		this.grp = grp;
 		this.msg = null;
 	}
-
+	/**
+	 * Envoi un message à une personne d'un groupe
+	 * @param p le destinataire
+	 * @param grp le groupe concerné
+	 * @param message le message
+	 */
 	public Envoi(Personne p, Groupe grp, String message) {
 		this.destinataire = p;
 		this.grp = grp;
@@ -75,9 +63,7 @@ public class Envoi extends Thread {
 	 * Envoie le message
 	 */
 	public void run(){
-		if (destinataire==null) {
-			//Jamais la je crois, a vérifier
-		} else if (destinataire.getType()==Contact.FRIEND && ((Personne)destinataire).getAddress() == null){
+		if (destinataire.getAddress() == null){
 			//TODO Recherche du destinataire
 			TalkTalk.ihm.afficherDestinataireInconnu(destinataire.getName());
 		} else {
@@ -86,9 +72,6 @@ public class Envoi extends Thread {
 			boolean res=false;
 			do {
 				res = envoiMsg();
-				if (!res){
-					System.out.println("jklj");
-				}
 				i++;
 			} while (i<NB_TENTATIVES && !res);
 			if (!res){

@@ -6,7 +6,7 @@ package talkTalk;
 
 import commun.Personne;
 
-public interface IHM extends Runnable {
+public interface IHM {
 	
 	/**
 	 * Fonction appelée lors de la reception d'un message
@@ -40,4 +40,8 @@ public interface IHM extends Runnable {
 	 * Appelée pour fermer l'ihm
 	 */
 	public void exit();
+	/**
+	 * Appelée pour lancer l'ihm
+	 */
+	public void start();
 }
