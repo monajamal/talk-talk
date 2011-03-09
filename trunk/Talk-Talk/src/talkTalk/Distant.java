@@ -35,6 +35,13 @@ public interface Distant extends Remote {
 	 * @throws RemoteException
 	 */
 	public void sendMsgGr(String pseudo,Adresse addr_exp,String m,List<Adresse> grp) throws RemoteException;
+	/**
+	 * Permet d'envoyer un wizz de groupe
+	 * @param pseudo le pseudo de l'expediteur
+	 * @param addr_exp l'adresse de l'expediteur
+	 * @param grp la liste des personnes appartenant au groupe
+	 * @throws RemoteException
+	 */
 	public void sendWizzGr(String pseudo,Adresse addr_exp,List<Adresse> grp) throws RemoteException;
 
 }

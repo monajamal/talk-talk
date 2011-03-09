@@ -47,9 +47,8 @@ public class DistantImpl implements Distant {
 			TalkTalk.friends.put(pseudo,exp);
 		} else {
 			exp.setAddress(addr_exp);
-		}// TODO Auto-generated method stub
+		}
 		TalkTalk.ihm.afficherWizzRecu(exp);
-		
 	}
 
 	@Override

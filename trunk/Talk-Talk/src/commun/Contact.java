@@ -22,6 +22,11 @@ public abstract class Contact {
 	public abstract String getImg();
 	public abstract int getType();
 	
+	/**
+	 * Lit le fichier de contact et remplit les ensembles d'amis et de groupes
+	 * @param friends les amis 
+	 * @param groupes les groupes
+	 */
 	public static void parseContact(Map<String,Personne> friends, Map<String,Groupe> groupes) {
 		File f = new File(FIC_CONTACT);
 		Scanner sc;
@@ -88,6 +93,11 @@ public abstract class Contact {
 		}
 		
 	}
+	/**
+	 * Ecrit dans le fichier les contacts 
+	 * @param friends les amis
+	 * @param groupes les groupes
+	 */
 	public static void saveContact(Map<String,Personne> friends, Map<String,Groupe> groupes) {
 		PrintWriter fout;
 		try {

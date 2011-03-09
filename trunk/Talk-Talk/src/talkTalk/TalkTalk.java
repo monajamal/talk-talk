@@ -34,14 +34,11 @@ public class TalkTalk {
 	public static String pseudo; //Mon pseudo
 	public static String image; //Mon image (non implémenté)
 	public static String statut; //Mon statut (non implémenté)
-	public static Map<String,Personne> friends;
-	public static Map<String,Groupe> groupes;
-	//public static Vector<Personne> friends;
-	//public static Vector<Groupe> groupes;
+	public static Map<String,Personne> friends; //Ensemble des amis
+	public static Map<String,Groupe> groupes; //Ensembles des groupes
 	public final static int portRegistry = 1099; //Le port du serveur de nom 
 	public final static int portObject = 3000; //Le port de l'objet
 	public static IHM ihm; //Interface d'affichage
-	//public static Console saisieconsole; //Interface de sortie à la console
 	public static final String PAGE_IP="http://monip.org"; //Page permettant de connaitre son ip publique
 	public static final boolean NAT = false; //Utilisation d'un nat ?
 	
@@ -59,10 +56,10 @@ public class TalkTalk {
 		// Rmi doit ecouter sur la bonne interface
 		Properties p = System.getProperties();
 		String publicIP;
-		if (NAT) {
-			publicIP = getPublicIP();
-			adressePerso = new Adresse(publicIP, portRegistry);
-			p.setProperty("java.rmi.server.hostname",publicIP);
+		if (NAT) { 
+			publicIP = getPublicIP(); //On cherche l'ip public
+			adressePerso = new Adresse(publicIP, portRegistry); 
+			p.setProperty("java.rmi.server.hostname",publicIP); 
 			System.out.println("IP Publique : "+publicIP);
 			System.out.println("Ouvrez les ports "+portRegistry+" et "+portObject+" vers "+addr.getHostAddress());
 		} else {
@@ -73,12 +70,12 @@ public class TalkTalk {
 		//Initialisation des paramètres
 		image=null;
 		statut="dispo";
+		// Les collections doivent etre synchronisé
 		friends = Collections.synchronizedMap(new Hashtable<String,Personne>());
 		groupes = Collections.synchronizedMap(new Hashtable<String,Groupe>());
+		//On lit le fichier de contact
 		Contact.parseContact(friends,groupes);
-		Contact.saveContact(friends,groupes);
-		//Creation de l'affichage
-
+		//Contact.saveContact(friends,groupes);
 		
 		//Lancement du registry
 		try {
@@ -101,19 +98,12 @@ public class TalkTalk {
 		
 		//Creation des interfaces de saisie et lancement
 		ihm = new Console();
-		
-		Thread IHM_Thread = new Thread(ihm);
-		IHM_Thread.start();
-		try {
-			IHM_Thread.join();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+		ihm.start();
 		
 	}
 	
 
-	/****Fonctions pouvant être appeles par les interfaces de saisie ou d'affichage****/
+	/****Fonctions pouvant être appelées par les interfaces de saisie ou d'affichage****/
 	
 	/**
 	 * Envoie un message 
@@ -197,10 +187,11 @@ public class TalkTalk {
 	public static void ajouterContact(String pseudo, String address, int port){
 		
 		//TODO : verifier que pseudo n'existe pas encore
-		
-		Personne p = new Personne(pseudo,new Adresse(address,1099));
-		TalkTalk.friends.put(pseudo,p);
-		Contact.saveContact(friends, groupes);
+		if (friends.get(pseudo) == null) {
+			Personne p = new Personne(pseudo,new Adresse(address,1099));
+			TalkTalk.friends.put(pseudo,p);
+			Contact.saveContact(friends, groupes);
+		}
 	}
 	/**
 	 * Quitte l'application.
@@ -227,11 +218,8 @@ public class TalkTalk {
 				while (ienum.hasMoreElements()) {  // retourne l adresse IPv4 et IPv6
 					InetAddress ia = ienum.nextElement();
 					String adress = ia.getHostAddress().toString();
-					//System.out.println("Adresse : "+adress);
 					if( adress.length() < 16){          //On s'assure ainsi que l'adresse IP est bien IPv4
-						if(adress.startsWith("127")){  //C'est localhost
-							//System.out.println("127 " +ia.getHostAddress());
-						} else {
+						if(!adress.startsWith("127")){  //C'est pas localhost
 							addr = ia;
 						}
 					}

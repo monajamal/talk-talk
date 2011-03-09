@@ -1,2 +1,6 @@
-Plop : 195.132.201.206
-Groupe Tous : Plop
+C;MH;192.168.8.11;1099
+C;2;192.168.8.23;1099
+C;45;34;1099
+C;Jerome;?;?
+C;Truc;stggw1.homeip.net;999
+G;Machin;Jerome,MH,Truc
