@@ -26,16 +26,39 @@ public class Personne extends Contact {
 		this.setImage_perso(image_perso);
 		this.setMsg_perso(msg_perso);
 		this.setAddress(addr);
+		this.setDistant(null);
 	}
 	public Personne(String pseudo, Adresse addr) {
 		this.setPseudo(pseudo);
-		this.setAddress(addr);
 		this.setAlias(null);
 		this.setStatut(OFFLINE);
 		this.setImage_perso(null);
 		this.setMsg_perso(null);
 		this.setAddress(addr);
+		this.setDistant(null);
 	}
+	
+	@Override
+	public String getName() {
+		return this.getPseudo();
+	}
+	@Override
+	public String getImg() {
+		String res = "images/statut/";
+		switch (this.getStatut()) {
+			case 1 : res+="dispo.png";break;
+			case 2 : res+="occupe.png";break;
+			case 3 : res+="absent.png";break;
+			case 4 : res+="invisible.png";break;
+			default : res+="offline.png";
+		}
+		return res;
+	}
+	@Override
+	public int getType() {
+		return Contact.PERSONNE;
+	}
+	
 	public void setPseudo(String pseudo) {
 		this.pseudo = pseudo;
 	}
@@ -65,27 +88,6 @@ public class Personne extends Contact {
 	}
 	public String getMsg_perso() {
 		return msg_perso;
-	}
-	
-	@Override
-	public String getName() {
-		return this.getPseudo();
-	}
-	@Override
-	public String getImg() {
-		String res = "images/statut/";
-		switch (this.getStatut()) {
-			case 1 : res+="dispo.png";break;
-			case 2 : res+="occupe.png";break;
-			case 3 : res+="absent.png";break;
-			case 4 : res+="invisible.png";break;
-			default : res+="offline.png";
-		}
-		return res;
-	}
-	@Override
-	public int getType() {
-		return Contact.FRIEND;
 	}
 	public void setAddress(Adresse address) {
 		if (address==null || !address.equals(this.address)) {

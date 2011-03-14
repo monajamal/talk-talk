@@ -9,34 +9,44 @@ import utils.SaisieControle;
 
 import commun.Personne;
 
-public class Console implements IHM{
-	
+public class Console implements Affichage {
 	@Override
-	public void afficherErreurEnvoi(String destinataire, String msg) {
-		System.out.println("Erreur : Le message suivant n'a pas pu être remis à "+destinataire+" : \n"+msg);
-		
+	public void afficherMessageRecu(Personne expediteur, String message) {
+		String res=afficherMessageRecu;
+		res=res.replace("%expediteur",expediteur.getPseudo());
+		res=res.replace("%message",message);
+		System.out.println(res);
 	}
-
 	@Override
-	public void afficherMessageRecu(Personne expediteur, String msg) {
-		System.out.println("> "+expediteur.getPseudo()+" : "+msg);
+	public void afficherWizzRecu(Personne expediteur) {
+		String res=afficherWizzRecu;
+		res=res.replace("%expediteur",expediteur.getPseudo());
+		System.out.println(res);
 	}
-
+	@Override
+	public void afficherMessageEnvoye(Personne destinataire, String message) {
+		String res=afficherMessageEnvoye;
+		res=res.replace("%destinataire",destinataire.getPseudo());
+		res=res.replace("%message",message);
+		System.out.println(res);
+	}
+	@Override
+	public void afficherErreurEnvoi(String destinataire, String message) {
+		String res=afficherErreurEnvoi;
+		res=res.replace("%destinataire",destinataire);
+		res=res.replace("%message",message);
+		System.out.println(res);
+	}
 	@Override
 	public void afficherDestinataireInconnu(String destinataire) {
-		System.out.println("Destinataire inconnu : "+destinataire);
+		String res=afficherDestinataireInconnu;
+		res=res.replace("%destinataire",destinataire);
+		System.out.println(res);
 	}
-
+	
+	
+	
 	@Override
-	public void afficherMessageEnvoye(Personne destinataire, String msg) {
-		System.out.println("Envoi de "+msg+" à "+destinataire.getPseudo());
-	}
-
-	@Override
-	public void afficherWizzRecu(Personne exp) {
-		System.out.println(exp.getPseudo()+" vous a envoyé un wizz");
-		
-	}
 	public void start() {
 		System.out.println("Je suis "+TalkTalk.pseudo+" et je suis connecté sur ["+TalkTalk.adressePerso+"] !");
 		System.out.println("Mes amis sont "+print(TalkTalk.friends));
@@ -71,33 +81,30 @@ public class Console implements IHM{
 					String msg = saisie.substring(saisie.indexOf(' ')+1);
 					TalkTalk.envoyerMessage(dest, msg);
 				}
-			}else if (saisie.startsWith("/wizz")) {
+			} else if (saisie.startsWith("/wizz")) {
 				saisie=saisie.replaceAll("/wizz ", "");
 				String dest = saisie;
 				TalkTalk.envoyerWizz(dest);
 				
-			}
-			else {
+			} else {
 				System.out.println("Commande inconnue");
 			}
 			//yield();
 		}
 	}
-	
+	@Override
+	public void exit() {
+		System.out.println("SERVEUR ["+TalkTalk.adressePerso+"] : Server down !");
+	}
 	public static String print(Map<String,Personne> friends) {
 		String res="{ ";
 		int i=0;
-		for (String pseudo : friends.keySet())
-		{
+		for (String pseudo : friends.keySet()) {
 			if (i!=0) res+=", ";
 			res += pseudo;
 			i++;
 		}
 		res+=" }";
 		return res;
-	}
-	
-	public void exit() {
-		System.out.println("SERVEUR ["+TalkTalk.adressePerso+"] : Server down !");
 	}
 }

@@ -18,10 +18,8 @@ public class MainTalkTalk {
 		ami.add(new Personne("Marie-Hélène","Plop",Personne.IDLE,"images/schtroumpfette.png",null,new Adresse("192.168.1.1",22222)));
 		ami.add(new Personne("Jonathan","Tux",Personne.BUSY,"images/tux1.png",null,new Adresse("192.168.1.1",1099)));
 		ami.add(new Personne("William",null,Personne.OFFLINE,null,null,new Adresse("192.168.1.1",1099)));
+		ami.add(new Personne("FastWriting",null,Personne.AVAILABLE,null,null,new Adresse("192.168.1.1",1099)));
 		ami.add(new Groupe("Groupe"));
-		ami.add(new Personne("FastWriting",null,Personne.INVISIBLE,null,null,new Adresse("192.168.1.1",1099)));
-		
-		//ami.get(0).
 		new IHM("TalkTalk");
 		
 	}

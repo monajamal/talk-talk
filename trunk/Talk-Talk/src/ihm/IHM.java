@@ -91,6 +91,8 @@ public class IHM extends JFrame {
 		menuContextuel();
 		/** Fenêtre **/
 		creeFenetre();
+		/** Affichage **/
+		new Affich(this);
 	}
 	public void creeBarreDeMenu(ActionListener action) {
 		/** Création des éléments     **/

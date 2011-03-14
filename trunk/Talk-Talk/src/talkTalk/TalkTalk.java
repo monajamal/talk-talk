@@ -38,7 +38,7 @@ public class TalkTalk {
 	public static Map<String,Groupe> groupes; //Ensembles des groupes
 	public final static int portRegistry = 1099; //Le port du serveur de nom 
 	public final static int portObject = 3000; //Le port de l'objet
-	public static IHM ihm; //Interface d'affichage
+	public static Affichage ihm; //Interface d'affichage
 	public static final String PAGE_IP="http://monip.org"; //Page permettant de connaitre son ip publique
 	public static final boolean NAT = false; //Utilisation d'un nat ?
 	
@@ -148,7 +148,7 @@ public class TalkTalk {
 	 * @param message le message à envoyer
 	 */
 	public static void envoyerMessage(Contact dest, String message) {
-		if (dest.getType()==Contact.FRIEND) {
+		if (dest.getType()==Contact.PERSONNE) {
 			Envoi env = new Envoi((Personne)dest,message);
 			env.start();
 		} else if (dest.getType()==Contact.GROUPE) {
@@ -166,7 +166,7 @@ public class TalkTalk {
 	 * @param dest la classe de contact du destinataire
 	 */
 	public static void envoyerWizz(Contact dest) {
-		if (dest.getType()==Contact.FRIEND) {
+		if (dest.getType()==Contact.PERSONNE) {
 			Envoi env = new Envoi((Personne)dest);
 			env.start();
 		}  else if (dest.getType()==Contact.GROUPE) {
