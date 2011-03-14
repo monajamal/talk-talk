@@ -13,10 +13,10 @@ import talkTalk.Adresse;
 
 public abstract class Contact {
 	
-	public static final String FIC_CONTACT = "./data/contact";
+	public static final String FIC_CONTACT = "./data/contact.csv";
 	
-	public static final int FRIEND = 1;
-	public static final int GROUPE = 1;
+	public static final int PERSONNE = 1;
+	public static final int GROUPE = 2;
 	
 	public abstract String getName();
 	public abstract String getImg();
@@ -30,30 +30,31 @@ public abstract class Contact {
 	public static void parseContact(Map<String,Personne> friends, Map<String,Groupe> groupes) {
 		File f = new File(FIC_CONTACT);
 		Scanner sc;
+		String l;
+		String[] tab;
+		
 		Groupe grp;
-		Personne membre = null;
+		Personne membre;
+		int port;
+		String ip;
+		String pseudo;
+		
 		try {
 			sc = new Scanner(f);
-			sc.useDelimiter("\n|\r\n");
-			String l ="";
-			String[] tab;
 			
-			while (sc.hasNext()){
-				l = sc.next();
+			while (sc.hasNext()) {
+				l = sc.nextLine();
 				tab = l.split(";");
-				int port;
-				String ip;
-				String pseudo;
-				if (tab[0].equals("C")){
-					//Contact avec adresse
+				
+				if (tab[0].equals("C")) {
+					// Lecture des personnes
 					if (tab.length>=3) {
 						pseudo = tab[1];
-						if (tab[2].equals("?")){
+						if (tab[2].equals("?")) {
 							friends.put(pseudo,new Personne(pseudo,null));
 						} else {
 							ip = tab[2];
-
-							if (tab.length>=4){
+							if (tab.length>=4) {
 								port = Integer.parseInt(tab[3]);
 							} else {
 								port = 1099;
@@ -64,8 +65,8 @@ public abstract class Contact {
 						System.out.println("Erreur de lecture du fichier de configuration");
 					}
 				} else if (tab[0].equals("G")) {
-					//Groupe
-					if (tab.length==3){
+					// Lecture des groupes
+					if (tab.length==3) {
 						grp = new Groupe(tab[1]);
 						String tabMembre[] = tab[2].split(",");
 						for (int i=0;i<tabMembre.length;i++) {
@@ -81,20 +82,20 @@ public abstract class Contact {
 					} else {
 						System.out.println("Erreur de lecture du fichier de configuration");
 					}
-
-				}else if (tab[0].equals("B")) {
-					//Blocage
+				} else if (tab[0].equals("B")) {
+					// Lecture des personnes bloquées
+					// TODO : lecture des personnes bloquées
 				} else {
+					// ligne ignoré (commentaire, ou mal écrite)
 					System.out.println("Erreur de lecture du fichier de configuration");
 				}
 			}
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
-		
 	}
 	/**
-	 * Ecrit dans le fichier les contacts 
+	 * Écrit dans le fichier les contacts 
 	 * @param friends les amis
 	 * @param groupes les groupes
 	 */
@@ -102,8 +103,9 @@ public abstract class Contact {
 		PrintWriter fout;
 		try {
 			fout = new PrintWriter(new FileWriter(FIC_CONTACT,false));
+			// On sauvegarde les personnes
 			Personne p;
-			for (String pseudo : friends.keySet()){
+			for (String pseudo : friends.keySet()) {
 				p = friends.get(pseudo);
 				fout.print("C;");
 				fout.print(p.getPseudo()+";");
@@ -115,9 +117,9 @@ public abstract class Contact {
 				}
 				fout.println();
 			}
+			// On sauvegarde les groupes
 			Groupe g;
-			for (String grp_name : groupes.keySet())
-			{
+			for (String grp_name : groupes.keySet()) {
 				g = groupes.get(grp_name);
 				fout.print("G;");
 				fout.print(g.getName()+";");
@@ -132,9 +134,10 @@ public abstract class Contact {
 				fout.println();
 			}
 			fout.close();
+			// On sauvegarde les personnes bloquées
+			// TODO : sauvegarder les personnes bloquées
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
 	}
 }

@@ -3,7 +3,7 @@ package commun;
 import java.util.Vector;
 
 public class Groupe extends Contact {
-	
+
 	private String name;
 	Vector<Personne> membres;
 	
@@ -11,9 +11,8 @@ public class Groupe extends Contact {
 		this.setName(name);
 		membres = new Vector<Personne>();
 	}
-	public void setName(String name) {
-		this.name = name;
-	}
+	
+	@Override
 	public String getName() {
 		return name;
 	}
@@ -26,17 +25,16 @@ public class Groupe extends Contact {
 		return Contact.GROUPE;
 	}
 	
-	public Vector<Personne> getMembres(){
+	public void setName(String name) {
+		this.name = name;
+	}
+	public Vector<Personne> getMembres() {
 		return membres;
 	}
-	
-	public void addMembre(Personne pers){
+	public void addMembre(Personne pers) {
 		membres.add(pers);
 	}
-	
-	public boolean removeMembre(Personne pers)
-	{
+	public boolean removeMembre(Personne pers) {
 		return membres.remove(pers);
 	}
-	
 }
