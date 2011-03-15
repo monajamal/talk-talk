@@ -87,7 +87,7 @@ public abstract class Contact {
 					// TODO : lecture des personnes bloquées
 				} else {
 					// ligne ignoré (commentaire, ou mal écrite)
-					System.out.println("Erreur de lecture du fichier de configuration");
+					//System.out.println("Erreur de lecture du fichier de configuration");
 				}
 			}
 		} catch (FileNotFoundException e) {
@@ -105,6 +105,7 @@ public abstract class Contact {
 			fout = new PrintWriter(new FileWriter(FIC_CONTACT,false));
 			// On sauvegarde les personnes
 			Personne p;
+			fout.print("#;Pseudo;IP;Port");
 			for (String pseudo : friends.keySet()) {
 				p = friends.get(pseudo);
 				fout.print("C;");
@@ -119,6 +120,7 @@ public abstract class Contact {
 			}
 			// On sauvegarde les groupes
 			Groupe g;
+			fout.print("#;Nom;Membre A,Membre B,Membre C, ...");
 			for (String grp_name : groupes.keySet()) {
 				g = groupes.get(grp_name);
 				fout.print("G;");

@@ -41,11 +41,13 @@ public interface Affichage {
 	String afficherDestinataireInconnu = "Destinataire inconnu : %destinataire";
 	public void afficherDestinataireInconnu(String destinataire);
 	/**
-	 * Appelée pour fermer l'ihm
-	 */
-	public void exit();
-	/**
 	 * Appelée pour lancer l'ihm
 	 */
+	String start = "Je suis "+TalkTalk.pseudo+" et je suis connecté sur ["+TalkTalk.adressePerso+"] !";
 	public void start();
+	/**
+	 * Appelée pour fermer l'ihm
+	 */
+	String stop = "SERVEUR ["+TalkTalk.adressePerso+"] : Server down !";
+	public void stop();
 }

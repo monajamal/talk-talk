@@ -1,6 +1,8 @@
-C;MH;192.168.8.11;1099
-C;2;192.168.8.23;1099
-C;45;34;1099
-C;Jerome;?;?
-C;Truc;stggw1.homeip.net;999
-G;Machin;Jerome,MH,Truc
+#;Pseudo;IP;Port
+C;TeeTux;194.254.52.154;1099
+C;Plop;194.254.52.152;22222
+C;Jonathan;194.254.52.153;1099
+
+#;Nom;Membre A,Membre B,Membre C, ...
+
+

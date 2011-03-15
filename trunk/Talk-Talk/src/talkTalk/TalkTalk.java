@@ -3,6 +3,8 @@
  */
 package talkTalk;
 
+import ihm.Affich;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -39,16 +41,18 @@ public class TalkTalk {
 	public final static int portRegistry = 1099; //Le port du serveur de nom 
 	public final static int portObject = 3000; //Le port de l'objet
 	public static Affichage ihm; //Interface d'affichage
-	public static final String PAGE_IP="http://monip.org"; //Page permettant de connaitre son ip publique
+	public static final String PAGE_IP="http://monip.org"; //Page permettant de connaître son IP publique
 	public static final boolean NAT = false; //Utilisation d'un nat ?
 	
 	public static void main(String[] args) throws UnknownHostException {
+		/** Pseudo **/
 		if (args.length==1) pseudo=args[0]; else pseudo="namelessTalk";
+		
 
 		//On cherche une interface correcte (plus sûr)
 		InetAddress addr = getBestAddr();
 		if (addr == null) {
-			System.out.println("Etes vous bien connecte quelque part ?");
+			System.out.println("Etes vous bien connecté quelque part ?");
 			System.exit(-1);
 		}
 		//Nom de la machine
@@ -96,10 +100,14 @@ public class TalkTalk {
 			e.printStackTrace();
 		}
 		
-		//Creation des interfaces de saisie et lancement
-		ihm = new Console();
+		/** Creation de l'interface utilisateur **/
+		if (args.length==2 && args[1].equals("ihm"))
+			ihm = new Affich("TalkTalk");
+		else if (args.length==1 || (args.length==2 && args[1].equals("console")))
+			ihm = new Console();
+		else
+			ihm = new Console();
 		ihm.start();
-		
 	}
 	
 
@@ -198,7 +206,7 @@ public class TalkTalk {
 	 * Appele la fonction exit() sur les interfaces de saisie.
 	 */
 	public static void exit() {
-		ihm.exit();
+		ihm.stop();
 		System.exit(0);
 	}
 	
@@ -234,7 +242,7 @@ public class TalkTalk {
 	}
 	/**
 	 * Retourne l'ip publique 
-	 * @return une chaine de caractère contenant l'ip publique
+	 * @return une chaîne de caractère contenant l'ip publique
 	 */
 	private static String getPublicIP() {
 		String addr = null;
@@ -264,8 +272,3 @@ public class TalkTalk {
 	}
 
 }
-
-
-
-//Debug.start(args);
-//Debug.addLog("*** START ***");

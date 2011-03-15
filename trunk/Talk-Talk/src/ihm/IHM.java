@@ -70,10 +70,6 @@ public class IHM extends JFrame {
 	protected String[] statut = {"Disponible","Absent","Occupé","Invisible","Se déconnecter"};
 	protected String[] images = {"images/statut/dispo.png","images/statut/absent.png","images/statut/occupe.png","images/statut/invisible.png","images/statut/offline.png"};
 	
-	//STATIC DATA
-	//protected String[] contacts = {"Damien","Marie-Hélène","FastWriting","Schtroumpfette","Plop","Groupe 1","Tux"};
-	//protected String[] temp = {"images/statut/dispo.png","images/statut/absent.png","images/statut/occupe.png","images/statut/offline.png","images/statut/dispo.png","images/groupe.png","images/statut/dispo.png"};
-	
 	public IHM(String titre) {
 		/** Titre **/
 		super(titre);
@@ -91,8 +87,6 @@ public class IHM extends JFrame {
 		menuContextuel();
 		/** Fenêtre **/
 		creeFenetre();
-		/** Affichage **/
-		new Affich(this);
 	}
 	public void creeBarreDeMenu(ActionListener action) {
 		/** Création des éléments     **/
@@ -171,13 +165,13 @@ public class IHM extends JFrame {
 		Integer[] dataStatut = new Integer[statut.length];
 		for (int i=0;i<statut.length;i++) dataStatut[i]=i;
 		/*liste de contacts*/
-		Integer[] dataContact = new Integer[MainTalkTalk.ami.size()];
-		String[] nomContact = new String[MainTalkTalk.ami.size()];
-		String[] imgContact = new String[MainTalkTalk.ami.size()];
-		for (int i=0;i<MainTalkTalk.ami.size();i++) {
+		Integer[] dataContact = new Integer[TalkTalk.friends.size()];
+		String[] nomContact = new String[TalkTalk.friends.size()];
+		String[] imgContact = new String[TalkTalk.friends.size()];
+		for (int i=0;i<TalkTalk.friends.size();i++) {
 			dataContact[i]=i;
-			nomContact[i]=MainTalkTalk.ami.get(i).getName();
-			imgContact[i]=MainTalkTalk.ami.get(i).getImg();
+			nomContact[i]=TalkTalk.friends.get(i).getName();
+			imgContact[i]=TalkTalk.friends.get(i).getImg();
 		}
 		
 		
@@ -191,7 +185,7 @@ public class IHM extends JFrame {
 				this.jc_fenetre = new Vector<JConversation>();
 		this.jp_bottom = new JPanel(new BorderLayout());
 			this.jl_pub = new JHyperTextLink("Publicité de nos partenaires !","http://code.google.com/p/talk-talk/");
-			this.jl_temp = new JLabel("    [hostname + ip + port]    ");
+			this.jl_temp = new JLabel("    [hostname + ip + port]    "+TalkTalk.pseudo+"-"+TalkTalk.adressePerso);
 			this.jchk_fastwriting = new JCheckBox("Utiliser FastWriting");
 		this.jslip = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,this.jp_left,this.jp_center);/* JSplitPane à la fin */
 		
