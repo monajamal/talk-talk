@@ -43,19 +43,15 @@ public class Console implements Affichage {
 		res=res.replace("%destinataire",destinataire);
 		System.out.println(res);
 	}
-	
-	
-	
 	@Override
 	public void start() {
-		System.out.println("Je suis "+TalkTalk.pseudo+" et je suis connecté sur ["+TalkTalk.adressePerso+"] !");
+		System.out.println(start);
 		System.out.println("Mes amis sont "+print(TalkTalk.friends));
 		String saisie = "";
 		while (saisie!=null) {
 			saisie = SaisieControle.saisieString("Commande ?");
-			if (saisie.startsWith("/quit")) {
+			if (saisie.startsWith("/quit") || saisie.startsWith("/exit")) {
 				saisie=null;		
-				
 				TalkTalk.exit();
 			} else if (saisie.startsWith("/add")) {
 				saisie=saisie.replaceAll("/add ", "");
@@ -89,12 +85,12 @@ public class Console implements Affichage {
 			} else {
 				System.out.println("Commande inconnue");
 			}
-			//yield();
 		}
 	}
 	@Override
-	public void exit() {
-		System.out.println("SERVEUR ["+TalkTalk.adressePerso+"] : Server down !");
+	public void stop() {
+		String res=stop;
+		System.out.println(res);
 	}
 	public static String print(Map<String,Personne> friends) {
 		String res="{ ";

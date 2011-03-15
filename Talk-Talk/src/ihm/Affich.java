@@ -11,8 +11,8 @@ import talkTalk.TalkTalk;
 
 public class Affich implements Affichage {
 	IHM ihm;
-	public Affich(IHM ihm) {
-		this.ihm=ihm;
+	public Affich(String titre) {
+		this.ihm=new IHM(titre);
 	}
 	@Override
 	public void afficherMessageRecu(Personne expediteur, String message) {
@@ -72,12 +72,26 @@ public class Affich implements Affichage {
 			}
 		}
 	}
-	
-	
-	
-	
-	
-	
+	@Override
+	public void start() {
+		addLog(start);
+		addLog("Mes amis sont "+print(TalkTalk.friends));
+	}
+	@Override
+	public void stop() {
+		addLog(stop);
+	}
+	public static String print(Map<String,Personne> friends) {
+		String res="{ ";
+		int i=0;
+		for (String pseudo : friends.keySet()) {
+			if (i!=0) res+=", ";
+			res += pseudo;
+			i++;
+		}
+		res+=" }";
+		return res;
+	}
 	public void addLog(String log) {
 		try {
 			ihm.jta_log.getDocument().insertString(ihm.jta_log.getDocument().getLength(),log,null);
@@ -91,34 +105,5 @@ public class Affich implements Affichage {
 		} catch (BadLocationException e) {
 			e.printStackTrace();
 		}
-	}
-	@Override
-	public void exit() {
-		try {
-			ihm.jta_log.getDocument().insertString(ihm.jta_log.getDocument().getLength(),"SERVEUR ["+TalkTalk.adressePerso+"] : Server down !",null);
-		} catch (BadLocationException e) {
-			e.printStackTrace();
-		}
-	}
-	@Override
-	public void start() {
-		try {
-			ihm.jta_log.getDocument().insertString(ihm.jta_log.getDocument().getLength(),"Je suis "+TalkTalk.pseudo+" et je suis connecté sur ["+TalkTalk.adressePerso+"] !",null);
-			ihm.jta_log.getDocument().insertString(ihm.jta_log.getDocument().getLength(),"Mes amis sont "+print(TalkTalk.friends),null);
-		} catch (BadLocationException e) {
-			e.printStackTrace();
-		}
-	}
-	public static String print(Map<String,Personne> friends) {
-		String res="{ ";
-		int i=0;
-		for (String pseudo : friends.keySet())
-		{
-			if (i!=0) res+=", ";
-			res += pseudo;
-			i++;
-		}
-		res+=" }";
-		return res;
 	}
 }
