@@ -37,4 +37,15 @@ public class Groupe extends Contact {
 	public boolean removeMembre(Personne pers) {
 		return membres.remove(pers);
 	}
+	public Vector<String> getPseudosMembres(){
+		Vector<String> res = new Vector<String>();
+		synchronized(membres){
+			for (Personne p : membres){
+				res.add(p.getPseudo());
+			}
+		}
+		return res;
+	}
+	
+	
 }

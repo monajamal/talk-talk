@@ -4,6 +4,7 @@ import java.rmi.RemoteException;
 import java.util.List;
 import java.util.Vector;
 
+import commun.Groupe;
 import commun.Personne;
 
 public class DistantImpl implements Distant {
@@ -52,16 +53,32 @@ public class DistantImpl implements Distant {
 	}
 
 	@Override
-	public void sendMsgGr(String pseudo, Adresse addr_exp, String m,
-			List<Adresse> grp) throws RemoteException {
-		// TODO Auto-generated method stub
+	public void sendMsgGr(String pseudo, Adresse addr_exp, String m, String grp_name,
+			List<String> grp) throws RemoteException {
+		Groupe groupe = null;
+		groupe = TalkTalk.groupes.get(grp_name);
+		
+		if (groupe==null) {
+			groupe = new Groupe(grp_name);
+			//TODO :Rajouter membres
+			TalkTalk.groupes.put(grp_name,groupe);
+		} 
+		//TODO : verifier les membres ?
+		//TalkTalk.ihm.affichermsgRecu(exp); //TODO : affichage groupe
 		
 	}
 
 	@Override
-	public void sendWizzGr(String pseudo, Adresse addrExp, List<Adresse> grp)
+	public void sendWizzGr(String pseudo, Adresse addrExp,String grp_name, List<String> grp)
 			throws RemoteException {
-		// TODO Auto-generated method stub
+		Groupe groupe = null;
+		groupe = TalkTalk.groupes.get(grp_name);
 		
+		if (groupe==null) {
+			groupe = new Groupe(grp_name);
+			//TODO :Rajouter membres
+			TalkTalk.groupes.put(grp_name,groupe); 
+		} 
+		//TODO : affichage groupe
 	}
 }
