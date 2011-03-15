@@ -163,7 +163,8 @@ public class TalkTalk {
 			List<Personne> membres = ((Groupe) dest).getMembres();
 			Envoi env;
 			for (Personne p : membres) {
-				env = new Envoi(p,(Groupe)dest,message);
+				List<String> grp_pseudo = ((Groupe)dest).getPseudosMembres();
+				env = new Envoi(p,(Groupe)dest,grp_pseudo,message);
 				env.start();
 			}
 		}
@@ -181,7 +182,8 @@ public class TalkTalk {
 			List<Personne> membres = ((Groupe) dest).getMembres();
 			Envoi env;
 			for (Personne p : membres) {
-				env = new Envoi(p,(Groupe)dest);
+				List<String> grp_pseudo = ((Groupe)dest).getPseudosMembres();
+				env = new Envoi(p,(Groupe)dest,grp_pseudo);
 				env.start();
 			}
 		}
@@ -196,7 +198,7 @@ public class TalkTalk {
 		
 		//TODO : verifier que pseudo n'existe pas encore
 		if (friends.get(pseudo) == null) {
-			Personne p = new Personne(pseudo,new Adresse(address,1099));
+			Personne p = new Personne(pseudo,new Adresse(address,port));
 			TalkTalk.friends.put(pseudo,p);
 			Contact.saveContact(friends, groupes);
 		}
