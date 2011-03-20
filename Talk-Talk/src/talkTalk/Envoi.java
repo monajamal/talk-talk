@@ -73,14 +73,20 @@ public class Envoi extends Thread {
 			//TODO Recherche du destinataire
 			TalkTalk.ihm.afficherDestinataireInconnu(destinataire.getName());
 		} else {
-			TalkTalk.ihm.afficherMessageEnvoye(destinataire, msg);
+			if (grp ==null) {
+				if (msg!=null) {
+					TalkTalk.ihm.afficherMessageEnvoye(destinataire, msg);
+				} else {
+					TalkTalk.ihm.afficherWizzEnvoye(destinataire);
+				}
+			}
 			int i=0;
 			boolean res=false;
 			do {
 				res = envoiMsg();
 				i++;
 			} while (i<NB_TENTATIVES && !res);
-			if (!res){
+			if (!res){ 
 				TalkTalk.ihm.afficherErreurEnvoi(destinataire.getName(), msg);
 			}
 		}
@@ -104,7 +110,7 @@ public class Envoi extends Thread {
 				d.sendWizz(TalkTalk.pseudo, TalkTalk.adressePerso);
 			} else if (this.msg != null && this.grp ==null)  {
 				d.sendMsg(TalkTalk.pseudo,TalkTalk.adressePerso,msg);
-			} else if (this.msg == null && this.grp !=null)  {//TODO comment construire la liste d'adresse ?
+			} else if (this.msg == null && this.grp !=null)  {
 				d.sendWizzGr(TalkTalk.pseudo,TalkTalk.adressePerso,this.grp.getName(),this.pseudos_grp);
 			} else if (this.msg != null && this.grp ==null)  {
 				d.sendMsgGr(TalkTalk.pseudo,TalkTalk.adressePerso,this.msg,this.grp.getName(),this.pseudos_grp);

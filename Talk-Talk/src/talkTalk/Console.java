@@ -4,6 +4,7 @@
 package talkTalk;
 
 import java.util.Map;
+import java.util.Set;
 
 import utils.SaisieControle;
 
@@ -15,27 +16,40 @@ public class Console implements Affichage {
 		String res=afficherMessageRecu;
 		res=res.replace("%expediteur",expediteur.getPseudo());
 		res=res.replace("%message",message);
-		System.out.println(res);
+		System.out.print(res);
 	}
 	@Override
 	public void afficherWizzRecu(Personne expediteur) {
 		String res=afficherWizzRecu;
 		res=res.replace("%expediteur",expediteur.getPseudo());
-		System.out.println(res);
+		System.out.print(res);
 	}
 	@Override
 	public void afficherMessageEnvoye(Personne destinataire, String message) {
 		String res=afficherMessageEnvoye;
 		res=res.replace("%destinataire",destinataire.getPseudo());
 		res=res.replace("%message",message);
-		System.out.println(res);
+		System.out.print(res);
+	}
+	@Override
+	public void afficherWizzEnvoye(Personne destinataire) {
+		String res=afficherMessageEnvoye;
+		res=res.replace("%destinataire",destinataire.getPseudo());
+		System.out.print(res);
 	}
 	@Override
 	public void afficherErreurEnvoi(String destinataire, String message) {
-		String res=afficherErreurEnvoi;
-		res=res.replace("%destinataire",destinataire);
-		res=res.replace("%message",message);
-		System.out.println(res);
+		if (message!=null) {
+			String res=afficherErreurEnvoi;
+			res=res.replace("%destinataire",destinataire);
+			res=res.replace("%message",message);
+			System.out.print(res);
+		} else {
+			String res=afficherErreurEnvoi;
+			res=res.replace("%destinataire",destinataire);
+			res=res.replace("%message","wizz");
+			System.out.print(res);
+		}
 	}
 	@Override
 	public void afficherDestinataireInconnu(String destinataire) {
@@ -55,17 +69,23 @@ public class Console implements Affichage {
 				TalkTalk.exit();
 			} else if (saisie.startsWith("/add")) {
 				saisie=saisie.replaceAll("/add ", "");
-				
 				String tab[] = saisie.split(" ");
 				if (tab.length==3) {
 					TalkTalk.ajouterContact(tab[0], tab[1], Integer.parseInt(tab[2]));
 					System.out.println("Mes amis sont "+print(TalkTalk.friends));
 				} else {
 					System.out.println("Echec lors de l'ajout");
-				}
-				
+				}	
 			} else if (saisie.startsWith("/contact")) {
-				System.out.println("recherche du contact....echec !");
+				saisie=saisie.replaceAll("/contact ", "");
+				Personne p = TalkTalk.friends.get(saisie);
+				if (p==null){
+					//p = new Personne(saisie,null);
+					p = TalkTalk.ajouterContact(saisie);
+				}
+				TalkTalk.searchAdresse(p);
+				System.out.println("L'addresse de "+saisie+ " est : " +p.getAddress());
+				//System.out.println("recherche du contact....echec !");
 			} else if (saisie.startsWith("/image")) {
 				System.out.println("pas implémenté !");
 			} else if (saisie.startsWith("/file")) {
@@ -81,7 +101,6 @@ public class Console implements Affichage {
 				saisie=saisie.replaceAll("/wizz ", "");
 				String dest = saisie;
 				TalkTalk.envoyerWizz(dest);
-				
 			} else {
 				System.out.println("Commande inconnue");
 			}
@@ -90,12 +109,13 @@ public class Console implements Affichage {
 	@Override
 	public void stop() {
 		String res=stop;
-		System.out.println(res);
+		System.out.print(res);
 	}
 	public static String print(Map<String,Personne> friends) {
 		String res="{ ";
 		int i=0;
-		for (String pseudo : friends.keySet()) {
+		Set<String> set = friends.keySet();
+		for (String pseudo : set) {
 			if (i!=0) res+=", ";
 			res += pseudo;
 			i++;

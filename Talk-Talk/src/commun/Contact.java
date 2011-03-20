@@ -104,38 +104,38 @@ public abstract class Contact {
 		try {
 			fout = new PrintWriter(new FileWriter(FIC_CONTACT,false));
 			// On sauvegarde les personnes
-			Personne p;
 			fout.print("#;Pseudo;IP;Port");
-			for (String pseudo : friends.keySet()) {
-				p = friends.get(pseudo);
-				fout.print("C;");
-				fout.print(p.getPseudo()+";");
-				if (p.getAddress()!=null){
-					fout.print(p.getAddress().getNomDns()+";");
-					fout.print(p.getAddress().getPort());
-				} else {
-					fout.print("?;?");
+			synchronized(friends.values()) {
+				for (Personne p : friends.values()) {
+					fout.print("C;");
+					fout.print(p.getPseudo()+";");
+					if (p.getAddress()!=null){
+						fout.print(p.getAddress().getNomDns()+";");
+						fout.print(p.getAddress().getPort());
+					} else {
+						fout.print("?;?");
+					}
+					fout.println();
 				}
-				fout.println();
 			}
 			// On sauvegarde les groupes
-			Groupe g;
 			fout.print("#;Nom;Membre A,Membre B,Membre C, ...");
-			for (String grp_name : groupes.keySet()) {
-				g = groupes.get(grp_name);
-				fout.print("G;");
-				fout.print(g.getName()+";");
-				List<Personne> list = g.getMembres();
-				for (int i = 0;i<list.size();i++) {
-					if (i == list.size()-1) {
-						fout.print(list.get(i).getPseudo());
-					} else {
-						fout.print(list.get(i).getPseudo()+",");
+			synchronized(groupes){
+				for (Groupe g : groupes.values()) {
+					fout.print("G;");
+					fout.print(g.getName()+";");
+					List<Personne> list = g.getMembres();
+					for (int i = 0;i<list.size();i++) {
+						if (i == list.size()-1) {
+							fout.print(list.get(i).getPseudo());
+						} else {
+							fout.print(list.get(i).getPseudo()+",");
+						}
 					}
+					fout.println();
 				}
-				fout.println();
+				fout.close();
 			}
-			fout.close();
 			// On sauvegarde les personnes bloquées
 			// TODO : sauvegarder les personnes bloquées
 		} catch (IOException e) {
