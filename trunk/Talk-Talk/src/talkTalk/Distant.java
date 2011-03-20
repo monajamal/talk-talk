@@ -6,7 +6,6 @@ package talkTalk;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.List;
-import java.util.Vector;
 
 public interface Distant extends Remote {
 	/**
@@ -17,8 +16,13 @@ public interface Distant extends Remote {
 	 * @throws RemoteException
 	 */
 	public void sendMsg(String expediteur,Adresse addr_exp,String m) throws RemoteException;
-	
-	public Vector<String> searchContact(String pseudo) throws RemoteException;
+	/**
+	 * Passe le jeton 
+	 * @param jeton le jeton
+	 * @return le jeton modifié
+	 * @throws RemoteException
+	 */
+	public JetonRecherche searchContact(JetonRecherche jeton) throws RemoteException;
 	/**
 	 * Permet d'envoyer un wizz a cette personne
 	 * @param pseudo le pseudo de l'expediteur

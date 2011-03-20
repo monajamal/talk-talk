@@ -41,6 +41,7 @@ public class TalkTalk {
 	public final static int portRegistry = 1099; //Le port du serveur de nom 
 	public final static int portObject = 3000; //Le port de l'objet
 	public static Affichage ihm; //Interface d'affichage
+	public static DistantImpl distantLocal = null; // garde l'interface locale pour s'envoyer le jeton
 	public static final String PAGE_IP="http://monip.org"; //Page permettant de connaître son IP publique
 	public static final boolean NAT = false; //Utilisation d'un nat ?
 	
@@ -90,8 +91,8 @@ public class TalkTalk {
 		
 		// Lancement du serveur
 		try {
-			DistantImpl objLocal = new DistantImpl();
-			Remote stub = UnicastRemoteObject.exportObject(objLocal,portObject);
+			distantLocal = new DistantImpl();
+			Remote stub = UnicastRemoteObject.exportObject(distantLocal,portObject);
 			Naming.rebind("rmi://"+hostname+":"+portRegistry+"/TalkTalk", stub);
 			System.out.println("SERVEUR ["+hostname+"] : Server ready !");
 		} catch (RemoteException e) {
@@ -194,13 +195,32 @@ public class TalkTalk {
 	 * @param address l'adresse ip
 	 * @param port le port
 	 */
-	public static void ajouterContact(String pseudo, String address, int port){
+	public static Personne ajouterContact(String pseudo, String address, int port){
 		
-		//TODO : verifier que pseudo n'existe pas encore
-		if (friends.get(pseudo) == null) {
+		//TODO : que faire si le pseudo existe deja, rien ? 
+		if (!friends.containsKey(pseudo)) {
 			Personne p = new Personne(pseudo,new Adresse(address,port));
 			TalkTalk.friends.put(pseudo,p);
 			Contact.saveContact(friends, groupes);
+			return p;
+		} else {
+			return friends.get(pseudo);
+		}
+	}
+	/**
+	 * Ajoute un contact sans adresse
+	 * @param pseudo le pseudo 
+	 */
+	public static Personne ajouterContact(String pseudo){
+		
+		//TODO : verifier que pseudo n'existe pas encore
+		if (friends.get(pseudo) == null) {
+			Personne p = new Personne(pseudo,null);
+			TalkTalk.friends.put(pseudo,p);
+			Contact.saveContact(friends, groupes);
+			return p;
+		} else {
+			return friends.get(pseudo);
 		}
 	}
 	/**
@@ -210,6 +230,20 @@ public class TalkTalk {
 	public static void exit() {
 		ihm.stop();
 		System.exit(0);
+	}
+	/**
+	 * Recherche l'adresse du contact.
+	 * Renseigne directement dans le contact.
+	 * @param p la personne dont on cherche l'adresse
+	 */
+	public static void searchAdresse(Personne p){
+		JetonRecherche jeton = new JetonRecherche(p.getPseudo());
+		try {
+			distantLocal.searchContact(jeton);
+		} catch (RemoteException e) {
+			// N'arrive jamais là a priori
+			e.printStackTrace();
+		}
 	}
 	
 	

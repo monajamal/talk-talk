@@ -50,10 +50,25 @@ public class Affich implements Affichage {
 		}
 	}
 	@Override
+	public void afficherWizzEnvoye(Personne destinataire) {
+		String res=afficherWizzEnvoye;
+		res=res.replace("%destinataire",destinataire.getPseudo());
+		addLog(res);
+		for (int i=0;i<ihm.jc_fenetre.size();i++) {
+			if (destinataire.getPseudo().equals(ihm.jc_fenetre.get(i).getName())) {
+				addLog(res,i);
+			}
+		}
+	}
+	@Override
 	public void afficherErreurEnvoi(String destinataire, String message) {
 		String res=afficherErreurEnvoi;
 		res=res.replace("%destinataire",destinataire);
-		res=res.replace("%message",message);
+		if (message!=null) {
+			res=res.replace("%message",message);
+		} else {
+			res=res.replace("%message","wizz");
+		}
 		addLog(res);
 		for (int i=0;i<ihm.jc_fenetre.size();i++) {
 			if (destinataire.equals(ihm.jc_fenetre.get(i).getName())) {
@@ -116,5 +131,5 @@ public class Affich implements Affichage {
 		} catch (BadLocationException e) {
 			e.printStackTrace();
 		}
-	}
+	}	
 }
