@@ -8,8 +8,8 @@ public class Personne extends Contact {
 	public static final int AVAILABLE = 1;
 	public static final int BUSY = 2;
 	public static final int IDLE = 3;
-	public static final int INVISIBLE = 4;
-	public static final int OFFLINE = 5;
+	//public static final int INVISIBLE = 4;
+	public static final int OFFLINE = 4;
 	
 	private String pseudo;
 	private String alias;
@@ -49,7 +49,7 @@ public class Personne extends Contact {
 			case 1 : res+="dispo.png";break;
 			case 2 : res+="occupe.png";break;
 			case 3 : res+="absent.png";break;
-			case 4 : res+="invisible.png";break;
+			//case 4 : res+="invisible.png";break;
 			default : res+="offline.png";
 		}
 		return res;

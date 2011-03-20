@@ -92,16 +92,27 @@ public class Affich implements Affichage {
 		res+=" }";
 		return res;
 	}
+	/**
+	 * Écris dans la console de log de l'interface graphique
+	 * @param log : message de log à écrire
+	 */
 	public void addLog(String log) {
+		int atEnd = ihm.jta_log.getDocument().getLength();
 		try {
-			ihm.jta_log.getDocument().insertString(ihm.jta_log.getDocument().getLength(),log,null);
+			ihm.jta_log.getDocument().insertString(atEnd,log+"\n",null);
 		} catch (BadLocationException e) {
 			e.printStackTrace();
 		}
 	}
-	public void addLog(String log,int i) {
+	/**
+	 * Écris dans la fenêtre de conversation avec une personne
+	 * @param log : message de log à écrire
+	 * @param index : index de la fenêtre de conversation
+	 */
+	public void addLog(String log,int index) {
+		int atEnd = ihm.jc_fenetre.get(index).jtp_conversation.getDocument().getLength();
 		try {
-			ihm.jc_fenetre.get(i).jtp_conversation.getDocument().insertString(ihm.jta_log.getDocument().getLength(),log,null);
+			ihm.jc_fenetre.get(index).jtp_conversation.getDocument().insertString(atEnd,log,null);
 		} catch (BadLocationException e) {
 			e.printStackTrace();
 		}

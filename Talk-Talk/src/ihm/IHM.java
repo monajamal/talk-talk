@@ -28,6 +28,8 @@ import javax.swing.KeyStroke;
 import javax.swing.ListCellRenderer;
 import javax.swing.event.ListSelectionListener;
 
+import commun.Personne;
+
 import talkTalk.TalkTalk;
 import utils.Resources;
 
@@ -67,8 +69,8 @@ public class IHM extends JFrame {
 	
 	int size_split=200;
 	
-	protected String[] statut = {"Disponible","Absent","Occupé","Invisible","Se déconnecter"};
-	protected String[] images = {"images/statut/dispo.png","images/statut/absent.png","images/statut/occupe.png","images/statut/invisible.png","images/statut/offline.png"};
+	protected String[] statut = {"Disponible","Absent","Occupé","Se déconnecter"};
+	protected String[] images = {"images/statut/dispo.png","images/statut/absent.png","images/statut/occupe.png","images/statut/offline.png"};
 	
 	public IHM(String titre) {
 		/** Titre **/
@@ -112,9 +114,9 @@ public class IHM extends JFrame {
 		this.jmi_quitter.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, ActionEvent.CTRL_MASK));
 		// Edition
 		this.jmi_couper.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, ActionEvent.CTRL_MASK));
-		this.jmi_couper.setEnabled(false);
+		//this.jmi_couper.setEnabled(false);
 		this.jmi_copier.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.CTRL_MASK));
-		this.jmi_coller.setEnabled(false);
+		//this.jmi_coller.setEnabled(false);
 		this.jmi_coller.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, ActionEvent.CTRL_MASK));
 		
 		this.jmi_rechercher.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F, ActionEvent.CTRL_MASK));
@@ -160,18 +162,21 @@ public class IHM extends JFrame {
 				this.jm_help.insertSeparator(1);
 				this.jm_help.add(this.jmi_aProposDe);
 	}
+	String[] nomContact;
 	public void creeInterface(ActionListener action,MouseListener mouse,ListSelectionListener listSelection) {
 		/*Disponibilité*/
 		Integer[] dataStatut = new Integer[statut.length];
 		for (int i=0;i<statut.length;i++) dataStatut[i]=i;
 		/*liste de contacts*/
 		Integer[] dataContact = new Integer[TalkTalk.friends.size()];
-		String[] nomContact = new String[TalkTalk.friends.size()];
+		nomContact = new String[TalkTalk.friends.size()];
 		String[] imgContact = new String[TalkTalk.friends.size()];
-		for (int i=0;i<TalkTalk.friends.size();i++) {
+		int i=0;
+		for (Personne suivant : TalkTalk.friends.values()){
 			dataContact[i]=i;
-			nomContact[i]=TalkTalk.friends.get(i).getName();
-			imgContact[i]=TalkTalk.friends.get(i).getImg();
+			nomContact[i]=suivant.getName();
+			imgContact[i]=suivant.getImg();
+			i++;
 		}
 		
 		
