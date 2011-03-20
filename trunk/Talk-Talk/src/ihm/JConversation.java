@@ -244,6 +244,8 @@ class Event_JConversation implements ActionListener, KeyListener {
 		} else if (obj instanceof JButton) {
 			JButton jb = (JButton)obj;
 			if (jb==jc.jb_wizz) {
+				TalkTalk.envoyerWizz(jc.getName());
+				
 				Style style2 = jc.jtp_ecrire.getStyle("default");
 				StyleConstants.setForeground(style2, Color.RED);
 				StyleConstants.setFontSize(style2, 10);
@@ -255,6 +257,9 @@ class Event_JConversation implements ActionListener, KeyListener {
 				//Component c =new JButton("Rejouer ?");
 				//jc.jtp_conversation.insertComponent(jc.jb_wizz);
 			} else if (jb==jc.jb_send) {
+				int atEnd = jc.jtp_conversation.getDocument().getLength();
+				String message = jc.jtp_ecrire.getText();
+				
 				//System.out.println("là");
 				//jc.jtp_ecrire.cut();jc.jtp_conversation.paste();
 				
@@ -269,17 +274,13 @@ class Event_JConversation implements ActionListener, KeyListener {
 				
 				
 				try {
-					jc.jtp_conversation.getDocument().insertString(
-							jc.jtp_conversation.getDocument().getLength(),
-							"Damien : ",
-							style1);
-					jc.jtp_conversation.getDocument().insertString(
-							jc.jtp_conversation.getDocument().getLength(),
-							jc.jtp_ecrire.getText()+"\n",
-							defaut);
+					jc.jtp_conversation.getDocument().insertString(atEnd,"Damien : ",style1);
+					jc.jtp_conversation.getDocument().insertString(atEnd,message+"\n",defaut);
 				} catch (BadLocationException e) {
 					e.printStackTrace();
 				}
+				
+				TalkTalk.envoyerMessage(TalkTalk.friends.get(jc.getName()), message);
 				/*try {
 					jc.jtp_conversation.getDocument().insertString(jc.jtp_conversation.getDocument().getLength(),jc.jtp_ecrire.getText()+"\n",null);
 				} catch (BadLocationException e) {
@@ -316,8 +317,11 @@ class Event_JConversation implements ActionListener, KeyListener {
 				e.printStackTrace();
 			}
 		} else if (arg0.getKeyCode()==10) {//si on fait juste un ENTER, on valide
+			String message = jc.jtp_ecrire.getText();
 			try {
-				jc.jtp_conversation.getDocument().insertString(jc.jtp_conversation.getDocument().getLength(),jc.jtp_ecrire.getText()+"\n",null);
+				TalkTalk.envoyerMessage(TalkTalk.friends.get(jc.getName()), message);
+				jc.jtp_conversation.getDocument().insertString(jc.jtp_conversation.getDocument().getLength(),message+"\n",null);
+				
 			} catch (BadLocationException e) {
 				e.printStackTrace();
 			}

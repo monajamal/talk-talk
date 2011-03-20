@@ -1,17 +1,27 @@
 package ihm;
 
+import java.awt.Component;
+import java.awt.Toolkit;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 
+import javax.swing.FocusManager;
 import javax.swing.JButton;
 import javax.swing.JList;
 import javax.swing.JMenuItem;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.JTextComponent;
 
 import talkTalk.TalkTalk;
 import utils.Resources;
@@ -30,17 +40,63 @@ public class Event implements ActionListener, ListSelectionListener, MouseListen
 			JMenuItem jmi = (JMenuItem)obj;
 			
 			if (jmi == ihm.jmi_quitter) {
-				System.out.println("quitter");
-				System.exit(0);
-			}
-			else if (jmi == ihm.jmi_couper) {
-				System.out.println("couper");
-			}
-			else if (jmi == ihm.jmi_copier) {
-				System.out.println("copier");
-			}
-			else if (jmi == ihm.jmi_coller) {
-				System.out.println("coller");
+				TalkTalk.exit();
+			} else if (jmi == ihm.jmi_couper || jmi == ihm.jmi_copier || jmi == ihm.jmi_coller) {
+				//FIXME !!
+				System.out.println("Action !!");
+				Component c = FocusManager.getCurrentKeyboardFocusManager().getFocusOwner();
+				
+				System.out.println(c.toString());
+				
+				if (c instanceof JTextComponent) {
+					
+					JTextComponent jtc = (JTextComponent)c;
+					int start = jtc.getSelectionStart();
+					int end = jtc.getSelectionEnd();
+					String mot;
+					
+					try {
+						mot = jtc.getDocument().getText(start, end-(start));
+						
+						if (jmi == ihm.jmi_copier) {
+							StringSelection ss = new StringSelection(mot);
+							Toolkit.getDefaultToolkit().getSystemClipboard().setContents(ss,null);
+							
+							System.out.println("Copier : "+mot);
+							
+						} else if (jmi == ihm.jmi_couper) {
+							StringSelection ss = new StringSelection(mot);
+							Toolkit.getDefaultToolkit().getSystemClipboard().setContents(ss,null);
+							jtc.getDocument().remove(start, end-(start));
+							
+							System.out.println("Couper : "+mot);
+						} else if (jmi == ihm.jmi_coller) {
+							/** Lecture du contenu : */
+							Transferable t = Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
+							/** Vérification que le contenu est de type texte. */
+							if (t!=null && t.isDataFlavorSupported(DataFlavor.stringFlavor)) {
+								mot = (String)t.getTransferData(DataFlavor.stringFlavor);
+								
+								start=jtc.getSelectionStart();
+								end=jtc.getSelectionEnd();
+								jtc.getDocument().remove(start, end-start);
+								jtc.getDocument().insertString(jtc.getCaretPosition(),mot,null);
+								
+								
+								System.out.println("Coller : "+mot);
+							}
+						}
+					} catch (BadLocationException e) {
+						e.printStackTrace();
+					} catch (UnsupportedFlavorException e) {
+						e.printStackTrace();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+				
+				
+				
 			}
 			else if (jmi == ihm.jmi_rechercher) {
 				System.out.println("rechercher");
@@ -81,20 +137,24 @@ public class Event implements ActionListener, ListSelectionListener, MouseListen
 			JList jlst = (JList)obj;
 			if (arg0.getClickCount() == 2) {
 				// Cherche si un onglet est déjà ouvert
-				boolean exist=false;
+				boolean exist=false;int select=0;
 				for (int i=0;i<ihm.jc_fenetre.size();i++) {
-					if (ihm.jc_fenetre.get(i).getName().equals(TalkTalk.friends.get(jlst.getSelectedIndex()).getName())) {
+					if (ihm.jc_fenetre.get(i).getName().equals(TalkTalk.friends.get(ihm.nomContact[jlst.getSelectedIndex()]).getName())) {
 						exist=true;
+						select=i+1;
 					}
 				}
 				// Si NON, ouvrir l'onglet
 				if (!exist) {
 					ihm.jc_fenetre.add(
-							new JConversation(jlst.getSelectedIndex(),TalkTalk.friends.get(jlst.getSelectedIndex()).getName(),null,
+							new JConversation(jlst.getSelectedIndex(),TalkTalk.friends.get(ihm.nomContact[jlst.getSelectedIndex()]).getName(),null,
 									Resources.getImageIcon("images/tux.png",TalkTalk .class),
 									Resources.getImageIcon("images/profil.png",TalkTalk.class)));
 					ihm.actuTab(this);
+					select=ihm.jc_fenetre.size();
 				}
+				
+				ihm.jtabp_onglet.setSelectedIndex(select);
 			}
 		}
 	}
