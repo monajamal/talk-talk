@@ -35,6 +35,7 @@ public class Console implements Affichage {
 	public void afficherWizzEnvoye(Personne destinataire) {
 		String res=afficherMessageEnvoye;
 		res=res.replace("%destinataire",destinataire.getPseudo());
+		res=res.replace("%message","wizz");
 		System.out.print(res);
 	}
 	@Override
@@ -101,6 +102,10 @@ public class Console implements Affichage {
 				saisie=saisie.replaceAll("/wizz ", "");
 				String dest = saisie;
 				TalkTalk.envoyerWizz(dest);
+			} else if (saisie.startsWith("/statut")) {
+				saisie=saisie.replaceAll("/statut ", "");
+				TalkTalk.setStatut(Integer.parseInt(saisie));
+			
 			} else {
 				System.out.println("Commande inconnue");
 			}
@@ -110,6 +115,10 @@ public class Console implements Affichage {
 	public void stop() {
 		String res=stop;
 		System.out.print(res);
+	}
+	@Override
+	public void changerStatut(Personne p) {
+		System.out.println(p.getPseudo()+" est maintenant "+p.getStatut()+".");
 	}
 	public static String print(Map<String,Personne> friends) {
 		String res="{ ";

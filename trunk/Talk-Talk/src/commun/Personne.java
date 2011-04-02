@@ -1,7 +1,10 @@
 package commun;
 
+import java.rmi.RemoteException;
+
 import talkTalk.Adresse;
 import talkTalk.Distant;
+import talkTalk.TalkTalk;
 
 public class Personne extends Contact {
 	
@@ -46,9 +49,9 @@ public class Personne extends Contact {
 	public String getImg() {
 		String res = "images/statut/";
 		switch (this.getStatut()) {
-			case 1 : res+="dispo.png";break;
-			case 2 : res+="occupe.png";break;
-			case 3 : res+="absent.png";break;
+			case AVAILABLE : res+="dispo.png";break;
+			case BUSY : res+="occupe.png";break;
+			case IDLE : res+="absent.png";break;
 			//case 4 : res+="invisible.png";break;
 			default : res+="offline.png";
 		}
@@ -99,7 +102,18 @@ public class Personne extends Contact {
 		return address;
 	}
 	public void setDistant(Distant distant) {
-		this.distant = distant;
+		if (distant == null)
+		{
+			this.distant = null;
+		} else if (this.distant==null || !this.distant.equals(distant)){
+			this.distant = distant;
+			//On s'abonne au changement 
+			try {
+				distant.abonnement(TalkTalk.pseudo, TalkTalk.adressePerso);
+			} catch (RemoteException e) {
+				distant=null;
+			}
+		}
 	}
 	public Distant getDistant() {
 		return distant;

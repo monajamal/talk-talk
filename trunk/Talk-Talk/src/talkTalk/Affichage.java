@@ -56,4 +56,5 @@ public interface Affichage {
 	 */
 	String stop = "SERVEUR ["+TalkTalk.adressePerso+"] : Server down !\n";
 	public void stop();
+	public void changerStatut(Personne p);
 }

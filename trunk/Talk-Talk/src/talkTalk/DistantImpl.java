@@ -20,14 +20,7 @@ public class DistantImpl implements Distant {
 	@Override
 	public void sendMsg(String expediteur, Adresse addr_exp, String m)
 	throws RemoteException {
-		Personne exp = null;
-		exp = TalkTalk.friends.get(expediteur);
-		if (exp==null) {
-			exp = new Personne(expediteur,addr_exp);
-			TalkTalk.friends.put(expediteur,exp);
-		} else {
-			exp.setAddress(addr_exp);
-		}
+		Personne exp = TalkTalk.ajouterContact(expediteur);
 		TalkTalk.ihm.afficherMessageRecu(exp, m);
 
 	}
@@ -35,15 +28,7 @@ public class DistantImpl implements Distant {
 	@Override
 	public void sendWizz(String pseudo, Adresse addr_exp)
 	throws RemoteException {
-		Personne exp = null;
-		exp = TalkTalk.friends.get(pseudo);
-
-		if (exp==null) {
-			exp = new Personne(pseudo,addr_exp);
-			TalkTalk.friends.put(pseudo,exp);
-		} else {
-			exp.setAddress(addr_exp);
-		}
+		Personne exp = TalkTalk.ajouterContact(pseudo);
 		TalkTalk.ihm.afficherWizzRecu(exp);
 	}
 
@@ -155,5 +140,29 @@ public class DistantImpl implements Distant {
 			}
 		}
 		return jeton;
+	}
+
+	@Override
+	public void abonnement(String pseudo, Adresse addr) throws RemoteException {
+		Personne p = TalkTalk.ajouterContact(pseudo);
+		p.setAddress(addr);
+		TalkTalk.abonnes.add(p);
+		//On lui envoie directement le statut
+		Envoi env = new Envoi(p,TalkTalk.statut);
+		env.start();
+	}
+
+	@Override
+	public void setStatut(String pseudo, int newStatut) throws RemoteException{
+		Personne p = TalkTalk.friends.get(pseudo);
+		if (p!=null) { //Si on le connait pas on s'en fout
+			p.setStatut(newStatut);
+			TalkTalk.ihm.changerStatut(p);
+		}
+	}
+
+	@Override
+	public int getStatut() throws RemoteException{
+		return TalkTalk.statut;
 	}
 }

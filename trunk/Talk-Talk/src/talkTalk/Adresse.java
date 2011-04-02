@@ -60,6 +60,10 @@ public class Adresse implements Serializable {
 			return false;
 		}
 	}
+	@Override
+	public int hashCode(){
+		return addr.hashCode()+port;
+	}
 	public String toString(){
 		return(addr+":"+port);
 	}
