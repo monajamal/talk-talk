@@ -47,5 +47,11 @@ public interface Distant extends Remote {
 	 * @throws RemoteException
 	 */
 	public void sendWizzGr(String pseudo,Adresse addr_exp,String grp_name,List<String> grp) throws RemoteException;
+	
+	public void abonnement(String pseudo, Adresse addr) throws RemoteException;
+	
+	public void setStatut(String pseudo, int newStatut) throws RemoteException;
+	
+	public int getStatut() throws RemoteException;
 
 }

@@ -19,6 +19,7 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -35,7 +36,7 @@ public class TalkTalk {
 	public static Adresse adressePerso; //Mon adresse ou me contacter
 	public static String pseudo; //Mon pseudo
 	public static String image; //Mon image (non implémenté)
-	public static String statut; //Mon statut (non implémenté)
+	public static int statut; //Mon statut (non implémenté)
 	public static Map<String,Personne> friends; //Ensemble des amis
 	public static Map<String,Groupe> groupes; //Ensembles des groupes
 	public final static int portRegistry = 1099; //Le port du serveur de nom 
@@ -44,6 +45,7 @@ public class TalkTalk {
 	public static DistantImpl distantLocal = null; // garde l'interface locale pour s'envoyer le jeton
 	public static final String PAGE_IP="http://monip.org"; //Page permettant de connaître son IP publique
 	public static final boolean NAT = false; //Utilisation d'un nat ?
+	public static List<Personne> abonnes;
 	
 	public static void main(String[] args) throws UnknownHostException {
 		/** Pseudo **/
@@ -60,6 +62,8 @@ public class TalkTalk {
 		String hostname = addr.getHostName();
 		// Rmi doit ecouter sur la bonne interface
 		Properties p = System.getProperties();
+		//http://download.oracle.com/javase/1.4.2/docs/guide/rmi/javarmiproperties.html
+		
 		String publicIP;
 		if (NAT) { 
 			publicIP = getPublicIP(); //On cherche l'ip public
@@ -74,10 +78,12 @@ public class TalkTalk {
 		
 		//Initialisation des paramètres
 		image=null;
-		statut="dispo";
+		statut=Personne.AVAILABLE;
 		// Les collections doivent etre synchronisé
+		//TODO : choisir l'implémentation de ces trucs...
 		friends = Collections.synchronizedMap(new Hashtable<String,Personne>());
 		groupes = Collections.synchronizedMap(new Hashtable<String,Groupe>());
+		abonnes = new ArrayList();
 		//On lit le fichier de contact
 		Contact.parseContact(friends,groupes);
 		//Contact.saveContact(friends,groupes);
@@ -235,18 +241,34 @@ public class TalkTalk {
 	 * Recherche l'adresse du contact.
 	 * Renseigne directement dans le contact.
 	 * @param p la personne dont on cherche l'adresse
+	 * @return le thread qui a été lancé
 	 */
-	public static void searchAdresse(Personne p){
-		JetonRecherche jeton = new JetonRecherche(p.getPseudo());
-		try {
-			distantLocal.searchContact(jeton);
-		} catch (RemoteException e) {
-			// N'arrive jamais là a priori
-			e.printStackTrace();
+	public static Thread searchAdresse(Personne p){
+		final JetonRecherche jeton = new JetonRecherche(p.getPseudo());
+		Thread t = new Thread(){
+			public void run() {
+				try {
+					distantLocal.searchContact(jeton);
+				} catch (RemoteException e) {
+					// N'arrive jamais là a priori
+					e.printStackTrace();
+				}
+			}
+		};
+		t.start();
+		return t;
+	}
+	public static void setStatut(int newStatut)
+	{
+		statut = newStatut;
+		//TODO : envoyer a tous les abonnes le nouveau statut
+		List<Personne> abo = new ArrayList<Personne>(abonnes);
+		Envoi env;
+		for (Personne p : abo){
+			env = new Envoi(p,statut);
+			env.start();
 		}
 	}
-	
-	
 	/**
 	 * Cherche une interface non ipv6 et non localhost
 	 * @return l'adresse de l'interface trouve ou null
@@ -306,5 +328,6 @@ public class TalkTalk {
 		}
 		return addr;
 	}
+
 
 }

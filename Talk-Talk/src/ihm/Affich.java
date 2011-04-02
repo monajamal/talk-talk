@@ -131,5 +131,10 @@ public class Affich implements Affichage {
 		} catch (BadLocationException e) {
 			e.printStackTrace();
 		}
+	}
+	@Override
+	public void changerStatut(Personne p) {
+		// TODO Auto-generated method stub
+		
 	}	
 }
