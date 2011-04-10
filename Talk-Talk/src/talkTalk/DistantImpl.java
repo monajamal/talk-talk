@@ -1,5 +1,9 @@
 package talkTalk;
 
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
@@ -40,11 +44,14 @@ public class DistantImpl implements Distant {
 
 		if (groupe==null) {
 			groupe = new Groupe(grp_name);
-			//TODO :Rajouter membres
+			for (String membres : grp){
+				groupe.addMembre(TalkTalk.ajouterContact(membres));
+			}
 			TalkTalk.groupes.put(grp_name,groupe);
 		} 
 		//TODO : verifier les membres ?
-		//TalkTalk.ihm.affichermsgRecu(exp); //TODO : affichage groupe
+		Personne exp = TalkTalk.ajouterContact(pseudo);
+		TalkTalk.ihm.afficherMessageRecuGrp(groupe,exp, m); 
 
 	}
 
@@ -56,10 +63,13 @@ public class DistantImpl implements Distant {
 
 		if (groupe==null) {
 			groupe = new Groupe(grp_name);
-			//TODO :Rajouter membres
+			for (String membres : grp){
+				groupe.addMembre(TalkTalk.ajouterContact(membres));
+			}
 			TalkTalk.groupes.put(grp_name,groupe); 
 		} 
-		//TODO : affichage groupe
+		Personne exp = TalkTalk.ajouterContact(pseudo);
+		TalkTalk.ihm.afficherWizzRecuGrp(groupe,exp); 
 	}
 
 	@Override
@@ -165,4 +175,25 @@ public class DistantImpl implements Distant {
 	public int getStatut() throws RemoteException{
 		return TalkTalk.statut;
 	}
+
+	@Override
+	public void sendFichier(String pseudo, Adresse adressePerso,
+			String fichier, byte[] donnees)throws RemoteException {
+		Personne p = TalkTalk.ajouterContact(pseudo);
+		p.setAddress(adressePerso);
+		TalkTalk.ihm.afficherFichierRecu(p,fichier);
+		File f = new File(fichier);
+		
+		try {
+			f.createNewFile();
+			DataOutputStream d = new DataOutputStream(new FileOutputStream(f));
+			d.write(donnees);
+			d.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	
 }

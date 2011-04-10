@@ -4,6 +4,7 @@ import java.util.Map;
 
 import javax.swing.text.BadLocationException;
 
+import commun.Groupe;
 import commun.Personne;
 
 import talkTalk.Affichage;
@@ -134,6 +135,22 @@ public class Affich implements Affichage {
 	}
 	@Override
 	public void changerStatut(Personne p) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void afficherMessageRecuGrp(Groupe grp, Personne expediteur,
+			String message) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void afficherWizzRecuGrp(Groupe grp, Personne expediteur) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void afficherFichierRecu(Personne p, String fichier) {
 		// TODO Auto-generated method stub
 		
 	}	
