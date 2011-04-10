@@ -83,7 +83,7 @@ public class TalkTalk {
 		//TODO : choisir l'implémentation de ces trucs...
 		friends = Collections.synchronizedMap(new Hashtable<String,Personne>());
 		groupes = Collections.synchronizedMap(new Hashtable<String,Groupe>());
-		abonnes = new ArrayList();
+		abonnes = new ArrayList<Personne>();
 		//On lit le fichier de contact
 		Contact.parseContact(friends,groupes);
 		//Contact.saveContact(friends,groupes);
@@ -196,14 +196,36 @@ public class TalkTalk {
 		}
 	}
 	/**
+	 * Envoie un fichier
+	 * @param dest le destinataire
+	 * @param fichier le nom du fichier a envoyer
+	 */
+	public static void envoyerFichier(String dest, String fichier) {
+		Personne p = friends.get(dest);
+		if (p!=null){
+			envoyerFichier(p,fichier);
+		}
+	}
+	/**
+	 * Envoie un fichier
+	 * @param dest la classe de contact du destinataire
+	 * @param fichier le nom du fichier a envoyer
+	 */
+	public static void envoyerFichier(Contact dest, String fichier) {
+		if (dest.getType()==Contact.PERSONNE) {
+			EnvoiFichier env = new EnvoiFichier((Personne)dest,fichier);
+			env.start();
+		}  
+	}
+	/**
 	 * Ajoute un contact
 	 * @param pseudo le pseudo 
 	 * @param address l'adresse ip
 	 * @param port le port
+	 * @return la personne si le pseudo existe déjà ou la nouvelle personne crée
 	 */
 	public static Personne ajouterContact(String pseudo, String address, int port){
 		
-		//TODO : que faire si le pseudo existe deja, rien ? 
 		if (!friends.containsKey(pseudo)) {
 			Personne p = new Personne(pseudo,new Adresse(address,port));
 			TalkTalk.friends.put(pseudo,p);
@@ -216,10 +238,9 @@ public class TalkTalk {
 	/**
 	 * Ajoute un contact sans adresse
 	 * @param pseudo le pseudo 
+	 * @return la personne si le pseudo existe déjà ou la nouvelle personne crée
 	 */
 	public static Personne ajouterContact(String pseudo){
-		
-		//TODO : verifier que pseudo n'existe pas encore
 		if (friends.get(pseudo) == null) {
 			Personne p = new Personne(pseudo,null);
 			TalkTalk.friends.put(pseudo,p);
@@ -258,10 +279,13 @@ public class TalkTalk {
 		t.start();
 		return t;
 	}
+	/**
+	 * Change le statut
+	 * @param newStatut le nouveau statut
+	 */
 	public static void setStatut(int newStatut)
 	{
 		statut = newStatut;
-		//TODO : envoyer a tous les abonnes le nouveau statut
 		List<Personne> abo = new ArrayList<Personne>(abonnes);
 		Envoi env;
 		for (Personne p : abo){

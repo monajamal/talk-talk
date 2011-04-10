@@ -4,6 +4,7 @@
 
 package talkTalk;
 
+import commun.Groupe;
 import commun.Personne;
 
 public interface Affichage {
@@ -15,11 +16,25 @@ public interface Affichage {
 	String afficherMessageRecu = "> %expediteur : %message\n";
 	public void afficherMessageRecu(Personne expediteur, String message);
 	/**
+	 * Fonction appelée lors de la reception d'un message de groupe
+	 * @param exp l'expéditeur du message
+	 * @param grp le groupe concerné
+	 * @param msg le message
+	 */
+	String afficherMessageRecuGrp = "> %expediteur (%groupe) : %message\n";
+	public void afficherMessageRecuGrp(Groupe grp, Personne expediteur, String message);
+	/**
 	 * Afficher le wizz reçu.
 	 * @param exp l'expediteur du wizz
 	 */
 	String afficherWizzRecu = "%expediteur vous a envoyé un wizz\n";
 	public void afficherWizzRecu(Personne expediteur);
+	/**
+	 * Afficher le wizz reçu.
+	 * @param exp l'expediteur du wizz
+	 */
+	String afficherWizzRecuGrp = "%expediteur (%groupe) vous a envoyé un wizz\n";
+	public void afficherWizzRecuGrp(Groupe grp, Personne expediteur);
 	/**
 	 * Fonction appelée lorsqu'un message est envoyé
 	 * @param destinataire le destinataire 
@@ -57,4 +72,5 @@ public interface Affichage {
 	String stop = "SERVEUR ["+TalkTalk.adressePerso+"] : Server down !\n";
 	public void stop();
 	public void changerStatut(Personne p);
+	public void afficherFichierRecu(Personne p, String fichier);
 }

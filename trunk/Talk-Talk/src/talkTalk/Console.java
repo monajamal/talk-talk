@@ -8,6 +8,7 @@ import java.util.Set;
 
 import utils.SaisieControle;
 
+import commun.Groupe;
 import commun.Personne;
 
 public class Console implements Affichage {
@@ -90,7 +91,12 @@ public class Console implements Affichage {
 			} else if (saisie.startsWith("/image")) {
 				System.out.println("pas implémenté !");
 			} else if (saisie.startsWith("/file")) {
-				System.out.println("pas implémenté !");
+				saisie=saisie.replaceAll("/file ", "");
+				if (saisie.indexOf(' ')!=-1) {
+					String dest = saisie.substring(0, saisie.indexOf(' '));
+					String file = saisie.substring(saisie.indexOf(' ')+1);
+					TalkTalk.envoyerFichier(dest,file);
+				}
 			} else if (saisie.startsWith("/send")) {
 				saisie=saisie.replaceAll("/send ", "");
 				if (saisie.indexOf(' ')!=-1) {
@@ -131,5 +137,26 @@ public class Console implements Affichage {
 		}
 		res+=" }";
 		return res;
+	}
+	@Override
+	public void afficherMessageRecuGrp(Groupe grp, Personne expediteur,
+			String message) {
+		String res=afficherMessageRecuGrp;
+		res=res.replace("%expediteur",expediteur.getPseudo());
+		res=res.replace("%message",message);
+		res=res.replace("%groupe",grp.getName());
+		System.out.print(res);
+	}
+	@Override
+	public void afficherWizzRecuGrp(Groupe grp, Personne expediteur) {
+		String res=afficherWizzRecuGrp;
+		res=res.replace("%expediteur",expediteur.getPseudo());
+		res=res.replace("%groupe",grp.getName());
+		System.out.print(res);
+	}
+	@Override
+	public void afficherFichierRecu(Personne p, String fichier) {
+		System.out.println("Fichier "+fichier +" recu de "+p.getName());
+		
 	}
 }
