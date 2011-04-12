@@ -19,10 +19,13 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JList;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.JTextComponent;
+
+import commun.Personne;
 
 import talkTalk.TalkTalk;
 import utils.Resources;
@@ -115,6 +118,10 @@ public class Event implements ActionListener, ListSelectionListener, MouseListen
 				}.start();
 				Wizz.creerWizz(ihm,40,3);
 			}
+			if (jb==ihm.jb_add) {
+				String name=JOptionPane.showInputDialog("Nom du contact ?");
+				TalkTalk.searchAdresse(new Personne(name,null));
+			}
 		} else if (obj instanceof JComboBox) {
 			JComboBox jcb = (JComboBox)obj;
 			TalkTalk.setStatut(jcb.getSelectedIndex());
@@ -154,6 +161,7 @@ public class Event implements ActionListener, ListSelectionListener, MouseListen
 				((JConversation)ihm.jtabp_onglet.getComponentAt(select)).jtp_ecrire.requestFocusInWindow();
 			}
 		}
+		ihm.createDataListContact();
 	}
 	@Override
 	public void mouseEntered(MouseEvent arg0) {

@@ -138,7 +138,7 @@ public class JConversation extends JPanel {
 		this.jb_couleur.addActionListener(action);
 		for (int i=0;i<this.js_smiley.length;i++) this.js_smiley[i].addActionListener(action);
 		this.jb_send.addActionListener(action);
-		
+		this.jb_bloque.addActionListener(action);
 		/** Montage des éléments      **/
 		this.add(this.jsp_conversation,BorderLayout.CENTER);
 		this.add(this.jp_right,BorderLayout.EAST);
@@ -246,6 +246,16 @@ class Event_JConversation implements ActionListener, KeyListener {
 				if (newColor != null) {
 					jc.setCouleur(newColor);
 					jc.jtp_ecrire.setForeground(newColor);
+				}
+			} else if (jb==jc.jb_bloque) {
+				if (((Personne)(this.jc.getContact())).getStatut()==Personne.BLOQUE) {
+					jc.jb_bloque.setText("Bloquer");
+					((Personne)(this.jc.getContact())).setStatut(Personne.OFFLINE);
+					TalkTalk.bloques.remove(this.jc.getContact().getName());
+				} else {
+					jc.jb_bloque.setText("Débloquer");
+					TalkTalk.bloques.put(this.jc.getContact().getName(),((Personne)(this.jc.getContact())));
+					((Personne)(this.jc.getContact())).setStatut(Personne.BLOQUE);
 				}
 			}
 		}
