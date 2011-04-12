@@ -20,6 +20,7 @@ public class Envoi extends Thread {
 	private Groupe grp = null; // Si non null, c'est un envoi de groupe
 	private List<String> pseudos_grp;
 	private int statut = -1;
+	private boolean messagePerso = false;
 	
 	/**
 	 * Création d'un thread d'envoi avec la classe Personne
@@ -76,7 +77,18 @@ public class Envoi extends Thread {
 		this.statut = statut;
 		this.msg = null;
 	}
-
+	/**
+	 * Envoi une mise a jour de message perso à une personne
+	 * @param p la personne a mettre jour
+	 * @param mesagePerso le nouveau message perso
+	 * @param b doit etre a true
+	 */
+	public Envoi(Personne p, String messagePerso, boolean b) {
+		super();
+		destinataire = p;
+		this.msg = messagePerso;
+		this.messagePerso = b;
+	}
 	/**
 	 * Envoie le message
 	 */
@@ -98,7 +110,7 @@ public class Envoi extends Thread {
 		if (destinataire.getAddress() == null){ //On a fait une recherche mais c'est sans résultat
 			TalkTalk.ihm.afficherDestinataireInconnu(destinataire.getName());
 		} else {
-			if (grp ==null && statut==-1) {
+			if (grp ==null && statut==-1 && !messagePerso) {
 				if (msg!=null) {
 					TalkTalk.ihm.afficherMessageEnvoye(destinataire, msg);
 				} else {
@@ -133,13 +145,15 @@ public class Envoi extends Thread {
 			}
 			if (statut!=-1){
 				d.setStatut(TalkTalk.pseudo, statut);
+			}else if (messagePerso){
+				d.setMessagePerso(TalkTalk.pseudo, msg);
 			} else if (this.msg == null && this.grp ==null) {
 				d.sendWizz(TalkTalk.pseudo, TalkTalk.adressePerso);
 			} else if (this.msg != null && this.grp ==null)  {
 				d.sendMsg(TalkTalk.pseudo,TalkTalk.adressePerso,msg);
 			} else if (this.msg == null && this.grp !=null)  {
 				d.sendWizzGr(TalkTalk.pseudo,TalkTalk.adressePerso,this.grp.getName(),this.pseudos_grp);
-			} else if (this.msg != null && this.grp ==null)  {
+			} else if (this.msg != null && this.grp !=null)  {
 				d.sendMsgGr(TalkTalk.pseudo,TalkTalk.adressePerso,this.msg,this.grp.getName(),this.pseudos_grp);
 			}
 		} catch (MalformedURLException e) {

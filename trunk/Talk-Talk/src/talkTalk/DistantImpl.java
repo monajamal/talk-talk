@@ -10,6 +10,7 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.List;
 
+import commun.Contact;
 import commun.Groupe;
 import commun.Personne;
 
@@ -24,9 +25,10 @@ public class DistantImpl implements Distant {
 	@Override
 	public void sendMsg(String expediteur, Adresse addr_exp, String m)
 	throws RemoteException {
-		Personne exp = TalkTalk.ajouterContact(expediteur);
-		TalkTalk.ihm.afficherMessageRecu(exp, m);
-
+		if (!TalkTalk.bloques.contains(expediteur)) {
+			Personne exp = TalkTalk.ajouterContact(expediteur);
+			TalkTalk.ihm.afficherMessageRecu(exp, m);
+		}
 	}
 
 	@Override
@@ -153,22 +155,28 @@ public class DistantImpl implements Distant {
 				personneSearch.setAddress(jeton.getReponse());
 			}
 		}
+		Contact.saveContact(TalkTalk.friends, TalkTalk.groupes, TalkTalk.bloques);
 		return jeton;
 	}
 
 	@Override
 	public void abonnement(String pseudo, Adresse addr) throws RemoteException {
-		Personne p = TalkTalk.ajouterContact(pseudo);
-		p.setAddress(addr);
-		TalkTalk.abonnes.add(p);
-		//On lui envoie directement le statut et l'image perso
-		Envoi env = new Envoi(p,TalkTalk.statut);
-		env.start();
-		if (TalkTalk.image != null) {
-			EnvoiFichier envFic = new EnvoiFichier(p,TalkTalk.image,true);
-			envFic.start();
+		if (!TalkTalk.bloques.contains(pseudo)) {
+			Personne p = TalkTalk.ajouterContact(pseudo);
+			p.setAddress(addr);
+			TalkTalk.abonnes.add(p);
+			//On lui envoie directement le statut et l'image perso
+			Envoi env = new Envoi(p,TalkTalk.statut);
+			env.start();
+			if (TalkTalk.image != null) {
+				EnvoiFichier envFic = new EnvoiFichier(p,TalkTalk.image,true);
+				envFic.start();
+			}
+
+			env = new Envoi(p,TalkTalk.messagePerso,true);
+			env.start();
+
 		}
-		
 	}
 
 	@Override
@@ -224,6 +232,15 @@ public class DistantImpl implements Distant {
 			}
 		}
 		TalkTalk.ihm.changerImage(p);
+	}
+
+	@Override
+	public void setMessagePerso(String pseudo, String messagePerso) throws RemoteException {
+		Personne p = TalkTalk.friends.get(pseudo);
+		if (p!=null) { //Si on le connait pas on s'en fout
+			p.setMsg_perso(messagePerso);
+			TalkTalk.ihm.changerMessagePerso(p);
+		}
 	}
 
 	

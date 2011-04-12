@@ -82,6 +82,13 @@ public class Console implements Affichage {
 		System.out.print(res);
 	}
 	@Override
+	public void changerMessagePerso(Personne personne) {
+		String res=changerMessage;
+		res=res.replace("%pseudo",personne.getPseudo());
+		res=res.replace("%message",personne.getMsg_perso());
+		System.out.print(res);
+	}
+	@Override
 	public void afficherFichierRecu(Personne personne, String fichier) {
 		String res=afficherFichierRecu;
 		res=res.replace("%personne",personne.getPseudo());
@@ -144,7 +151,10 @@ public class Console implements Affichage {
 			} else if (saisie.startsWith("/statut")) {
 				saisie=saisie.replaceAll("/statut ", "");
 				TalkTalk.setStatut(Integer.parseInt(saisie));
-			
+			} else if (saisie.startsWith("/bloque")) {
+				saisie=saisie.replaceAll("/bloque ", "");
+				TalkTalk.bloques.add(saisie);
+				TalkTalk.abonnes.remove(saisie);
 			} else {
 				System.out.println("Commande inconnue");
 			}
@@ -167,4 +177,5 @@ public class Console implements Affichage {
 		res+=" }";
 		return res;
 	}
+	
 }

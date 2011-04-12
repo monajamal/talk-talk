@@ -26,7 +26,7 @@ public abstract class Contact {
 	 * @param friends les amis 
 	 * @param groupes les groupes
 	 */
-	public static void parseContact(Map<String,Personne> friends, Map<String,Groupe> groupes) {
+	public static void parseContact(Map<String,Personne> friends, Map<String,Groupe> groupes, List<String> bloques) {
 		File f = new File(Config.FICHIER_CONTACTS);
 		Scanner sc;
 		String l;
@@ -83,7 +83,7 @@ public abstract class Contact {
 					}
 				} else if (tab[0].equals("B")) {
 					// Lecture des personnes bloquées
-					// TODO : lecture des personnes bloquées
+					bloques.add(tab[1]);
 				} else {
 					// ligne ignoré (commentaire, ou mal écrite)
 					// System.out.println("Erreur de lecture du fichier de configuration");
@@ -98,12 +98,12 @@ public abstract class Contact {
 	 * @param friends les amis
 	 * @param groupes les groupes
 	 */
-	public static void saveContact(Map<String,Personne> friends, Map<String,Groupe> groupes) {
+	public static void saveContact(Map<String,Personne> friends, Map<String,Groupe> groupes, List<String> bloques) {
 		PrintWriter fout;
 		try {
 			fout = new PrintWriter(new FileWriter(Config.FICHIER_CONTACTS,false));
 			// On sauvegarde les personnes
-			fout.print("#;Pseudo;IP;Port");
+			fout.println("#;Pseudo;IP;Port");
 			synchronized(friends.values()) {
 				for (Personne p : friends.values()) {
 					fout.print("C;");
@@ -118,7 +118,7 @@ public abstract class Contact {
 				}
 			}
 			// On sauvegarde les groupes
-			fout.print("#;Nom;Membre A,Membre B,Membre C, ...");
+			fout.println("#;Nom;Membre A,Membre B,Membre C, ...");
 			synchronized(groupes){
 				for (Groupe g : groupes.values()) {
 					fout.print("G;");
@@ -136,7 +136,13 @@ public abstract class Contact {
 				fout.close();
 			}
 			// On sauvegarde les personnes bloquées
-			// TODO : sauvegarder les personnes bloquées
+			fout.println("#;Nom");
+			synchronized(bloques) {
+				for (String b : bloques) {
+					fout.print("B;");
+					fout.println(b);
+				}
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
