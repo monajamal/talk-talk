@@ -91,7 +91,6 @@ public class Console implements Affichage {
 	@Override
 	public void changerImage(Personne p) {
 		// Rien a faire
-		
 	}
 	@Override
 	public void start() {

@@ -140,8 +140,7 @@ public class Affich implements Affichage {
 	}
 	@Override
 	public void changerImage(Personne p) {
-		// TODO Auto-generated method stub
-		
+		addLog(p.getName()+" change d'image perso");
 	}	
 	@Override
 	public void start() {

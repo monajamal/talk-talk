@@ -18,6 +18,7 @@ import javax.swing.FocusManager;
 import javax.swing.JButton;
 import javax.swing.JList;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.text.BadLocationException;
@@ -142,7 +143,7 @@ public class Event implements ActionListener, ListSelectionListener, MouseListen
 				boolean exist=false;int select=0;
 				for (int i=1;i<ihm.jtabp_onglet.getTabCount();i++) {
 					JConversation jc = (JConversation)ihm.jtabp_onglet.getComponentAt(i);
-					if (jc.getName().equals(TalkTalk.friends.get(ihm.lstPersonnes[jlst.getSelectedIndex()].getName()).getName())) {
+					if (jc.getName().equals(ihm.lstContactAmis[jlst.getSelectedIndex()].getName())) {
 						exist=true;
 						select=i;
 					}
@@ -150,11 +151,12 @@ public class Event implements ActionListener, ListSelectionListener, MouseListen
 				
 				// Si NON, ouvrir l'onglet
 				if (!exist) {
-					ihm.jtabp_onglet.add(
-							new JConversation(TalkTalk.friends.get(ihm.lstPersonnes[jlst.getSelectedIndex()].getName()).getName(),null,
+					ihm.jtabp_onglet.add(new JConversation(ihm.lstContactAmis[jlst.getSelectedIndex()]));
+					/*ihm.jtabp_onglet.add(
+							new JConversation(TalkTalk.friends.get(ihm.lstTabPersonnes[jlst.getSelectedIndex()].getName()).getName(),null,
 									Resources.getImageIcon("images/tux.png",TalkTalk .class),
 									Resources.getImageIcon("images/profil.png",TalkTalk.class)));//jlst.getSelectedIndex(),
-					
+					*/
 					
 					
 					//ihm.actuTab(this); TODO
