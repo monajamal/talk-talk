@@ -25,7 +25,7 @@ public class DistantImpl implements Distant {
 	@Override
 	public void sendMsg(String expediteur, Adresse addr_exp, String m)
 	throws RemoteException {
-		if (!TalkTalk.bloques.contains(expediteur)) {
+		if (!TalkTalk.bloques.containsKey(expediteur)) {
 			Personne exp = TalkTalk.ajouterContact(expediteur);
 			TalkTalk.ihm.afficherMessageRecu(exp, m);
 		}
@@ -161,7 +161,7 @@ public class DistantImpl implements Distant {
 
 	@Override
 	public void abonnement(String pseudo, Adresse addr) throws RemoteException {
-		if (!TalkTalk.bloques.contains(pseudo)) {
+		if (!TalkTalk.bloques.containsKey(pseudo)) {
 			Personne p = TalkTalk.ajouterContact(pseudo);
 			p.setAddress(addr);
 			TalkTalk.abonnes.add(p);
@@ -199,7 +199,7 @@ public class DistantImpl implements Distant {
 		Personne p = TalkTalk.ajouterContact(pseudo);
 		p.setAddress(adressePerso);
 		TalkTalk.ihm.afficherFichierRecu(p,fichier);
-		File f = new File(fichier);
+		File f = new File(Config.DOSSIER_DOWNLOAD+fichier);
 		
 		try {
 			f.createNewFile();
@@ -216,8 +216,7 @@ public class DistantImpl implements Distant {
 	public void setImagePerso(String pseudo, byte[] img) throws RemoteException{
 		Personne p = TalkTalk.friends.get(pseudo);
 		if (p!=null){
-			File f = new File(pseudo);
-			//TODO : le mettre qqpart correctement
+			File f = new File(Config.DOSSIER_IMAGES+pseudo);
 			try {
 				if (!f.exists()){
 					f.createNewFile();
@@ -225,7 +224,7 @@ public class DistantImpl implements Distant {
 				DataOutputStream d = new DataOutputStream(new FileOutputStream(f));
 				d.write(img);
 				d.close();
-				p.setImage_perso(pseudo); //TODO : changer la aussi 0
+				p.setImage_perso(Config.DOSSIER_IMAGES+pseudo); 
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

@@ -94,7 +94,6 @@ public class Envoi extends Thread {
 	 */
 	public void run(){
 		if (destinataire.getAddress() == null){
-			//TODO Recherche du destinataire
 			Thread t = TalkTalk.searchAdresse(destinataire);
 			boolean interrupted = true;
 			while (interrupted) 
