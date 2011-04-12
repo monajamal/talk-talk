@@ -68,6 +68,11 @@ public interface Affichage {
 	String changerStatut = "%pseudo change de statut : %statut";
 	public void changerStatut(Personne personne);
 	/**
+	 * Changement d'image de notre ami
+	 * @param p 
+	 */
+	public void changerImage(Personne personne);
+	/**
 	 * Affichage de la reception d'un fichier
 	 * @param p
 	 * @param fichier

@@ -157,9 +157,11 @@ public class DistantImpl implements Distant {
 		Personne p = TalkTalk.ajouterContact(pseudo);
 		p.setAddress(addr);
 		TalkTalk.abonnes.add(p);
-		//On lui envoie directement le statut
+		//On lui envoie directement le statut et l'image perso
 		Envoi env = new Envoi(p,TalkTalk.statut);
+		EnvoiFichier envFic = new EnvoiFichier(p,TalkTalk.image,true);
 		env.start();
+		envFic.start();
 	}
 
 	@Override
@@ -193,6 +195,28 @@ public class DistantImpl implements Distant {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+
+	@Override
+	public void setImagePerso(String pseudo, byte[] img) throws RemoteException{
+		Personne p = TalkTalk.friends.get(pseudo);
+		if (p!=null){
+			File f = new File(pseudo);
+			//TODO : le mettre qqpart correctement
+			try {
+				if (!f.exists()){
+					f.createNewFile();
+				}
+				DataOutputStream d = new DataOutputStream(new FileOutputStream(f));
+				d.write(img);
+				d.close();
+				p.setImage_perso(pseudo); //TODO : changer la aussi 0
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		TalkTalk.ihm.changerImage(p);
 	}
 
 	

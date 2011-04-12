@@ -139,6 +139,11 @@ public class Affich implements Affichage {
 		}
 	}
 	@Override
+	public void changerImage(Personne p) {
+		// TODO Auto-generated method stub
+		
+	}	
+	@Override
 	public void start() {
 		addLog(start);
 		addLog("Mes amis sont "+print(TalkTalk.friends));
@@ -185,4 +190,7 @@ public class Affich implements Affichage {
 		res+=" }";
 		return res;
 	}
+
+	
+
 }

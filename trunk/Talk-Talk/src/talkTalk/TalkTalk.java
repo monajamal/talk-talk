@@ -293,6 +293,15 @@ public class TalkTalk {
 			env.start();
 		}
 	}
+	public static void setImagePerso(String img){
+		image = img;
+		List<Personne> abo = new ArrayList<Personne>(abonnes);
+		EnvoiFichier env;
+		for (Personne p : abo){
+			env = new EnvoiFichier(p,img,true);
+			env.start();
+		}
+	}
 	/**
 	 * Cherche une interface non ipv6 et non localhost
 	 * @return l'adresse de l'interface trouve ou null
