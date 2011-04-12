@@ -7,6 +7,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseListener;
 
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComboBox;
@@ -55,8 +56,7 @@ public class IHM extends JFrame {
 	protected JPanel jp_left;
 		protected JComboBox jcb_statut;
 		protected JList jlst_contacts;protected JScrollPane jsp_contacts;
-		//protected JList jlst_personne;protected JScrollPane jsp_personne;
-		//protected JList jlst_groupe;protected JScrollPane jsp_groupe;
+		protected JButton jb_add;
 	protected JSplitPane jslip;
 	protected JPanel jp_center;
 		protected JTabbedPane jtabp_onglet;
@@ -89,6 +89,30 @@ public class IHM extends JFrame {
 		menuContextuel();
 		/** Fenêtre **/
 		creeFenetre();
+	}
+	public void createDataListContact() {
+		Integer[] dataContacts = new Integer[TalkTalk.friends.size()+TalkTalk.groupes.size()+TalkTalk.bloques.size()];
+		lstContactAmis = new Contact[TalkTalk.friends.size()+TalkTalk.groupes.size()+TalkTalk.bloques.size()];
+		int i=0;
+		for (Personne suivant : TalkTalk.friends.values()) {
+			dataContacts[i]=i;
+			lstContactAmis[i]=suivant;
+			i++;
+		}
+		for (Groupe suivant : TalkTalk.groupes.values()) {
+			dataContacts[i]=i;
+			lstContactAmis[i]=suivant;
+			i++;
+		}
+		for (Personne suivant : TalkTalk.bloques.values()) {
+			dataContacts[i]=i;
+			lstContactAmis[i]=suivant;
+			i++;
+		}
+		// Liste de contact
+		ComboBoxRenderer renderer2 = new ComboBoxRenderer(lstContactAmis,TalkTalk.class);
+		renderer2.setPreferredSize(new Dimension(16,16));
+		this.jlst_contacts.setCellRenderer(renderer2);
 	}
 	public void creeBarreDeMenu(ActionListener action) {
 		/** Création des éléments     **/
@@ -168,25 +192,20 @@ public class IHM extends JFrame {
 		/*liste de contacts*/
 		Integer[] dataContacts = new Integer[TalkTalk.friends.size()+TalkTalk.groupes.size()+TalkTalk.bloques.size()];
 		lstContactAmis = new Contact[TalkTalk.friends.size()+TalkTalk.groupes.size()+TalkTalk.bloques.size()];
-		//String[] imgContacts = new String[TalkTalk.friends.size()+TalkTalk.groupes.size()+TalkTalk.bloques.size()];
 		int i=0;
 		for (Personne suivant : TalkTalk.friends.values()) {
 			dataContacts[i]=i;
 			lstContactAmis[i]=suivant;
-			//imgContacts[i]=suivant.getImg();
 			i++;
 		}
 		for (Groupe suivant : TalkTalk.groupes.values()) {
 			dataContacts[i]=i;
 			lstContactAmis[i]=suivant;
-			//imgContacts[i]=suivant.getImg();
 			i++;
 		}
 		for (Personne suivant : TalkTalk.bloques.values()) {
 			dataContacts[i]=i;
 			lstContactAmis[i]=suivant;
-			((Personne)(lstContactAmis[i])).setStatut(Personne.BLOQUE);
-			//imgContacts[i]"images/statut/bloque.png";
 			i++;
 		}
 		
@@ -194,6 +213,7 @@ public class IHM extends JFrame {
 		this.jp_left = new JPanel(new BorderLayout());
 			this.jcb_statut = new JComboBox(dataStatut);
 			this.jlst_contacts = new JList(dataContacts);this.jsp_contacts = new JScrollPane(this.jlst_contacts);
+			this.jb_add = new JButton("Ajouter un contact");
 		this.jp_center = new JPanel(new BorderLayout());
 			this.jtabp_onglet = new JTabbedPane();
 				this.jta_log = new JTextArea("\t\tFenêtre de log\n\t\t-----------------------\n");
@@ -220,11 +240,12 @@ public class IHM extends JFrame {
 		/** Action sur les éléments   **/
 		this.jcb_statut.addActionListener(action);
 		this.jlst_contacts.addMouseListener(mouse);
+		this.jb_add.addActionListener(action);
 		/** Montage des éléments      **/
 		//zone splitter
 			this.jp_left.add(this.jcb_statut,BorderLayout.NORTH);
 			this.jp_left.add(this.jlst_contacts,BorderLayout.CENTER);
-			//this.jp_left.add(this.jsp_groupe,BorderLayout.SOUTH);
+			this.jp_left.add(this.jb_add,BorderLayout.SOUTH);
 		//zone splitter
 			this.jp_center.add(this.jtabp_onglet,BorderLayout.CENTER);
 		this.add(this.jp_bottom,BorderLayout.SOUTH);

@@ -83,7 +83,7 @@ public abstract class Contact {
 					}
 				} else if (tab[0].equals("B")) {
 					// Lecture des personnes bloquées
-					bloques.put(tab[1],new Personne(tab[1],null));
+					bloques.put(tab[1],new Personne(tab[1],Personne.BLOQUE));
 				} else {
 					// ligne ignoré (commentaire, ou mal écrite)
 					// System.out.println("Erreur de lecture du fichier de configuration");

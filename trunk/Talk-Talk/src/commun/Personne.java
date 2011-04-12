@@ -31,6 +31,15 @@ public class Personne extends Contact {
 		this.setAddress(addr);
 		this.setDistant(null);
 	}
+	public Personne(String pseudo, int statut) {
+		this.setPseudo(pseudo);
+		this.setAlias(null);
+		this.setStatut(statut);
+		this.setImage_perso(null);
+		this.setMsg_perso(null);
+		this.setAddress(null);
+		this.setDistant(null);
+	}
 	public Personne(String pseudo, Adresse addr) {
 		this.setPseudo(pseudo);
 		this.setAlias(null);
