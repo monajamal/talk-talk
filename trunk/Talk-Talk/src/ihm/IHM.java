@@ -166,20 +166,27 @@ public class IHM extends JFrame {
 		Integer[] dataStatut = new Integer[statut.length];
 		for (int i=0;i<statut.length;i++) dataStatut[i]=i;
 		/*liste de contacts*/
-		Integer[] dataContacts = new Integer[TalkTalk.friends.size()+TalkTalk.groupes.size()];
-		lstContactAmis = new Contact[TalkTalk.friends.size()+TalkTalk.groupes.size()];
-		String[] imgContacts = new String[TalkTalk.friends.size()+TalkTalk.groupes.size()];
+		Integer[] dataContacts = new Integer[TalkTalk.friends.size()+TalkTalk.groupes.size()+TalkTalk.bloques.size()];
+		lstContactAmis = new Contact[TalkTalk.friends.size()+TalkTalk.groupes.size()+TalkTalk.bloques.size()];
+		//String[] imgContacts = new String[TalkTalk.friends.size()+TalkTalk.groupes.size()+TalkTalk.bloques.size()];
 		int i=0;
 		for (Personne suivant : TalkTalk.friends.values()) {
 			dataContacts[i]=i;
 			lstContactAmis[i]=suivant;
-			imgContacts[i]=suivant.getImg();
+			//imgContacts[i]=suivant.getImg();
 			i++;
 		}
 		for (Groupe suivant : TalkTalk.groupes.values()) {
 			dataContacts[i]=i;
 			lstContactAmis[i]=suivant;
-			imgContacts[i]=suivant.getImg();
+			//imgContacts[i]=suivant.getImg();
+			i++;
+		}
+		for (Personne suivant : TalkTalk.bloques.values()) {
+			dataContacts[i]=i;
+			lstContactAmis[i]=suivant;
+			((Personne)(lstContactAmis[i])).setStatut(Personne.BLOQUE);
+			//imgContacts[i]"images/statut/bloque.png";
 			i++;
 		}
 		
@@ -211,6 +218,7 @@ public class IHM extends JFrame {
 		this.jtabp_onglet.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);//scroll horizontal des onglets
 		
 		/** Action sur les éléments   **/
+		this.jcb_statut.addActionListener(action);
 		this.jlst_contacts.addMouseListener(mouse);
 		/** Montage des éléments      **/
 		//zone splitter

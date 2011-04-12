@@ -37,7 +37,9 @@ public class JConversation extends JPanel {
 	protected JTextPane jtp_conversation;protected JScrollPane jsp_conversation;
 	protected JPanel jp_right;
 		protected JLabel jl_image_ami;
-		protected JLabel jl_infos;
+		protected JPanel jp_dfsdfgdsg;
+			protected JButton jb_bloque;
+			protected JLabel jl_infos;
 		protected JLabel jl_image_perso;
 	protected JPanel jp_write;
 		protected JTextPane jtp_ecrire;protected JScrollPane jsp_ecrire;
@@ -75,13 +77,17 @@ public class JConversation extends JPanel {
 		if (TalkTalk.image.equals("null")) ii = Resources.getImageIcon("images/profil.png", TalkTalk.class);
 		else ii = new ImageIcon(TalkTalk.image);
 		String infos;
+		String bloque = "";
 		if (ami.getType()==Contact.PERSONNE) {
-			Personne p=  (Personne)ami;
+			Personne p =  (Personne)ami;
 			infos="<html>";
-			infos+="<p>Alias : "+p.getAlias()+"</p>";
 			infos+="<p>Pseudo : "+p.getName()+"</p>";
-			infos+="<p>IP : "+p.getAddress().getAddr()+"</p>";
-			infos+="<p>Port : "+p.getAddress().getPort()+"</p>";
+			if (p.getStatut()!=Personne.BLOQUE) {
+				bloque="Bloquer";
+				infos+="<p>Alias : "+p.getAlias()+"</p>";
+				infos+="<p>IP : "+p.getAddress().getAddr()+"</p>";
+				infos+="<p>Port : "+p.getAddress().getPort()+"</p>";
+			} else bloque="Débloquer";
 			infos+="</html>";
 		} else {
 			Groupe g = (Groupe)ami;
@@ -98,7 +104,9 @@ public class JConversation extends JPanel {
 		this.jtp_conversation = new JTextPane();this.jsp_conversation = new JScrollPane(this.jtp_conversation);
 		this.jp_right = new JPanel(new BorderLayout());
 			this.jl_image_ami = new JLabel(Resources.getImageIcon("images/profil.png",TalkTalk.class),SwingConstants.CENTER);
-			this.jl_infos = new JLabel(infos);
+			this.jp_dfsdfgdsg = new JPanel(new BorderLayout());
+				this.jb_bloque = new JButton(bloque);
+				this.jl_infos = new JLabel(infos);
 			this.jl_image_perso = new JLabel(ii,SwingConstants.CENTER);
 		this.jp_write = new JPanel(new BorderLayout());
 			this.jtp_ecrire = new JTextPane();this.jsp_ecrire = new JScrollPane(this.jtp_ecrire);
@@ -135,7 +143,9 @@ public class JConversation extends JPanel {
 		this.add(this.jsp_conversation,BorderLayout.CENTER);
 		this.add(this.jp_right,BorderLayout.EAST);
 			this.jp_right.add(this.jl_image_ami,BorderLayout.NORTH);
-			this.jp_right.add(this.jl_infos,BorderLayout.CENTER);
+			this.jp_right.add(this.jp_dfsdfgdsg,BorderLayout.CENTER);
+				if (ami.getType()==Contact.PERSONNE) this.jp_dfsdfgdsg.add(this.jb_bloque,BorderLayout.NORTH);
+				this.jp_dfsdfgdsg.add(this.jl_infos,BorderLayout.CENTER);
 			this.jp_right.add(this.jl_image_perso,BorderLayout.SOUTH);
 		this.add(this.jp_write,BorderLayout.SOUTH);
 			this.jp_write.add(this.jsp_ecrire,BorderLayout.CENTER);
@@ -172,7 +182,6 @@ class Event_JConversation implements ActionListener, KeyListener {
 	public Event_JConversation(JConversation jc) {
 		this.jc=jc;
 	}
-
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
 		Object obj = arg0.getSource();
@@ -193,7 +202,7 @@ class Event_JConversation implements ActionListener, KeyListener {
 			} else if (jchkb==jc.jchkb_souligne) {					// Changement de souligné
 				
 			}
-		} else if (obj instanceof JSmiley) {	// Si on insert un smiley
+		} else if (obj instanceof JSmiley) {	// Si on insere un smiley
 			JSmiley js = (JSmiley)obj;
 			
 			jc.jtp_ecrire.insertIcon(js.getIcon());//FIXME : cette fonction empeche de mettre 2 fois de suite le même smiley
@@ -204,7 +213,7 @@ class Event_JConversation implements ActionListener, KeyListener {
 		} else if (obj instanceof JButton) {
 			JButton jb = (JButton)obj;
 			if (jb==jc.jb_wizz) {
-				TalkTalk.envoyerWizz(jc.getName());
+				TalkTalk.envoyerWizz(jc.getContact().getName());
 				
 				Style style2 = jc.jtp_ecrire.getStyle("default");
 				StyleConstants.setForeground(style2, Color.RED);
@@ -219,19 +228,9 @@ class Event_JConversation implements ActionListener, KeyListener {
 			} else if (jb==jc.jb_send) {
 				int atEnd = jc.jtp_conversation.getDocument().getLength();
 				String message = jc.jtp_ecrire.getText();
-				
-				//System.out.println("là");
-				//jc.jtp_ecrire.cut();jc.jtp_conversation.paste();
-				
-				
 				Style defaut = jc.jtp_ecrire.getStyle("default");
 				Style style1 = jc.jtp_ecrire.addStyle("style1", defaut);
 				StyleConstants.setBold(style1, true);
-				/*Style style2 = jc.jtp_ecrire.addStyle("style2", style1);
-				StyleConstants.setForeground(style2, Color.RED);
-				StyleConstants.setFontSize(style2, 25);*/
-				
-				
 				try {
 					jc.jtp_conversation.getDocument().insertString(atEnd,TalkTalk.pseudo+" : ",style1);
 					jc.jtp_conversation.getDocument().insertString(atEnd,message+"\n",defaut);
@@ -239,13 +238,9 @@ class Event_JConversation implements ActionListener, KeyListener {
 					e.printStackTrace();
 				}
 				
-				TalkTalk.envoyerMessage(TalkTalk.friends.get(jc.getName()), message);
-				/*try {
-					jc.jtp_conversation.getDocument().insertString(jc.jtp_conversation.getDocument().getLength(),jc.jtp_ecrire.getText()+"\n",null);
-				} catch (BadLocationException e) {
-					e.printStackTrace();
-				}*/
+				TalkTalk.envoyerMessage(TalkTalk.friends.get(jc.getContact().getName()), message);
 				jc.jtp_ecrire.setText("");
+				
 			} else if (jb==jc.jb_couleur) {
 				Color newColor = JColorChooser.showDialog(jc,"Choose Background Color",jc.getCouleur());
 				if (newColor != null) {
@@ -258,7 +253,6 @@ class Event_JConversation implements ActionListener, KeyListener {
 	@Override
 	public void keyPressed(KeyEvent arg0) {
 		// si on fait ENTER (KeyCode=10) et que Ctrl (Modifiers==1) ou Maj (Modifiers==2) alors on rajoute une ligne
-		//if (arg0.getKeyCode()==10 && (arg0.getModifiers()==1 || arg0.getModifiers()==2)) {
 		if (arg0.getKeyCode()==10 && (arg0.isControlDown() || arg0.isShiftDown())) {
 			try {
 				jc.jtp_ecrire.getDocument().insertString(jc.jtp_ecrire.getDocument().getLength(),"\n",null);
@@ -268,9 +262,11 @@ class Event_JConversation implements ActionListener, KeyListener {
 		} else if (arg0.getKeyCode()==10) {//si on fait juste un ENTER, on valide
 			String message = jc.jtp_ecrire.getText();
 			try {
-				TalkTalk.envoyerMessage(TalkTalk.friends.get(jc.getName()), message);
-				jc.jtp_conversation.getDocument().insertString(jc.jtp_conversation.getDocument().getLength(),message+"\n",null);
-				
+				TalkTalk.envoyerMessage(jc.getContact(), message);
+				jc.jtp_conversation.getDocument().insertString(
+						jc.jtp_conversation.getDocument().getLength(),
+						TalkTalk.pseudo+" : "+message+"\n",
+						null);
 			} catch (BadLocationException e) {
 				e.printStackTrace();
 			}

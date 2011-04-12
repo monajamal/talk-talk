@@ -77,6 +77,7 @@ public interface Affichage {
 	 * Changement d'image de notre ami
 	 * @param p 
 	 */
+	String changerImage = "%pseudo change d'image perso";
 	public void changerImage(Personne personne);
 	/**
 	 * Affichage de la reception d'un fichier
