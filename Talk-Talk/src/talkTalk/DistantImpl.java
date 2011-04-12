@@ -40,17 +40,19 @@ public class DistantImpl implements Distant {
 	public void sendMsgGr(String pseudo, Adresse addr_exp, String m, String grp_name,
 			List<String> grp) throws RemoteException {
 		Groupe groupe = null;
+		Personne exp = TalkTalk.ajouterContact(pseudo);
 		groupe = TalkTalk.groupes.get(grp_name);
 
 		if (groupe==null) {
 			groupe = new Groupe(grp_name);
+			groupe.addMembre(exp);
 			for (String membres : grp){
 				groupe.addMembre(TalkTalk.ajouterContact(membres));
+				
 			}
 			TalkTalk.groupes.put(grp_name,groupe);
 		} 
 		//TODO : verifier les membres ?
-		Personne exp = TalkTalk.ajouterContact(pseudo);
 		TalkTalk.ihm.afficherMessageRecuGrp(groupe,exp, m); 
 
 	}
@@ -59,16 +61,18 @@ public class DistantImpl implements Distant {
 	public void sendWizzGr(String pseudo, Adresse addrExp,String grp_name, List<String> grp)
 	throws RemoteException {
 		Groupe groupe = null;
+		Personne exp = TalkTalk.ajouterContact(pseudo);
 		groupe = TalkTalk.groupes.get(grp_name);
 
 		if (groupe==null) {
 			groupe = new Groupe(grp_name);
+			groupe.addMembre(exp);
 			for (String membres : grp){
 				groupe.addMembre(TalkTalk.ajouterContact(membres));
 			}
 			TalkTalk.groupes.put(grp_name,groupe); 
 		} 
-		Personne exp = TalkTalk.ajouterContact(pseudo);
+		
 		TalkTalk.ihm.afficherWizzRecuGrp(groupe,exp); 
 	}
 
@@ -159,9 +163,12 @@ public class DistantImpl implements Distant {
 		TalkTalk.abonnes.add(p);
 		//On lui envoie directement le statut et l'image perso
 		Envoi env = new Envoi(p,TalkTalk.statut);
-		EnvoiFichier envFic = new EnvoiFichier(p,TalkTalk.image,true);
 		env.start();
-		envFic.start();
+		if (TalkTalk.image != null) {
+			EnvoiFichier envFic = new EnvoiFichier(p,TalkTalk.image,true);
+			envFic.start();
+		}
+		
 	}
 
 	@Override
