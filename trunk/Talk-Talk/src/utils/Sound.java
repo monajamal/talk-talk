@@ -1,6 +1,5 @@
 package utils;
 
-import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -19,9 +18,9 @@ public class Sound {
 	private AudioFormat format;
 	private byte[] samples;
 
-	public Sound(String filename) {
+	public Sound(File f) {
 		try {
-			AudioInputStream stream = AudioSystem.getAudioInputStream(new File(filename));
+			AudioInputStream stream = AudioSystem.getAudioInputStream(f);
 			format = stream.getFormat();
 			samples = getSamples(stream);
 		} catch (UnsupportedAudioFileException e) {
@@ -71,10 +70,10 @@ public class Sound {
 		line.drain();
 		line.close();
 	}
-	public static void main(String[] args) {
+	/*public static void main(String[] args) {
 		Sound player = new Sound("src/ihm/son/wizz.wav");
 		InputStream stream = new ByteArrayInputStream(player.getSamples());
 		player.play(stream);
 		System.exit(0);
-	}
+	}*/
 }

@@ -67,8 +67,6 @@ public class IHM extends JFrame {
 		protected JCheckBox jchk_fastwriting;
 	
 	int size_split=200;
-	//Personne[] lstTabPersonnes;	// Pour afficher la liste des contacts
-	//Groupe[] lstTabGroupes;		//Pour afficher la liste des groupes
 	Contact[] lstContactAmis;	//Pour afficher la liste des contacts
 	
 	protected String[] statut = {"Disponible","Absent","Occupé","Se déconnecter"};
@@ -168,29 +166,6 @@ public class IHM extends JFrame {
 		Integer[] dataStatut = new Integer[statut.length];
 		for (int i=0;i<statut.length;i++) dataStatut[i]=i;
 		/*liste de contacts*/
-		/*Integer[] dataContact = new Integer[TalkTalk.friends.size()];
-		lstTabPersonnes = new Personne[TalkTalk.friends.size()];
-		String[] imgPersonnes = new String[TalkTalk.friends.size()];
-		int i=0;
-		for (Personne suivant : TalkTalk.friends.values()){
-			dataContact[i]=i;
-			lstTabPersonnes[i]=suivant;
-			imgPersonnes[i]=suivant.getImg();
-			i++;
-		}*/
-		/*liste de groupes*/
-		/*JOptionPane.showConfirmDialog(null, ""+TalkTalk.groupes.size());
-		Integer[] dataGroupe = new Integer[TalkTalk.groupes.size()];
-		lstTabGroupes = new Groupe[TalkTalk.groupes.size()];
-		String[] imgGroupes = new String[TalkTalk.groupes.size()];
-		i=0;
-		for (Groupe suivant : TalkTalk.groupes.values()){
-			dataGroupe[i]=i;
-			lstTabGroupes[i]=suivant;
-			imgGroupes[i]=suivant.getImg();
-			i++;
-		}*/
-		/*liste de contacts*/
 		Integer[] dataContacts = new Integer[TalkTalk.friends.size()+TalkTalk.groupes.size()];
 		lstContactAmis = new Contact[TalkTalk.friends.size()+TalkTalk.groupes.size()];
 		String[] imgContacts = new String[TalkTalk.friends.size()+TalkTalk.groupes.size()];
@@ -201,7 +176,6 @@ public class IHM extends JFrame {
 			imgContacts[i]=suivant.getImg();
 			i++;
 		}
-		
 		for (Groupe suivant : TalkTalk.groupes.values()) {
 			dataContacts[i]=i;
 			lstContactAmis[i]=suivant;
@@ -209,12 +183,9 @@ public class IHM extends JFrame {
 			i++;
 		}
 		
-		
 		/** Création des éléments     **/
 		this.jp_left = new JPanel(new BorderLayout());
 			this.jcb_statut = new JComboBox(dataStatut);
-			//this.jlst_personne = new JList(dataContact);this.jsp_personne = new JScrollPane(this.jlst_personne);
-			//this.jlst_groupe = new JList(dataGroupe);this.jsp_groupe = new JScrollPane(this.jlst_groupe);
 			this.jlst_contacts = new JList(dataContacts);this.jsp_contacts = new JScrollPane(this.jlst_contacts);
 		this.jp_center = new JPanel(new BorderLayout());
 			this.jtabp_onglet = new JTabbedPane();
@@ -232,14 +203,6 @@ public class IHM extends JFrame {
 		renderer.setPreferredSize(new Dimension(16,16));
 		this.jcb_statut.setRenderer(renderer);
 		// Liste de contact
-		/*ComboBoxRenderer renderer2 = new ComboBoxRenderer(lstTabPersonnes,TalkTalk.class);
-		renderer2.setPreferredSize(new Dimension(16,16));
-		this.jlst_personne.setCellRenderer(renderer2);*/
-		// Liste de groupe
-		/*ComboBoxRenderer renderer3 = new ComboBoxRenderer(lstTabGroupes,TalkTalk.class);
-		renderer3.setPreferredSize(new Dimension(16,16));
-		this.jlst_groupe.setCellRenderer(renderer3);*/
-		// Liste de contact
 		ComboBoxRenderer renderer2 = new ComboBoxRenderer(lstContactAmis,TalkTalk.class);
 		renderer2.setPreferredSize(new Dimension(16,16));
 		this.jlst_contacts.setCellRenderer(renderer2);
@@ -248,8 +211,6 @@ public class IHM extends JFrame {
 		this.jtabp_onglet.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);//scroll horizontal des onglets
 		
 		/** Action sur les éléments   **/
-		//this.jlst_personne.addMouseListener(mouse);
-		//this.jlst_groupe.addMouseListener(mouse);
 		this.jlst_contacts.addMouseListener(mouse);
 		/** Montage des éléments      **/
 		//zone splitter

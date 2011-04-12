@@ -1,13 +1,13 @@
-package ihm;
+package utils;
 
 import java.awt.Component;
 
-class Wizz {
+public class Wizz {
 	//on passe en paramètre 
 	// 1: le composant(la fenêtre) sur lequel l'on doit faire le wizz
 	// 2: vitesse elle donne l'allure du wizz pour un wizz comme MSN Messenger <40
 	// 3: Décalage le décalage du wizz (idéal 2 :-) )
-	static void creerWizz(Component c,int vitesse,int decallage) {
+	public static void creerWizz(Component c,int vitesse,int decallage) {
 		//position de la fenêtre à l'écran vous devez avoir préalablement choisi sa position
 		// avec setbound()
 		int pos_x=c.getBounds().getLocation().x;
@@ -21,15 +21,12 @@ class Wizz {
 			//sinon position + décalage
 			c.setBounds(pos_x+pos[i%2],pos_y+pos[i%2],c.getBounds().getSize().width,c.getBounds().getSize().height);
 			
-			
 			try {
 				//donne l'effet de wizz
 				Thread.sleep(vitesse);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
 		}
 	}
 }

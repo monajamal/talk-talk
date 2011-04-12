@@ -112,12 +112,15 @@ public class JConversation extends JPanel {
 	}
 	public void creeInterface(ActionListener action,KeyListener key) {
 		String[] smile = {":)","<3","ø","(","()","!","*"};
+		ImageIcon ii;
+		if (TalkTalk.image.equals("null")) ii = Resources.getImageIcon("images/profil.png", TalkTalk.class);
+		else ii = new ImageIcon(TalkTalk.image);
 		/** Création des éléments     **/
 		this.jtp_conversation = new JTextPane();this.jsp_conversation = new JScrollPane(this.jtp_conversation);
 		this.jp_right = new JPanel(new BorderLayout());
 			this.jl_image_ami = new JLabel(this.icon_ami,SwingConstants.CENTER);
 			this.jl_temp = new JLabel("<html><p>Alias : "+name+"</p><p>Pseudo : ?</p><p>IP : ?</p><p>Port : ?</p></html>");
-			this.jl_image_perso = new JLabel(new ImageIcon(TalkTalk.image),SwingConstants.CENTER);
+			this.jl_image_perso = new JLabel(ii,SwingConstants.CENTER);
 		this.jp_write = new JPanel(new BorderLayout());
 			this.jtp_ecrire = new JTextPane();this.jsp_ecrire = new JScrollPane(this.jtp_ecrire);
 			this.jp_cmd = new JPanel();

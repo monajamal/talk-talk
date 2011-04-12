@@ -19,6 +19,8 @@ import utils.OperationsDates;
 public class Config {
 	
 	public final static String DOSSIER_DATA = "./data/";
+	public final static String DOSSIER_IMAGES = "./data/images/";
+	public final static String DOSSIER_DOWNLOAD = "./data/fichiers/";
 	public final static String FICHIER_CONFIG = "./data/config.ini";
 	public final static String FICHIER_CONTACTS = "./data/contacts.csv";
 	
@@ -94,7 +96,7 @@ public class Config {
 		String date, os_name, os_version;
 		if (isCreation) {
 			pseudo="namelessTalk";
-			image="images/profil.png";
+			image="null";
 			interfac="ihm";
 			
 			Date today = new Date();

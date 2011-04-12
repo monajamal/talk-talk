@@ -53,7 +53,7 @@ public class TalkTalk {
 		Config.lireConfig();
 		pseudo=config.get("Utilisateur").get("Pseudo").toString();
 		image=config.get("Utilisateur").get("Image").toString();
-		System.out.println(image);
+		
 		
 
 		//On cherche une interface correcte (plus sûr)
