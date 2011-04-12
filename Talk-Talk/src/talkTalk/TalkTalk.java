@@ -35,10 +35,12 @@ public class TalkTalk {
 	
 	public static Adresse adressePerso; //Mon adresse ou me contacter
 	public static String pseudo; //Mon pseudo
-	public static String image; //Mon image (non implémenté)
-	public static int statut; //Mon statut (non implémenté)
+	public static String image; //Mon image 
+	public static int statut; //Mon statut 
+	public static String messagePerso;
 	public static Map<String,Personne> friends; //Ensemble des amis
 	public static Map<String,Groupe> groupes; //Ensembles des groupes
+	public static List<String> bloques;
 	public final static int portRegistry = 1099; //Le port du serveur de nom 
 	public final static int portObject = 3000; //Le port de l'objet
 	public static Affichage ihm; //Interface d'affichage
@@ -82,14 +84,16 @@ public class TalkTalk {
 		
 		//Initialisation des paramètres
 		statut=Personne.AVAILABLE;
+		messagePerso = "";
+		
 		// Les collections doivent etre synchronisé
 		//TODO : choisir l'implémentation de ces trucs...
 		friends = Collections.synchronizedMap(new Hashtable<String,Personne>());
 		groupes = Collections.synchronizedMap(new Hashtable<String,Groupe>());
 		abonnes = new ArrayList<Personne>();
+		bloques = new ArrayList<String>();
 		//On lit le fichier de contact
-		Contact.parseContact(friends,groupes);
-		//Contact.saveContact(friends,groupes);
+		Contact.parseContact(friends,groupes,bloques);
 		
 		//Lancement du registry
 		try {
@@ -176,7 +180,6 @@ public class TalkTalk {
 				env.start();
 			}
 		}
-		
 	}
 	/**
 	 * Envoie un wizz (groupe ou personne)
@@ -230,7 +233,7 @@ public class TalkTalk {
 		if (!friends.containsKey(pseudo)) {
 			Personne p = new Personne(pseudo,new Adresse(address,port));
 			TalkTalk.friends.put(pseudo,p);
-			Contact.saveContact(friends, groupes);
+			Contact.saveContact(friends, groupes, bloques);
 			return p;
 		} else {
 			return friends.get(pseudo);
@@ -245,7 +248,7 @@ public class TalkTalk {
 		if (friends.get(pseudo) == null) {
 			Personne p = new Personne(pseudo,null);
 			TalkTalk.friends.put(pseudo,p);
-			Contact.saveContact(friends, groupes);
+			Contact.saveContact(friends, groupes, bloques);
 			return p;
 		} else {
 			return friends.get(pseudo);
@@ -257,6 +260,7 @@ public class TalkTalk {
 	 */
 	public static void exit() {
 		ihm.stop();
+		Contact.saveContact(friends, groupes, bloques);
 		System.exit(0);
 	}
 	/**
@@ -294,12 +298,30 @@ public class TalkTalk {
 			env.start();
 		}
 	}
+	/**
+	 * Change l'image perso
+	 * @param img
+	 */
 	public static void setImagePerso(String img){
 		image = img;
 		List<Personne> abo = new ArrayList<Personne>(abonnes);
 		EnvoiFichier env;
 		for (Personne p : abo){
 			env = new EnvoiFichier(p,img,true);
+			env.start();
+		}
+	}
+	/**
+	 * Change le message perso
+	 * @param newMessage
+	 */
+	public static void setMessagePerso(String newMessage)
+	{
+		messagePerso = newMessage;
+		List<Personne> abo = new ArrayList<Personne>(abonnes);
+		Envoi env;
+		for (Personne p : abo){
+			env = new Envoi(p,messagePerso,true);
 			env.start();
 		}
 	}

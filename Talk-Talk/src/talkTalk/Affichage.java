@@ -65,8 +65,14 @@ public interface Affichage {
 	 * Changement de statut de notre ami
 	 * @param personne
 	 */
-	String changerStatut = "%pseudo change de statut : %statut";
+	String changerStatut = "%pseudo change de statut : %statut\n";
 	public void changerStatut(Personne personne);
+	/**
+	 * Changement de message de notre ami
+	 * @param personne
+	 */
+	String changerMessage = "%pseudo change de message : %message\n";
+	public void changerMessagePerso(Personne personne);
 	/**
 	 * Changement d'image de notre ami
 	 * @param p 
@@ -89,4 +95,5 @@ public interface Affichage {
 	 */
 	String stop = "SERVEUR ["+TalkTalk.adressePerso+"] : Server down !\n";
 	public void stop();
+
 }

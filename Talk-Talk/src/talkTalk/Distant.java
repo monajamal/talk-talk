@@ -55,5 +55,6 @@ public interface Distant extends Remote {
 	public int getStatut() throws RemoteException;
 	public void sendFichier(String pseudo, Adresse adressePerso, String fichier, byte[] donnees)throws RemoteException;
 	public void setImagePerso(String pseudo, byte[] img)throws RemoteException;
+	public void setMessagePerso(String pseudo, String messagePerso)throws RemoteException;
 
 }

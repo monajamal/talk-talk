@@ -127,6 +127,18 @@ public class Affich implements Affichage {
 		}
 	}
 	@Override
+	public void changerMessagePerso(Personne personne) {
+		String res=changerMessage;
+		res=res.replace("%pseudo",personne.getPseudo());
+		res=res.replace("%statut",personne.getMsg_perso());
+		addLog(res);
+		for (int i=1;i<ihm.jtabp_onglet.getTabCount();i++) {
+			if (personne.getPseudo().equals(((JConversation)(ihm.jtabp_onglet.getComponentAt(i))).getName())) {
+				addLog(res,i);
+			}
+		}
+	}
+	@Override
 	public void afficherFichierRecu(Personne personne, String fichier) {
 		String res=afficherFichierRecu;
 		res=res.replace("%personne",personne.getPseudo());
