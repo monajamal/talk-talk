@@ -22,7 +22,7 @@ public interface Affichage {
 	 * @param msg le message
 	 */
 	String afficherMessageRecuGrp = "> %expediteur (%groupe) : %message\n";
-	public void afficherMessageRecuGrp(Groupe grp, Personne expediteur, String message);
+	public void afficherMessageRecuGrp(Groupe groupe, Personne expediteur, String message);
 	/**
 	 * Afficher le wizz reçu.
 	 * @param exp l'expediteur du wizz
@@ -62,6 +62,19 @@ public interface Affichage {
 	String afficherDestinataireInconnu = "Destinataire inconnu : %destinataire\n";
 	public void afficherDestinataireInconnu(String destinataire);
 	/**
+	 * Changement de statut de notre ami
+	 * @param personne
+	 */
+	String changerStatut = "%pseudo change de statut : %statut";
+	public void changerStatut(Personne personne);
+	/**
+	 * Affichage de la reception d'un fichier
+	 * @param p
+	 * @param fichier
+	 */
+	String afficherFichierRecu = "Fichier %fichier recu de %personne";
+	public void afficherFichierRecu(Personne personne, String fichier);
+	/**
 	 * Appelée pour lancer l'ihm
 	 */
 	String start = "Je suis "+TalkTalk.pseudo+" et je suis connecté sur ["+TalkTalk.adressePerso+"] !\n";
@@ -71,6 +84,4 @@ public interface Affichage {
 	 */
 	String stop = "SERVEUR ["+TalkTalk.adressePerso+"] : Server down !\n";
 	public void stop();
-	public void changerStatut(Personne p);
-	public void afficherFichierRecu(Personne p, String fichier);
 }

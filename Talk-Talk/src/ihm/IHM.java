@@ -7,7 +7,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseListener;
-import java.util.Vector;
 
 import javax.swing.ImageIcon;
 import javax.swing.JCheckBox;
@@ -28,10 +27,12 @@ import javax.swing.KeyStroke;
 import javax.swing.ListCellRenderer;
 import javax.swing.event.ListSelectionListener;
 
-import commun.Personne;
-
 import talkTalk.TalkTalk;
 import utils.Resources;
+
+import commun.Contact;
+import commun.Groupe;
+import commun.Personne;
 
 @SuppressWarnings("serial")
 public class IHM extends JFrame {
@@ -56,18 +57,21 @@ public class IHM extends JFrame {
 	
 	protected JPanel jp_left;
 		protected JComboBox jcb_statut;
-		protected JList jlst_contact;protected JScrollPane jsp_contact;
+		protected JList jlst_personne;protected JScrollPane jsp_personne;
+		protected JList jlst_groupe;protected JScrollPane jsp_groupe;
 	protected JSplitPane jslip;
 	protected JPanel jp_center;
 		protected JTabbedPane jtabp_onglet;
 			protected JTextArea jta_log;
-			protected Vector<JConversation> jc_fenetre;
+			//protected Vector<JConversation> jc_fenetre;
 	protected JPanel jp_bottom;
 		protected JHyperTextLink jl_pub;
 		protected JLabel jl_temp;
 		protected JCheckBox jchk_fastwriting;
 	
 	int size_split=200;
+	Personne[] lstPersonnes;	// Pour afficher la liste des contacts
+	Groupe[] lstGroupes;		//Pour afficher la liste des groupes
 	
 	protected String[] statut = {"Disponible","Absent","Occupé","Se déconnecter"};
 	protected String[] images = {"images/statut/dispo.png","images/statut/absent.png","images/statut/occupe.png","images/statut/offline.png"};
@@ -118,7 +122,6 @@ public class IHM extends JFrame {
 		this.jmi_copier.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.CTRL_MASK));
 		//this.jmi_coller.setEnabled(false);
 		this.jmi_coller.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, ActionEvent.CTRL_MASK));
-		
 		this.jmi_rechercher.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F, ActionEvent.CTRL_MASK));
 		this.jmi_preferences.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, ActionEvent.CTRL_MASK));
 		// Help
@@ -162,75 +165,59 @@ public class IHM extends JFrame {
 				this.jm_help.insertSeparator(1);
 				this.jm_help.add(this.jmi_aProposDe);
 	}
-	String[] nomContact;
 	public void creeInterface(ActionListener action,MouseListener mouse,ListSelectionListener listSelection) {
 		/*Disponibilité*/
 		Integer[] dataStatut = new Integer[statut.length];
 		for (int i=0;i<statut.length;i++) dataStatut[i]=i;
 		/*liste de contacts*/
 		Integer[] dataContact = new Integer[TalkTalk.friends.size()];
-		nomContact = new String[TalkTalk.friends.size()];
-		String[] imgContact = new String[TalkTalk.friends.size()];
+		lstPersonnes = new Personne[TalkTalk.friends.size()];
+		String[] imgPersonnes = new String[TalkTalk.friends.size()];
 		int i=0;
 		for (Personne suivant : TalkTalk.friends.values()){
 			dataContact[i]=i;
-			nomContact[i]=suivant.getName();
-			imgContact[i]=suivant.getImg();
+			lstPersonnes[i]=suivant;
+			imgPersonnes[i]=suivant.getImg();
 			i++;
 		}
-		
 		
 		/** Création des éléments     **/
 		this.jp_left = new JPanel(new BorderLayout());
 			this.jcb_statut = new JComboBox(dataStatut);
-			this.jlst_contact = new JList(dataContact);this.jsp_contact = new JScrollPane(this.jlst_contact);
+			this.jlst_personne = new JList(dataContact);this.jsp_personne = new JScrollPane(this.jlst_personne);
 		this.jp_center = new JPanel(new BorderLayout());
 			this.jtabp_onglet = new JTabbedPane();
-				this.jta_log = new JTextArea("Log");
-				this.jc_fenetre = new Vector<JConversation>();
+				this.jta_log = new JTextArea("\t\tFenêtre de log\n\t\t-----------------------\n");
+				//this.jc_fenetre = new Vector<JConversation>();
 		this.jp_bottom = new JPanel(new BorderLayout());
 			this.jl_pub = new JHyperTextLink("Publicité de nos partenaires !","http://code.google.com/p/talk-talk/");
 			this.jl_temp = new JLabel("    [hostname + ip + port]    "+TalkTalk.pseudo+"-"+TalkTalk.adressePerso);
 			this.jchk_fastwriting = new JCheckBox("Utiliser FastWriting");
 		this.jslip = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,this.jp_left,this.jp_center);/* JSplitPane à la fin */
 		
+		
 		/** Paramétrage des éléments  **/
 		this.jslip.setDividerLocation(size_split);
-		// Panneau de gauche
-		//this.jp_left.setPreferredSize(new Dimension(300,0));
 		// Liste de disponibilité
 		ComboBoxRenderer renderer = new ComboBoxRenderer(statut,images,TalkTalk.class);
 		renderer.setPreferredSize(new Dimension(16,16));
 		this.jcb_statut.setRenderer(renderer);
 		// Liste de contact
-		ComboBoxRenderer renderer2 = new ComboBoxRenderer(nomContact,imgContact,TalkTalk.class);
+		ComboBoxRenderer renderer2 = new ComboBoxRenderer(lstPersonnes,TalkTalk.class);
 		renderer2.setPreferredSize(new Dimension(16,16));
-		this.jlst_contact.setCellRenderer(renderer2);
+		this.jlst_personne.setCellRenderer(renderer2);
 		// Panneau d'onglets
-		/*Document d = this.jtp_conversation[1].getDocument();
-		try {
-			d.insertString(d.getLength(), "Damien: Coucou\n", null);
-			d.insertString(d.getLength(), "    MH: Hello", null);
-		} catch (BadLocationException e) {
-			e.printStackTrace();
-		}*/
 		this.jtabp_onglet.add("log",this.jta_log);
-		//this.jc_fenetre.add(new JConversation("MH",null,Resources.getImageIcon("images/tux.png",TalkTalk.class),Resources.getImageIcon("images/schtroumpfette.png",TalkTalk.class)));
-		//this.jc_fenetre.add(new JConversation("Tux",null,Resources.getImageIcon("images/tux.png",TalkTalk .class),Resources.getImageIcon("images/profil.png",TalkTalk.class)));
-		//this.jc_fenetre.add(new JConversation("Inconnu",null,Resources.getImageIcon("images/tux.png",TalkTalk .class),Resources.getImageIcon("images/profil.png",TalkTalk.class)));
-		actuTab(action);
-		
+		//actuTab(action);
 		this.jtabp_onglet.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);//scroll horizontal des onglets
-		/** Action sur les éléments   **/
-		this.jlst_contact.addMouseListener(mouse);
-		//this.jlst_contact.addListSelectionListener(listSelection);
 		
-		//this.jc_fenetre.get(0).jb_wizz.addActionListener(action);
+		/** Action sur les éléments   **/
+		this.jlst_personne.addMouseListener(mouse);
 		/** Montage des éléments      **/
-		//this.add(this.jp_left,BorderLayout.WEST);
+		//zone splitter
 			this.jp_left.add(this.jcb_statut,BorderLayout.NORTH);
-			this.jp_left.add(this.jsp_contact,BorderLayout.CENTER);
-		//this.add(this.jp_center,BorderLayout.CENTER);
+			this.jp_left.add(this.jsp_personne,BorderLayout.CENTER);
+		//zone splitter
 			this.jp_center.add(this.jtabp_onglet,BorderLayout.CENTER);
 		this.add(this.jp_bottom,BorderLayout.SOUTH);
 			this.jp_bottom.add(this.jl_pub,BorderLayout.WEST);
@@ -259,26 +246,24 @@ public class IHM extends JFrame {
 		this.setVisible(true);												// Rendre la fenêtre visible
 	}
 	
-	public void actuTab(ActionListener action) {
-		for (int i=0;i<this.jc_fenetre.size();i++) {
-			//this.jlst_contact
-			
-			//this.jc_fenetre.get(i).getIndex()
-			
-			this.jtabp_onglet.addTab(this.jc_fenetre.get(i).getName(),
-					Resources.getImageIcon("images/statut/dispo.png",TalkTalk.class),
-					this.jc_fenetre.get(i),this.jc_fenetre.get(i).getName());
-			
-			this.jc_fenetre.get(i).jb_wizz.addActionListener(action);
-		}
-	}
+	
 	
 	class ComboBoxRenderer extends JLabel implements ListCellRenderer {
-		
 		private String[] textes;
 		private String[] images;
 		ImageIcon[] img;
-		
+		public ComboBoxRenderer(Contact[] contact,Class<?> c) {
+			this.textes=new String[contact.length];
+			this.images=new String[contact.length];
+			for (int i=0;i<contact.length;i++) {
+				this.textes[i]=contact[i].getName();
+				if (contact[i].getImg()!=null) {
+					this.images[i]=contact[i].getImg();
+				} else this.images[i]="images/profil.png";//default;
+			}
+			//init
+			init(c);
+		}
 		public ComboBoxRenderer(String[] textes,String[] images,Class<?> c) {
 			// Vérification qu'il n'y pas de différence de taille entre les tableaux textes et images
 			if (textes.length>images.length) {
@@ -297,6 +282,10 @@ public class IHM extends JFrame {
 			// Enregistrement des textes et images pour le composant
 			this.textes=textes;
 			this.images=images;
+			//init
+			init(c);
+		}
+		private void init(Class<?> c) {
 			// Génération des ImageIcon a partir de l'adresse
 			this.img = new ImageIcon[textes.length];
 			for (int i=0;i<textes.length;i++) {
@@ -310,6 +299,7 @@ public class IHM extends JFrame {
 			this.setHorizontalAlignment(LEFT);
 			this.setVerticalAlignment(CENTER);
 		}
+		
 		/*
 		 * Cette méthode trouve le texte et l'image correspond à l'élément sélectionner,
 		 * et retourne le composant avec le texte et l'image.

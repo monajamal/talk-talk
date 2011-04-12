@@ -111,8 +111,10 @@ public class Event implements ActionListener, ListSelectionListener, MouseListen
 				ihm.jslip.setEnabled(ihm.jckmi_contact.isSelected()); // Activer/désactiver le spliteur
 			}
 			else if (jmi == ihm.jckmi_image) { // Afficher/masquer les images perso des contacts
-				for (int i=0;i<ihm.jc_fenetre.size();i++)
-					ihm.jc_fenetre.get(i).jp_right.setVisible(ihm.jckmi_image.isSelected());
+				for (int i=1;i<ihm.jtabp_onglet.getTabCount();i++) {
+					JConversation jc = (JConversation)ihm.jtabp_onglet.getComponentAt(i);
+					jc.jp_right.setVisible(ihm.jckmi_image.isSelected());
+				}
 			}
 			else System.out.println("inconnu");
 			
@@ -138,20 +140,27 @@ public class Event implements ActionListener, ListSelectionListener, MouseListen
 			if (arg0.getClickCount() == 2) {
 				// Cherche si un onglet est déjà ouvert
 				boolean exist=false;int select=0;
-				for (int i=0;i<ihm.jc_fenetre.size();i++) {
-					if (ihm.jc_fenetre.get(i).getName().equals(TalkTalk.friends.get(ihm.nomContact[jlst.getSelectedIndex()]).getName())) {
+				for (int i=1;i<ihm.jtabp_onglet.getTabCount();i++) {
+					JConversation jc = (JConversation)ihm.jtabp_onglet.getComponentAt(i);
+					if (jc.getName().equals(TalkTalk.friends.get(ihm.lstPersonnes[jlst.getSelectedIndex()].getName()).getName())) {
 						exist=true;
-						select=i+1;
+						select=i;
 					}
 				}
+				
 				// Si NON, ouvrir l'onglet
 				if (!exist) {
-					ihm.jc_fenetre.add(
-							new JConversation(jlst.getSelectedIndex(),TalkTalk.friends.get(ihm.nomContact[jlst.getSelectedIndex()]).getName(),null,
+					ihm.jtabp_onglet.add(
+							new JConversation(TalkTalk.friends.get(ihm.lstPersonnes[jlst.getSelectedIndex()].getName()).getName(),null,
 									Resources.getImageIcon("images/tux.png",TalkTalk .class),
-									Resources.getImageIcon("images/profil.png",TalkTalk.class)));
-					ihm.actuTab(this);
-					select=ihm.jc_fenetre.size();
+									Resources.getImageIcon("images/profil.png",TalkTalk.class)));//jlst.getSelectedIndex(),
+					
+					
+					
+					//ihm.actuTab(this); TODO
+					select=ihm.jtabp_onglet.getTabCount()-1;//ihm.jc_fenetre.size();
+					((JConversation)(ihm.jtabp_onglet.getComponentAt(select))).jb_wizz.addActionListener(this);
+					ihm.jtabp_onglet.setTabComponentAt(select,new ButtonTabComponent(ihm.jtabp_onglet));
 				}
 				
 				ihm.jtabp_onglet.setSelectedIndex(select);
