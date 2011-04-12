@@ -80,6 +80,17 @@ public class Personne extends Contact {
 	public int getStatut() {
 		return statut;
 	}
+	public String getStatutName() {
+		String res;
+		switch (this.getStatut()) {
+			case AVAILABLE : res="disponible";break;
+			case BUSY : res="occupé";break;
+			case IDLE : res="absent";break;
+			//case 4 : res="invisible";break;
+			default : res="déconnecté";
+		}
+		return res;
+	}
 	public void setImage_perso(String image_perso) {
 		this.image_perso = image_perso;
 	}

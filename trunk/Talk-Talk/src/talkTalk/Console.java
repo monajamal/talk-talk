@@ -20,9 +20,24 @@ public class Console implements Affichage {
 		System.out.print(res);
 	}
 	@Override
+	public void afficherMessageRecuGrp(Groupe groupe, Personne expediteur,String message) {
+		String res=afficherMessageRecuGrp;
+		res=res.replace("%expediteur",expediteur.getPseudo());
+		res=res.replace("%message",message);
+		res=res.replace("%groupe",groupe.getName());
+		System.out.print(res);
+	}
+	@Override
 	public void afficherWizzRecu(Personne expediteur) {
 		String res=afficherWizzRecu;
 		res=res.replace("%expediteur",expediteur.getPseudo());
+		System.out.print(res);
+	}
+	@Override
+	public void afficherWizzRecuGrp(Groupe grp, Personne expediteur) {
+		String res=afficherWizzRecuGrp;
+		res=res.replace("%expediteur",expediteur.getPseudo());
+		res=res.replace("%groupe",grp.getName());
 		System.out.print(res);
 	}
 	@Override
@@ -58,6 +73,20 @@ public class Console implements Affichage {
 		String res=afficherDestinataireInconnu;
 		res=res.replace("%destinataire",destinataire);
 		System.out.println(res);
+	}
+	@Override
+	public void changerStatut(Personne personne) {
+		String res=changerStatut;
+		res=res.replace("%pseudo",personne.getPseudo());
+		res=res.replace("%statut",personne.getStatutName());
+		System.out.print(res);
+	}
+	@Override
+	public void afficherFichierRecu(Personne personne, String fichier) {
+		String res=afficherFichierRecu;
+		res=res.replace("%personne",personne.getPseudo());
+		res=res.replace("%fichier",fichier);
+		System.out.print(res);
 	}
 	@Override
 	public void start() {
@@ -122,10 +151,6 @@ public class Console implements Affichage {
 		String res=stop;
 		System.out.print(res);
 	}
-	@Override
-	public void changerStatut(Personne p) {
-		System.out.println(p.getPseudo()+" est maintenant "+p.getStatut()+".");
-	}
 	public static String print(Map<String,Personne> friends) {
 		String res="{ ";
 		int i=0;
@@ -137,26 +162,5 @@ public class Console implements Affichage {
 		}
 		res+=" }";
 		return res;
-	}
-	@Override
-	public void afficherMessageRecuGrp(Groupe grp, Personne expediteur,
-			String message) {
-		String res=afficherMessageRecuGrp;
-		res=res.replace("%expediteur",expediteur.getPseudo());
-		res=res.replace("%message",message);
-		res=res.replace("%groupe",grp.getName());
-		System.out.print(res);
-	}
-	@Override
-	public void afficherWizzRecuGrp(Groupe grp, Personne expediteur) {
-		String res=afficherWizzRecuGrp;
-		res=res.replace("%expediteur",expediteur.getPseudo());
-		res=res.replace("%groupe",grp.getName());
-		System.out.print(res);
-	}
-	@Override
-	public void afficherFichierRecu(Personne p, String fichier) {
-		System.out.println("Fichier "+fichier +" recu de "+p.getName());
-		
 	}
 }

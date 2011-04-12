@@ -1,6 +1,7 @@
 package ihm;
 
 import java.util.Map;
+import java.util.Set;
 
 import javax.swing.text.BadLocationException;
 
@@ -21,8 +22,21 @@ public class Affich implements Affichage {
 		res=res.replace("%expediteur",expediteur.getPseudo());
 		res=res.replace("%message",message);
 		addLog(res);
-		for (int i=0;i<ihm.jc_fenetre.size();i++) {
-			if (expediteur.getPseudo().equals(ihm.jc_fenetre.get(i).getName())) {
+		for (int i=1;i<ihm.jtabp_onglet.getTabCount();i++) {
+			if (expediteur.getPseudo().equals(((JConversation)(ihm.jtabp_onglet.getComponentAt(i))).getName())) {
+				addLog(res,i);
+			}
+		}
+	}
+	@Override
+	public void afficherMessageRecuGrp(Groupe groupe, Personne expediteur,String message) {
+		String res=afficherMessageRecuGrp;
+		res=res.replace("%expediteur",expediteur.getPseudo());
+		res=res.replace("%message",message);
+		res=res.replace("%groupe",groupe.getName());
+		addLog(res);
+		for (int i=1;i<ihm.jtabp_onglet.getTabCount();i++) {
+			if (expediteur.getPseudo().equals(((JConversation)(ihm.jtabp_onglet.getComponentAt(i))).getName())) {
 				addLog(res,i);
 			}
 		}
@@ -32,8 +46,20 @@ public class Affich implements Affichage {
 		String res=afficherWizzRecu;
 		res=res.replace("%expediteur",expediteur.getPseudo());
 		addLog(res);
-		for (int i=0;i<ihm.jc_fenetre.size();i++) {
-			if (expediteur.getPseudo().equals(ihm.jc_fenetre.get(i).getName())) {
+		for (int i=1;i<ihm.jtabp_onglet.getTabCount();i++) {
+			if (expediteur.getPseudo().equals(((JConversation)(ihm.jtabp_onglet.getComponentAt(i))).getName())) {
+				addLog(res,i);
+			}
+		}
+	}
+	@Override
+	public void afficherWizzRecuGrp(Groupe groupe, Personne expediteur) {
+		String res=afficherWizzRecuGrp;
+		res=res.replace("%expediteur",expediteur.getPseudo());
+		res=res.replace("%groupe",groupe.getName());
+		addLog(res);
+		for (int i=1;i<ihm.jtabp_onglet.getTabCount();i++) {
+			if (expediteur.getPseudo().equals(((JConversation)(ihm.jtabp_onglet.getComponentAt(i))).getName())) {
 				addLog(res,i);
 			}
 		}
@@ -44,8 +70,8 @@ public class Affich implements Affichage {
 		res=res.replace("%destinataire",destinataire.getPseudo());
 		res=res.replace("%message",message);
 		addLog(res);
-		for (int i=0;i<ihm.jc_fenetre.size();i++) {
-			if (destinataire.getPseudo().equals(ihm.jc_fenetre.get(i).getName())) {
+		for (int i=1;i<ihm.jtabp_onglet.getTabCount();i++) {
+			if (destinataire.getPseudo().equals(((JConversation)(ihm.jtabp_onglet.getComponentAt(i))).getName())) {
 				addLog(res,i);
 			}
 		}
@@ -55,8 +81,8 @@ public class Affich implements Affichage {
 		String res=afficherWizzEnvoye;
 		res=res.replace("%destinataire",destinataire.getPseudo());
 		addLog(res);
-		for (int i=0;i<ihm.jc_fenetre.size();i++) {
-			if (destinataire.getPseudo().equals(ihm.jc_fenetre.get(i).getName())) {
+		for (int i=1;i<ihm.jtabp_onglet.getTabCount();i++) {
+			if (destinataire.getPseudo().equals(((JConversation)(ihm.jtabp_onglet.getComponentAt(i))).getName())) {
 				addLog(res,i);
 			}
 		}
@@ -71,8 +97,8 @@ public class Affich implements Affichage {
 			res=res.replace("%message","wizz");
 		}
 		addLog(res);
-		for (int i=0;i<ihm.jc_fenetre.size();i++) {
-			if (destinataire.equals(ihm.jc_fenetre.get(i).getName())) {
+		for (int i=1;i<ihm.jtabp_onglet.getTabCount();i++) {
+			if (destinataire.equals(((JConversation)(ihm.jtabp_onglet.getComponentAt(i))).getName())) {
 				addLog(res,i);
 			}
 		}
@@ -82,8 +108,32 @@ public class Affich implements Affichage {
 		String res=afficherDestinataireInconnu;
 		res=res.replace("%destinataire",destinataire);
 		addLog(res);
-		for (int i=0;i<ihm.jc_fenetre.size();i++) {
-			if (destinataire.equals(ihm.jc_fenetre.get(i).getName())) {
+		for (int i=1;i<ihm.jtabp_onglet.getTabCount();i++) {
+			if (destinataire.equals(((JConversation)(ihm.jtabp_onglet.getComponentAt(i))).getName())) {
+				addLog(res,i);
+			}
+		}
+	}
+	@Override
+	public void changerStatut(Personne personne) {
+		String res=changerStatut;
+		res=res.replace("%pseudo",personne.getPseudo());
+		res=res.replace("%statut",personne.getStatutName());
+		addLog(res);
+		for (int i=1;i<ihm.jtabp_onglet.getTabCount();i++) {
+			if (personne.getPseudo().equals(((JConversation)(ihm.jtabp_onglet.getComponentAt(i))).getName())) {
+				addLog(res,i);
+			}
+		}
+	}
+	@Override
+	public void afficherFichierRecu(Personne personne, String fichier) {
+		String res=afficherFichierRecu;
+		res=res.replace("%personne",personne.getPseudo());
+		res=res.replace("%fichier",fichier);
+		addLog(res);
+		for (int i=1;i<ihm.jtabp_onglet.getTabCount();i++) {
+			if (personne.getPseudo().equals(((JConversation)(ihm.jtabp_onglet.getComponentAt(i))).getName())) {
 				addLog(res,i);
 			}
 		}
@@ -96,17 +146,6 @@ public class Affich implements Affichage {
 	@Override
 	public void stop() {
 		addLog(stop);
-	}
-	public static String print(Map<String,Personne> friends) {
-		String res="{ ";
-		int i=0;
-		for (String pseudo : friends.keySet()) {
-			if (i!=0) res+=", ";
-			res += pseudo;
-			i++;
-		}
-		res+=" }";
-		return res;
 	}
 	/**
 	 * Écris dans la console de log de l'interface graphique
@@ -126,32 +165,24 @@ public class Affich implements Affichage {
 	 * @param index : index de la fenêtre de conversation
 	 */
 	public void addLog(String log,int index) {
-		int atEnd = ihm.jc_fenetre.get(index).jtp_conversation.getDocument().getLength();
+		int atEnd = ((JConversation)(ihm.jtabp_onglet.getComponentAt(index))).jtp_conversation.getDocument().getLength();
 		try {
-			ihm.jc_fenetre.get(index).jtp_conversation.getDocument().insertString(atEnd,log,null);
+			((JConversation)(ihm.jtabp_onglet.getComponentAt(index))).jtp_conversation.getDocument().insertString(atEnd,log,null);
 		} catch (BadLocationException e) {
 			e.printStackTrace();
 		}
 	}
-	@Override
-	public void changerStatut(Personne p) {
-		// TODO Auto-generated method stub
-		
+	
+	public static String print(Map<String,Personne> friends) {
+		String res="{ ";
+		int i=0;
+		Set<String> set = friends.keySet();
+		for (String pseudo : set) {
+			if (i!=0) res+=", ";
+			res += pseudo;
+			i++;
+		}
+		res+=" }";
+		return res;
 	}
-	@Override
-	public void afficherMessageRecuGrp(Groupe grp, Personne expediteur,
-			String message) {
-		// TODO Auto-generated method stub
-		
-	}
-	@Override
-	public void afficherWizzRecuGrp(Groupe grp, Personne expediteur) {
-		// TODO Auto-generated method stub
-		
-	}
-	@Override
-	public void afficherFichierRecu(Personne p, String fichier) {
-		// TODO Auto-generated method stub
-		
-	}	
 }

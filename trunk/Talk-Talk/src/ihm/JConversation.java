@@ -54,13 +54,12 @@ public class JConversation extends JPanel {
 			protected JCheckButton jchkb_gras;
 			protected JCheckButton jchkb_italique;
 			protected JCheckButton jchkb_souligne;
-			protected JButton jb_police;
 			protected JButton jb_couleur;
 			protected JSmiley[] js_smiley;
 			protected JCoolButton jb_send;
 	
 	// Nom de la personne ou du groupe, ??, Image perso, image de l'ami
-	public JConversation(int index,String name,Document doc,Icon icon_perso,Icon icon_ami) {
+	public JConversation(String name,Document doc,Icon icon_perso,Icon icon_ami) {
 		this.setName(name);
 		this.setDoc(doc);
 		this.setIcon_perso(icon_perso);
@@ -119,7 +118,6 @@ public class JConversation extends JPanel {
 				this.jchkb_gras = new JCheckButton(null,Resources.getImageIcon("images/cmd/cmd_1.png",TalkTalk.class));
 				this.jchkb_italique = new JCheckButton(null,Resources.getImageIcon("images/cmd/cmd_2.png",TalkTalk.class));
 				this.jchkb_souligne = new JCheckButton(null,Resources.getImageIcon("images/cmd/cmd_3.png",TalkTalk.class));
-				this.jb_police = new JButton(Resources.getImageIcon("images/cmd/cmd_4.png",TalkTalk.class));
 				this.jb_couleur = new JButton(Resources.getImageIcon("images/cmd/cmd_5.png",TalkTalk.class));
 				this.jb_wizz = new JButton("wizz");
 				this.js_smiley = new JSmiley[smile.length];
@@ -141,7 +139,6 @@ public class JConversation extends JPanel {
 		this.jchkb_gras.addActionListener(action);
 		this.jchkb_italique.addActionListener(action);
 		this.jchkb_souligne.addActionListener(action);
-		this.jb_police.addActionListener(action);
 		this.jb_couleur.addActionListener(action);
 		for (int i=0;i<this.js_smiley.length;i++) this.js_smiley[i].addActionListener(action);
 		this.jb_send.addActionListener(action);
@@ -159,7 +156,6 @@ public class JConversation extends JPanel {
 				this.jp_cmd.add(this.jchkb_gras);
 				this.jp_cmd.add(this.jchkb_italique);
 				this.jp_cmd.add(this.jchkb_souligne);
-				this.jp_cmd.add(this.jb_police);
 				this.jp_cmd.add(this.jb_couleur);
 				for (int i=0;i<this.js_smiley.length;i++) this.jp_cmd.add(this.js_smiley[i]);
 				this.jp_cmd.add(this.jb_send);
@@ -266,7 +262,6 @@ class Event_JConversation implements ActionListener, KeyListener {
 				
 				Style defaut = jc.jtp_ecrire.getStyle("default");
 				Style style1 = jc.jtp_ecrire.addStyle("style1", defaut);
-				StyleConstants.setFontFamily(style1, "Comic sans MS");
 				StyleConstants.setBold(style1, true);
 				/*Style style2 = jc.jtp_ecrire.addStyle("style2", style1);
 				StyleConstants.setForeground(style2, Color.RED);
@@ -274,7 +269,7 @@ class Event_JConversation implements ActionListener, KeyListener {
 				
 				
 				try {
-					jc.jtp_conversation.getDocument().insertString(atEnd,"Damien : ",style1);
+					jc.jtp_conversation.getDocument().insertString(atEnd,TalkTalk.pseudo+" : ",style1);
 					jc.jtp_conversation.getDocument().insertString(atEnd,message+"\n",defaut);
 				} catch (BadLocationException e) {
 					e.printStackTrace();
@@ -287,16 +282,6 @@ class Event_JConversation implements ActionListener, KeyListener {
 					e.printStackTrace();
 				}*/
 				jc.jtp_ecrire.setText("");
-			} else if (jb==jc.jb_police) {
-				GraphicsEnvironment environment = GraphicsEnvironment.getLocalGraphicsEnvironment();
-				/** Liste de toutes les polices : */
-				@SuppressWarnings("unused")
-				Font[] polices = environment.getAllFonts();
-				/** Liste des noms de toutes les polices : */
-				String[] nomPolices = environment.getAvailableFontFamilyNames();
-				for (int i=0;i<nomPolices.length;i++) {
-					System.out.println(nomPolices[i]);
-				}
 			} else if (jb==jc.jb_couleur) {
 				Color newColor = JColorChooser.showDialog(jc,"Choose Background Color",jc.getCouleur());
 				if (newColor != null) {
