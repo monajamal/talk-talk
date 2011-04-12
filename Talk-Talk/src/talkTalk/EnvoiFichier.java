@@ -22,16 +22,30 @@ public class EnvoiFichier extends Thread {
 	private String fichier;
 	private byte[] data;
 	private File f;
+	private boolean image;
 	
 	/**
 	 * Création d'un thread d'envoi avec la classe Personne
 	 * @param dest le destinataire
-	 * @param msg le message
+	 * @param fichier le nom du fichier a envoyer
 	 */
 	public EnvoiFichier(Personne dest, String fichier) {
 		super();
 		this.destinataire = dest;
 		this.fichier = fichier;
+		this.image = false;
+	}
+	/**
+	 * Création d'un thread d'envoi avec la classe Personne
+	 * @param p
+	 * @param img le nom de la nouvelle image perso
+	 * @param b si true envoie de l'image perso
+	 */
+	public EnvoiFichier(Personne dest, String img, boolean b) {
+		super();
+		this.destinataire = dest;
+		this.fichier = img;
+		this.image = b;
 	}
 
 	/**
@@ -96,8 +110,11 @@ public class EnvoiFichier extends Thread {
 			if (d == null ) {//On a pas encore cherché l'interface distante
 				d = (Distant)Naming.lookup("rmi://"+addr+"/TalkTalk");
 			}
-		
-			d.sendFichier(TalkTalk.pseudo,TalkTalk.adressePerso,f.getName(),data);
+			if (image ){
+				d.setImagePerso(TalkTalk.pseudo, data);
+			} else {
+				d.sendFichier(TalkTalk.pseudo,TalkTalk.adressePerso,f.getName(),data);
+			}
 		
 		} catch (MalformedURLException e) {
 			destinataire.setDistant(null); //On enlève l'interface distante, c'est pas la bonne

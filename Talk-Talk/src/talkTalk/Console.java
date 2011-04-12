@@ -89,6 +89,11 @@ public class Console implements Affichage {
 		System.out.print(res);
 	}
 	@Override
+	public void changerImage(Personne p) {
+		// Rien a faire
+		
+	}
+	@Override
 	public void start() {
 		System.out.println(start);
 		System.out.println("Mes amis sont "+print(TalkTalk.friends));
