@@ -18,14 +18,10 @@ import javax.swing.FocusManager;
 import javax.swing.JButton;
 import javax.swing.JList;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.JTextComponent;
-
-import commun.Contact;
-import commun.Personne;
 
 import talkTalk.TalkTalk;
 import utils.Resources;
@@ -144,31 +140,26 @@ public class Event implements ActionListener, ListSelectionListener, MouseListen
 				// Cherche si un onglet est déjà ouvert
 				boolean exist=false;int select=0;
 				for (int i=1;i<ihm.jtabp_onglet.getTabCount();i++) {
-					JConversation jc = (JConversation)ihm.jtabp_onglet.getComponentAt(i);
-					if (jc.getName().equals(ihm.lstContactAmis[jlst.getSelectedIndex()].getName())) {
+					if (ihm.jtabp_onglet.getTitleAt(i).equals(ihm.lstContactAmis[jlst.getSelectedIndex()].getName())) {
 						exist=true;
 						select=i;
 					}
 				}
-				
 				// Si NON, ouvrir l'onglet
 				if (!exist) {
-					ihm.jtabp_onglet.addTab(ihm.lstContactAmis[jlst.getSelectedIndex()].getName(),
-							Resources.getImageIcon(ihm.lstContactAmis[jlst.getSelectedIndex()].getImg(),TalkTalk.class),
-							new JConversation(ihm.lstContactAmis[jlst.getSelectedIndex()]));
-					/*ihm.jtabp_onglet.add(
-							new JConversation(TalkTalk.friends.get(ihm.lstTabPersonnes[jlst.getSelectedIndex()].getName()).getName(),null,
-									Resources.getImageIcon("images/tux.png",TalkTalk .class),
-									Resources.getImageIcon("images/profil.png",TalkTalk.class)));//jlst.getSelectedIndex(),
-					*/
+					JConversation jc = new JConversation(ihm.lstContactAmis[jlst.getSelectedIndex()]);
+					ButtonTabComponent btc = new ButtonTabComponent(Resources.getImageIcon(ihm.lstContactAmis[jlst.getSelectedIndex()].getImg(),TalkTalk.class),ihm.jtabp_onglet);
 					
-					
-					//ihm.actuTab(this); TODO
-					select=ihm.jtabp_onglet.getTabCount()-1;//ihm.jc_fenetre.size();
-					((JConversation)(ihm.jtabp_onglet.getComponentAt(select))).jb_wizz.addActionListener(this);
-					ihm.jtabp_onglet.setTabComponentAt(select,new ButtonTabComponent(ihm.jtabp_onglet));
+					// Ajout d'un onglet
+					ihm.jtabp_onglet.addTab(ihm.lstContactAmis[jlst.getSelectedIndex()].getName(),null,jc);
+					// indice de l'onglet a selectionner
+					select=ihm.jtabp_onglet.getTabCount()-1;
+					// action wizz
+					jc.jb_wizz.addActionListener(this);
+					// Image onglet + croix pour fermer
+					ihm.jtabp_onglet.setTabComponentAt(select,btc);
 				}
-				
+				// selectionne l'onglet
 				ihm.jtabp_onglet.setSelectedIndex(select);
 			}
 		}
