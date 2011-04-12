@@ -24,9 +24,13 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.JTextComponent;
 
+import commun.Contact;
+import commun.Personne;
+
 import talkTalk.TalkTalk;
 import utils.Resources;
 import utils.Sound;
+import utils.Wizz;
 
 public class Event implements ActionListener, ListSelectionListener, MouseListener {//TODO : extends MouseAdapter plutot que implements MouseListener ??
 	IHM ihm;
@@ -96,8 +100,6 @@ public class Event implements ActionListener, ListSelectionListener, MouseListen
 					}
 				}
 				
-				
-				
 			}
 			else if (jmi == ihm.jmi_rechercher) {
 				System.out.println("rechercher");
@@ -124,7 +126,7 @@ public class Event implements ActionListener, ListSelectionListener, MouseListen
 			if (jb.getText().contains("wizz")) {
 				new Thread() {
 					public void run() {
-						Sound player = new Sound("src/ihm/son/wizz.wav");
+						Sound player = new Sound(Resources.getFile("son/wizz.wav", TalkTalk.class));
 						InputStream stream = new ByteArrayInputStream(player.getSamples());
 						player.play(stream);
 					}
@@ -151,7 +153,9 @@ public class Event implements ActionListener, ListSelectionListener, MouseListen
 				
 				// Si NON, ouvrir l'onglet
 				if (!exist) {
-					ihm.jtabp_onglet.add(new JConversation(ihm.lstContactAmis[jlst.getSelectedIndex()]));
+					ihm.jtabp_onglet.addTab(ihm.lstContactAmis[jlst.getSelectedIndex()].getName(),
+							Resources.getImageIcon(ihm.lstContactAmis[jlst.getSelectedIndex()].getImg(),TalkTalk.class),
+							new JConversation(ihm.lstContactAmis[jlst.getSelectedIndex()]));
 					/*ihm.jtabp_onglet.add(
 							new JConversation(TalkTalk.friends.get(ihm.lstTabPersonnes[jlst.getSelectedIndex()].getName()).getName(),null,
 									Resources.getImageIcon("images/tux.png",TalkTalk .class),
