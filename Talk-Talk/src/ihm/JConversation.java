@@ -9,7 +9,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
-import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JColorChooser;
@@ -19,7 +18,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 import javax.swing.SwingConstants;
 import javax.swing.text.BadLocationException;
-import javax.swing.text.Document;
 import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
 
@@ -33,19 +31,13 @@ import commun.Personne;
 @SuppressWarnings("serial")
 public class JConversation extends JPanel {
 	
-	private Personne f;
-	private Groupe p;
-	
-	private int index;
-	private String name;
-	private Document doc;
-	private Icon icon_ami;
+	Contact ami;
 	private Color couleur;
 	
 	protected JTextPane jtp_conversation;protected JScrollPane jsp_conversation;
 	protected JPanel jp_right;
 		protected JLabel jl_image_ami;
-		protected JLabel jl_temp;
+		protected JLabel jl_infos;
 		protected JLabel jl_image_perso;
 	protected JPanel jp_write;
 		protected JTextPane jtp_ecrire;protected JScrollPane jsp_ecrire;
@@ -58,51 +50,18 @@ public class JConversation extends JPanel {
 			protected JSmiley[] js_smiley;
 			protected JCoolButton jb_send;
 	
-	
 	public JConversation(Contact c) {
-		//TalkTalk.image
-		this(c.getName(),null,
-				
-				Resources.getImageIcon("images/profil.png",TalkTalk.class));
-	}
-	// Nom de la personne ou du groupe, ??, Image perso, image de l'ami
-	public JConversation(String name,Document doc,Icon icon_ami) {
-		this.setName(name);
-		this.setDoc(doc);
-		this.setIcon_ami(icon_ami);
+		this.setContact(c);
 		this.setCouleur(Color.BLACK);
 		/** Évènement **/
 		ActionListener action = new Event_JConversation(this);
 		KeyListener key = new Event_JConversation(this);
-		//MouseListener mouse = new Event_JEtoile(this);
 		/** Barre de Menu **/
 		creeBarreDeMenu();
 		/** Interface **/
 		creeInterface(action,key);
 		/** Zone de notification **/
 		menuContextuel();
-		
-		/*
-		Style defaut = this.jtp_ecrire.getStyle("default");
-		Style style1 = this.jtp_ecrire.addStyle("style1", defaut);
-		StyleConstants.setFontFamily(style1, "Comic sans MS");
-		Style style2 = this.jtp_ecrire.addStyle("style2", style1);
-		StyleConstants.setForeground(style2, Color.RED);
-		StyleConstants.setFontSize(style2, 25);
-		*/
-		
-		//DefaultStyledDocument doc = (DefaultStyledDocument) monComposantTexte.getDocument ();
-		//doc.insertString (offset, "texte à ajouter", /** [un style d'écriture] */);
-		
-		/*HTMLDocument html = new HTMLDocument();
-		//html.ge
-		try {
-			System.out.println(html.getText(0, html.getLength()));
-		} catch (BadLocationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}*/
-		//html.getDefaultRootElement().
 	}
 	public void creeBarreDeMenu() {
 		/** Création des éléments     **/
@@ -115,11 +74,31 @@ public class JConversation extends JPanel {
 		ImageIcon ii;
 		if (TalkTalk.image.equals("null")) ii = Resources.getImageIcon("images/profil.png", TalkTalk.class);
 		else ii = new ImageIcon(TalkTalk.image);
+		String infos;
+		if (ami.getType()==Contact.PERSONNE) {
+			Personne p=  (Personne)ami;
+			infos="<html>";
+			infos+="<p>Alias : "+p.getAlias()+"</p>";
+			infos+="<p>Pseudo : "+p.getName()+"</p>";
+			infos+="<p>IP : "+p.getAddress().getAddr()+"</p>";
+			infos+="<p>Port : "+p.getAddress().getPort()+"</p>";
+			infos+="</html>";
+		} else {
+			Groupe g = (Groupe)ami;
+			infos="<html>";
+			infos+="<p>Nom : "+ami.getName()+"</p>";
+			infos+="<p>Membres :<br/>";
+			for (Personne p : g.getMembres()) {
+				infos+=p.getName()+"<br/>";
+			}
+			infos+="</p>";
+			infos+="</html>";
+		}
 		/** Création des éléments     **/
 		this.jtp_conversation = new JTextPane();this.jsp_conversation = new JScrollPane(this.jtp_conversation);
 		this.jp_right = new JPanel(new BorderLayout());
-			this.jl_image_ami = new JLabel(this.icon_ami,SwingConstants.CENTER);
-			this.jl_temp = new JLabel("<html><p>Alias : "+name+"</p><p>Pseudo : ?</p><p>IP : ?</p><p>Port : ?</p></html>");
+			this.jl_image_ami = new JLabel(Resources.getImageIcon("images/profil.png",TalkTalk.class),SwingConstants.CENTER);
+			this.jl_infos = new JLabel(infos);
 			this.jl_image_perso = new JLabel(ii,SwingConstants.CENTER);
 		this.jp_write = new JPanel(new BorderLayout());
 			this.jtp_ecrire = new JTextPane();this.jsp_ecrire = new JScrollPane(this.jtp_ecrire);
@@ -156,7 +135,7 @@ public class JConversation extends JPanel {
 		this.add(this.jsp_conversation,BorderLayout.CENTER);
 		this.add(this.jp_right,BorderLayout.EAST);
 			this.jp_right.add(this.jl_image_ami,BorderLayout.NORTH);
-			this.jp_right.add(this.jl_temp,BorderLayout.CENTER);
+			this.jp_right.add(this.jl_infos,BorderLayout.CENTER);
 			this.jp_right.add(this.jl_image_perso,BorderLayout.SOUTH);
 		this.add(this.jp_write,BorderLayout.SOUTH);
 			this.jp_write.add(this.jsp_ecrire,BorderLayout.CENTER);
@@ -175,29 +154,11 @@ public class JConversation extends JPanel {
 		/** Action sur les éléments   **/
 		/** Montage des éléments      **/
 	}
-	public void setIndex(int index) {
-		this.index = index;
+	public void setContact(Contact c) {
+		this.ami = c;
 	}
-	public int getIndex() {
-		return index;
-	}
-	public void setName(String name) {
-		this.name = name;
-	}
-	public String getName() {
-		return name;
-	}
-	public void setDoc(Document doc) {
-		this.doc = doc;
-	}
-	public Document getDoc() {
-		return doc;
-	}
-	public void setIcon_ami(Icon icon_ami) {
-		this.icon_ami = icon_ami;
-	}
-	public Icon getIcon_ami() {
-		return icon_ami;
+	public Contact getContact() {
+		return ami;
 	}
 	public void setCouleur(Color couleur) {
 		this.couleur = couleur;

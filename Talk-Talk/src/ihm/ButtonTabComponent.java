@@ -15,16 +15,18 @@ import java.awt.event.MouseListener;
 
 import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.plaf.basic.BasicButtonUI;
 
+@SuppressWarnings("serial")
 public class ButtonTabComponent extends JPanel {
 	private final JTabbedPane pane;
 
-	public ButtonTabComponent(final JTabbedPane pane) {
+	public ButtonTabComponent(ImageIcon ii,final JTabbedPane pane) {
 		//unset default FlowLayout' gaps
 		super(new FlowLayout(FlowLayout.LEFT, 0, 0));
 		if (pane == null) {
@@ -47,6 +49,7 @@ public class ButtonTabComponent extends JPanel {
 		add(label);
 		//add more space between the label and the button
 		label.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 5));
+		label.setIcon(ii);
 		//tab button
 		JButton button = new TabButton();
 		add(button);
