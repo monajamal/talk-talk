@@ -145,19 +145,27 @@ public class Affich implements Affichage {
 		res=res.replace("%fichier",fichier);
 		addLog(res);
 		for (int i=1;i<ihm.jtabp_onglet.getTabCount();i++) {
-			if (personne.getPseudo().equals(((JConversation)(ihm.jtabp_onglet.getComponentAt(i))).getName())) {
+			if (personne.getPseudo().equals(ihm.jtabp_onglet.getTitleAt(i))) {
 				addLog(res,i);
 			}
 		}
 	}
 	@Override
 	public void changerImage(Personne p) {
-		addLog(p.getName()+" change d'image perso");
+		String res=changerImage;
+		res=res.replace("%personne",p.getPseudo());
+		addLog(res);
+		for (int i=1;i<ihm.jtabp_onglet.getTabCount();i++) {
+			if (p.getPseudo().equals(ihm.jtabp_onglet.getTitleAt(i))) {
+				addLog(res,i);
+			}
+		}
 	}	
 	@Override
 	public void start() {
 		addLog(start);
 		addLog("Mes amis sont "+print(TalkTalk.friends));
+		addLog("-----------------------------------------------");
 	}
 	@Override
 	public void stop() {
@@ -201,7 +209,4 @@ public class Affich implements Affichage {
 		res+=" }";
 		return res;
 	}
-
-	
-
 }

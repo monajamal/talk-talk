@@ -16,6 +16,7 @@ import java.io.InputStream;
 
 import javax.swing.FocusManager;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JList;
 import javax.swing.JMenuItem;
 import javax.swing.event.ListSelectionEvent;
@@ -43,14 +44,8 @@ public class Event implements ActionListener, ListSelectionListener, MouseListen
 			if (jmi == ihm.jmi_quitter) {
 				TalkTalk.exit();
 			} else if (jmi == ihm.jmi_couper || jmi == ihm.jmi_copier || jmi == ihm.jmi_coller) {
-				//FIXME !!
-				System.out.println("Action !!");
 				Component c = FocusManager.getCurrentKeyboardFocusManager().getFocusOwner();
-				
-				System.out.println(c.toString());
-				
 				if (c instanceof JTextComponent) {
-					
 					JTextComponent jtc = (JTextComponent)c;
 					int start = jtc.getSelectionStart();
 					int end = jtc.getSelectionEnd();
@@ -62,15 +57,10 @@ public class Event implements ActionListener, ListSelectionListener, MouseListen
 						if (jmi == ihm.jmi_copier) {
 							StringSelection ss = new StringSelection(mot);
 							Toolkit.getDefaultToolkit().getSystemClipboard().setContents(ss,null);
-							
-							System.out.println("Copier : "+mot);
-							
 						} else if (jmi == ihm.jmi_couper) {
 							StringSelection ss = new StringSelection(mot);
 							Toolkit.getDefaultToolkit().getSystemClipboard().setContents(ss,null);
 							jtc.getDocument().remove(start, end-(start));
-							
-							System.out.println("Couper : "+mot);
 						} else if (jmi == ihm.jmi_coller) {
 							/** Lecture du contenu : */
 							Transferable t = Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
@@ -82,9 +72,6 @@ public class Event implements ActionListener, ListSelectionListener, MouseListen
 								end=jtc.getSelectionEnd();
 								jtc.getDocument().remove(start, end-start);
 								jtc.getDocument().insertString(jtc.getCaretPosition(),mot,null);
-								
-								
-								System.out.println("Coller : "+mot);
 							}
 						}
 					} catch (BadLocationException e) {
@@ -95,7 +82,6 @@ public class Event implements ActionListener, ListSelectionListener, MouseListen
 						e.printStackTrace();
 					}
 				}
-				
 			}
 			else if (jmi == ihm.jmi_rechercher) {
 				System.out.println("rechercher");
@@ -129,6 +115,10 @@ public class Event implements ActionListener, ListSelectionListener, MouseListen
 				}.start();
 				Wizz.creerWizz(ihm,40,3);
 			}
+		} else if (obj instanceof JComboBox) {
+			JComboBox jcb = (JComboBox)obj;
+			TalkTalk.setStatut(jcb.getSelectedIndex());
+			
 		}
 	}
 	@Override
@@ -161,6 +151,7 @@ public class Event implements ActionListener, ListSelectionListener, MouseListen
 				}
 				// selectionne l'onglet
 				ihm.jtabp_onglet.setSelectedIndex(select);
+				((JConversation)ihm.jtabp_onglet.getComponentAt(select)).jtp_ecrire.requestFocusInWindow();
 			}
 		}
 	}

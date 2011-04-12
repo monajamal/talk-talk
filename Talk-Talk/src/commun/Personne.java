@@ -12,6 +12,7 @@ public class Personne extends Contact {
 	public static final int BUSY = 2;
 	public static final int IDLE = 3;
 	public static final int OFFLINE = 4;
+	public static final int BLOQUE = 5;
 	
 	private String pseudo;
 	private String alias;
@@ -51,6 +52,7 @@ public class Personne extends Contact {
 			case AVAILABLE : res+="dispo.png";break;
 			case BUSY : res+="occupe.png";break;
 			case IDLE : res+="absent.png";break;
+			case BLOQUE : res+="bloque.png";break;
 			default : res+="offline.png";
 		}
 		return res;
@@ -84,6 +86,7 @@ public class Personne extends Contact {
 			case AVAILABLE : res="disponible";break;
 			case BUSY : res="occupé";break;
 			case IDLE : res="absent";break;
+			case BLOQUE : res="bloque";break;
 			default : res="déconnecté";
 		}
 		return res;
