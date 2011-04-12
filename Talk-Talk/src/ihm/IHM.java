@@ -1,14 +1,12 @@
 package ihm;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseListener;
 
-import javax.swing.ImageIcon;
 import javax.swing.JCheckBox;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComboBox;
@@ -24,7 +22,6 @@ import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.KeyStroke;
-import javax.swing.ListCellRenderer;
 import javax.swing.event.ListSelectionListener;
 
 import talkTalk.TalkTalk;
@@ -57,21 +54,22 @@ public class IHM extends JFrame {
 	
 	protected JPanel jp_left;
 		protected JComboBox jcb_statut;
-		protected JList jlst_personne;protected JScrollPane jsp_personne;
-		protected JList jlst_groupe;protected JScrollPane jsp_groupe;
+		protected JList jlst_contacts;protected JScrollPane jsp_contacts;
+		//protected JList jlst_personne;protected JScrollPane jsp_personne;
+		//protected JList jlst_groupe;protected JScrollPane jsp_groupe;
 	protected JSplitPane jslip;
 	protected JPanel jp_center;
 		protected JTabbedPane jtabp_onglet;
 			protected JTextArea jta_log;
-			//protected Vector<JConversation> jc_fenetre;
 	protected JPanel jp_bottom;
 		protected JHyperTextLink jl_pub;
 		protected JLabel jl_temp;
 		protected JCheckBox jchk_fastwriting;
 	
 	int size_split=200;
-	Personne[] lstPersonnes;	// Pour afficher la liste des contacts
-	Groupe[] lstGroupes;		//Pour afficher la liste des groupes
+	//Personne[] lstTabPersonnes;	// Pour afficher la liste des contacts
+	//Groupe[] lstTabGroupes;		//Pour afficher la liste des groupes
+	Contact[] lstContactAmis;	//Pour afficher la liste des contacts
 	
 	protected String[] statut = {"Disponible","Absent","Occupé","Se déconnecter"};
 	protected String[] images = {"images/statut/dispo.png","images/statut/absent.png","images/statut/occupe.png","images/statut/offline.png"};
@@ -170,31 +168,62 @@ public class IHM extends JFrame {
 		Integer[] dataStatut = new Integer[statut.length];
 		for (int i=0;i<statut.length;i++) dataStatut[i]=i;
 		/*liste de contacts*/
-		Integer[] dataContact = new Integer[TalkTalk.friends.size()];
-		lstPersonnes = new Personne[TalkTalk.friends.size()];
+		/*Integer[] dataContact = new Integer[TalkTalk.friends.size()];
+		lstTabPersonnes = new Personne[TalkTalk.friends.size()];
 		String[] imgPersonnes = new String[TalkTalk.friends.size()];
 		int i=0;
 		for (Personne suivant : TalkTalk.friends.values()){
 			dataContact[i]=i;
-			lstPersonnes[i]=suivant;
+			lstTabPersonnes[i]=suivant;
 			imgPersonnes[i]=suivant.getImg();
 			i++;
+		}*/
+		/*liste de groupes*/
+		/*JOptionPane.showConfirmDialog(null, ""+TalkTalk.groupes.size());
+		Integer[] dataGroupe = new Integer[TalkTalk.groupes.size()];
+		lstTabGroupes = new Groupe[TalkTalk.groupes.size()];
+		String[] imgGroupes = new String[TalkTalk.groupes.size()];
+		i=0;
+		for (Groupe suivant : TalkTalk.groupes.values()){
+			dataGroupe[i]=i;
+			lstTabGroupes[i]=suivant;
+			imgGroupes[i]=suivant.getImg();
+			i++;
+		}*/
+		/*liste de contacts*/
+		Integer[] dataContacts = new Integer[TalkTalk.friends.size()+TalkTalk.groupes.size()];
+		lstContactAmis = new Contact[TalkTalk.friends.size()+TalkTalk.groupes.size()];
+		String[] imgContacts = new String[TalkTalk.friends.size()+TalkTalk.groupes.size()];
+		int i=0;
+		for (Personne suivant : TalkTalk.friends.values()) {
+			dataContacts[i]=i;
+			lstContactAmis[i]=suivant;
+			imgContacts[i]=suivant.getImg();
+			i++;
 		}
+		
+		for (Groupe suivant : TalkTalk.groupes.values()) {
+			dataContacts[i]=i;
+			lstContactAmis[i]=suivant;
+			imgContacts[i]=suivant.getImg();
+			i++;
+		}
+		
 		
 		/** Création des éléments     **/
 		this.jp_left = new JPanel(new BorderLayout());
 			this.jcb_statut = new JComboBox(dataStatut);
-			this.jlst_personne = new JList(dataContact);this.jsp_personne = new JScrollPane(this.jlst_personne);
+			//this.jlst_personne = new JList(dataContact);this.jsp_personne = new JScrollPane(this.jlst_personne);
+			//this.jlst_groupe = new JList(dataGroupe);this.jsp_groupe = new JScrollPane(this.jlst_groupe);
+			this.jlst_contacts = new JList(dataContacts);this.jsp_contacts = new JScrollPane(this.jlst_contacts);
 		this.jp_center = new JPanel(new BorderLayout());
 			this.jtabp_onglet = new JTabbedPane();
 				this.jta_log = new JTextArea("\t\tFenêtre de log\n\t\t-----------------------\n");
-				//this.jc_fenetre = new Vector<JConversation>();
 		this.jp_bottom = new JPanel(new BorderLayout());
 			this.jl_pub = new JHyperTextLink("Publicité de nos partenaires !","http://code.google.com/p/talk-talk/");
-			this.jl_temp = new JLabel("    [hostname + ip + port]    "+TalkTalk.pseudo+"-"+TalkTalk.adressePerso);
+			this.jl_temp = new JLabel("   ["+TalkTalk.pseudo+"-"+TalkTalk.adressePerso+"-"+TalkTalk.portRegistry+"]   ");
 			this.jchk_fastwriting = new JCheckBox("Utiliser FastWriting");
 		this.jslip = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,this.jp_left,this.jp_center);/* JSplitPane à la fin */
-		
 		
 		/** Paramétrage des éléments  **/
 		this.jslip.setDividerLocation(size_split);
@@ -203,20 +232,30 @@ public class IHM extends JFrame {
 		renderer.setPreferredSize(new Dimension(16,16));
 		this.jcb_statut.setRenderer(renderer);
 		// Liste de contact
-		ComboBoxRenderer renderer2 = new ComboBoxRenderer(lstPersonnes,TalkTalk.class);
+		/*ComboBoxRenderer renderer2 = new ComboBoxRenderer(lstTabPersonnes,TalkTalk.class);
 		renderer2.setPreferredSize(new Dimension(16,16));
-		this.jlst_personne.setCellRenderer(renderer2);
+		this.jlst_personne.setCellRenderer(renderer2);*/
+		// Liste de groupe
+		/*ComboBoxRenderer renderer3 = new ComboBoxRenderer(lstTabGroupes,TalkTalk.class);
+		renderer3.setPreferredSize(new Dimension(16,16));
+		this.jlst_groupe.setCellRenderer(renderer3);*/
+		// Liste de contact
+		ComboBoxRenderer renderer2 = new ComboBoxRenderer(lstContactAmis,TalkTalk.class);
+		renderer2.setPreferredSize(new Dimension(16,16));
+		this.jlst_contacts.setCellRenderer(renderer2);
 		// Panneau d'onglets
 		this.jtabp_onglet.add("log",this.jta_log);
-		//actuTab(action);
 		this.jtabp_onglet.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);//scroll horizontal des onglets
 		
 		/** Action sur les éléments   **/
-		this.jlst_personne.addMouseListener(mouse);
+		//this.jlst_personne.addMouseListener(mouse);
+		//this.jlst_groupe.addMouseListener(mouse);
+		this.jlst_contacts.addMouseListener(mouse);
 		/** Montage des éléments      **/
 		//zone splitter
 			this.jp_left.add(this.jcb_statut,BorderLayout.NORTH);
-			this.jp_left.add(this.jsp_personne,BorderLayout.CENTER);
+			this.jp_left.add(this.jlst_contacts,BorderLayout.CENTER);
+			//this.jp_left.add(this.jsp_groupe,BorderLayout.SOUTH);
 		//zone splitter
 			this.jp_center.add(this.jtabp_onglet,BorderLayout.CENTER);
 		this.add(this.jp_bottom,BorderLayout.SOUTH);
@@ -244,82 +283,5 @@ public class IHM extends JFrame {
 		this.setLocationRelativeTo(null);									// Positionner la fenêtre
 		this.setIconImage(Resources.getImage("images/icon.png",TalkTalk.class));// Image dans la barre des tâches
 		this.setVisible(true);												// Rendre la fenêtre visible
-	}
-	
-	
-	
-	class ComboBoxRenderer extends JLabel implements ListCellRenderer {
-		private String[] textes;
-		private String[] images;
-		ImageIcon[] img;
-		public ComboBoxRenderer(Contact[] contact,Class<?> c) {
-			this.textes=new String[contact.length];
-			this.images=new String[contact.length];
-			for (int i=0;i<contact.length;i++) {
-				this.textes[i]=contact[i].getName();
-				if (contact[i].getImg()!=null) {
-					this.images[i]=contact[i].getImg();
-				} else this.images[i]="images/profil.png";//default;
-			}
-			//init
-			init(c);
-		}
-		public ComboBoxRenderer(String[] textes,String[] images,Class<?> c) {
-			// Vérification qu'il n'y pas de différence de taille entre les tableaux textes et images
-			if (textes.length>images.length) {
-				int i;
-				String[] tmp = new String[textes.length];
-				for (i=0;i<images.length;i++) tmp[i]=images[i];
-				for (int j=i;j<tmp.length;j++) tmp[i]=null;
-				images=tmp;
-			} else if (images.length>textes.length) {
-				int i;
-				String[] tmp = new String[images.length];
-				for (i=0;i<textes.length;i++) tmp[i]=textes[i];
-				for (int j=i;j<tmp.length;j++) tmp[i]=null;
-				textes=tmp;
-			}
-			// Enregistrement des textes et images pour le composant
-			this.textes=textes;
-			this.images=images;
-			//init
-			init(c);
-		}
-		private void init(Class<?> c) {
-			// Génération des ImageIcon a partir de l'adresse
-			this.img = new ImageIcon[textes.length];
-			for (int i=0;i<textes.length;i++) {
-				if (this.images[i]!=null) {
-					this.img[i]=Resources.getImageIcon(images[i],c);
-				} else this.img[i]=null;
-			}
-			
-			// Paramétrage général du composant
-			this.setOpaque(true);
-			this.setHorizontalAlignment(LEFT);
-			this.setVerticalAlignment(CENTER);
-		}
-		
-		/*
-		 * Cette méthode trouve le texte et l'image correspond à l'élément sélectionner,
-		 * et retourne le composant avec le texte et l'image.
-		 */
-		public Component getListCellRendererComponent(JList list,Object value,int index,boolean isSelected,boolean cellHasFocus) {
-			// L'index Sélectionner (le paramètre "index" n'est pas toujours valide, il faut donc se fier a "value");
-			int selectedIndex = ((Integer)value).intValue();
-			// Couleur de l'élément en fonction de s'il est sélectionner ou pas
-			if (isSelected) {
-				this.setBackground(list.getSelectionBackground());
-				this.setForeground(list.getSelectionForeground());
-			} else {
-				this.setBackground(list.getBackground());
-				this.setForeground(list.getForeground());
-			}
-			// Attribuer l'image et le texte (ne pose pas de problème si l'un ou l'autre est null);
-			this.setIcon(this.img[selectedIndex]);
-			this.setText(this.textes[selectedIndex]);
-			// Renvoi le composant
-			return this;
-		}
 	}
 }

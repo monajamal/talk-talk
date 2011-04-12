@@ -10,10 +10,9 @@ import java.util.Map;
 import java.util.Scanner;
 
 import talkTalk.Adresse;
+import talkTalk.Config;
 
 public abstract class Contact {
-	
-	public static final String FIC_CONTACT = "./data/contact.csv";
 	
 	public static final int PERSONNE = 1;
 	public static final int GROUPE = 2;
@@ -28,7 +27,7 @@ public abstract class Contact {
 	 * @param groupes les groupes
 	 */
 	public static void parseContact(Map<String,Personne> friends, Map<String,Groupe> groupes) {
-		File f = new File(FIC_CONTACT);
+		File f = new File(Config.FICHIER_CONTACTS);
 		Scanner sc;
 		String l;
 		String[] tab;
@@ -87,7 +86,7 @@ public abstract class Contact {
 					// TODO : lecture des personnes bloquées
 				} else {
 					// ligne ignoré (commentaire, ou mal écrite)
-					//System.out.println("Erreur de lecture du fichier de configuration");
+					// System.out.println("Erreur de lecture du fichier de configuration");
 				}
 			}
 		} catch (FileNotFoundException e) {
@@ -102,7 +101,7 @@ public abstract class Contact {
 	public static void saveContact(Map<String,Personne> friends, Map<String,Groupe> groupes) {
 		PrintWriter fout;
 		try {
-			fout = new PrintWriter(new FileWriter(FIC_CONTACT,false));
+			fout = new PrintWriter(new FileWriter(Config.FICHIER_CONTACTS,false));
 			// On sauvegarde les personnes
 			fout.print("#;Pseudo;IP;Port");
 			synchronized(friends.values()) {
