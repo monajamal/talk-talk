@@ -153,7 +153,7 @@ public class Console implements Affichage {
 				TalkTalk.setStatut(Integer.parseInt(saisie));
 			} else if (saisie.startsWith("/bloque")) {
 				saisie=saisie.replaceAll("/bloque ", "");
-				TalkTalk.bloques.add(saisie);
+				TalkTalk.bloques.put(saisie, new Personne(saisie,null));
 				TalkTalk.abonnes.remove(saisie);
 			} else {
 				System.out.println("Commande inconnue");

@@ -68,8 +68,6 @@ public class EnvoiFichier extends Thread {
 		if (destinataire.getAddress() == null){ //On a fait une recherche mais c'est sans résultat
 			TalkTalk.ihm.afficherDestinataireInconnu(destinataire.getName());
 		} else {
-			//TODO : affichage envoi du fichier
-			
 			try {
 				f = new File(fichier);
 				data = new byte[(int) f.length()];

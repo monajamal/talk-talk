@@ -26,7 +26,7 @@ public abstract class Contact {
 	 * @param friends les amis 
 	 * @param groupes les groupes
 	 */
-	public static void parseContact(Map<String,Personne> friends, Map<String,Groupe> groupes, List<String> bloques) {
+	public static void parseContact(Map<String,Personne> friends, Map<String,Groupe> groupes, Map<String,Personne> bloques) {
 		File f = new File(Config.FICHIER_CONTACTS);
 		Scanner sc;
 		String l;
@@ -83,7 +83,7 @@ public abstract class Contact {
 					}
 				} else if (tab[0].equals("B")) {
 					// Lecture des personnes bloquées
-					bloques.add(tab[1]);
+					bloques.put(tab[1],new Personne(tab[1],null));
 				} else {
 					// ligne ignoré (commentaire, ou mal écrite)
 					// System.out.println("Erreur de lecture du fichier de configuration");
@@ -98,7 +98,7 @@ public abstract class Contact {
 	 * @param friends les amis
 	 * @param groupes les groupes
 	 */
-	public static void saveContact(Map<String,Personne> friends, Map<String,Groupe> groupes, List<String> bloques) {
+	public static void saveContact(Map<String,Personne> friends, Map<String,Groupe> groupes, Map<String,Personne> bloques) {
 		PrintWriter fout;
 		try {
 			fout = new PrintWriter(new FileWriter(Config.FICHIER_CONTACTS,false));
@@ -138,7 +138,7 @@ public abstract class Contact {
 			// On sauvegarde les personnes bloquées
 			fout.println("#;Nom");
 			synchronized(bloques) {
-				for (String b : bloques) {
+				for (String b : bloques.keySet()) {
 					fout.print("B;");
 					fout.println(b);
 				}

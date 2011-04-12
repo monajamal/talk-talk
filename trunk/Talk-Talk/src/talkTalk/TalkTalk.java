@@ -26,6 +26,7 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Vector;
 
 import commun.Contact;
 import commun.Groupe;
@@ -40,7 +41,7 @@ public class TalkTalk {
 	public static String messagePerso;
 	public static Map<String,Personne> friends; //Ensemble des amis
 	public static Map<String,Groupe> groupes; //Ensembles des groupes
-	public static List<String> bloques;
+	public static Map<String,Personne> bloques;
 	public final static int portRegistry = 1099; //Le port du serveur de nom 
 	public final static int portObject = 3000; //Le port de l'objet
 	public static Affichage ihm; //Interface d'affichage
@@ -90,8 +91,8 @@ public class TalkTalk {
 		//TODO : choisir l'implémentation de ces trucs...
 		friends = Collections.synchronizedMap(new Hashtable<String,Personne>());
 		groupes = Collections.synchronizedMap(new Hashtable<String,Groupe>());
-		abonnes = new ArrayList<Personne>();
-		bloques = new ArrayList<String>();
+		abonnes = new Vector<Personne>();
+		bloques = Collections.synchronizedMap(new Hashtable<String,Personne>());
 		//On lit le fichier de contact
 		Contact.parseContact(friends,groupes,bloques);
 		
