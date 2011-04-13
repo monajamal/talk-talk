@@ -90,16 +90,14 @@ public class DistantImpl implements Distant {
 		jeton.addNoeud(TalkTalk.pseudo); //On se rajoute au jeton
 		if (TalkTalk.pseudo.equals(jeton.getPseudo())) {
 			//C'est moi qu'on cherche
-			//TODO : enlever ce commentaire 
-			System.out.println("Je vois pas comment on peut arriver là, à part en se cherchant soi même");
 			jeton.setReponse(TalkTalk.adressePerso);
 		} else if (personneSearch !=null && personneSearch.getAddress()!=null){
 			//On a la réponse
-			System.out.println("On a la réponse : "+personneSearch.getAddress());
+			//System.out.println("On a la réponse : "+personneSearch.getAddress());
 			jeton.setReponse(personneSearch.getAddress());
 		} else {
 			//On a pas la réponse nous même
-			System.out.println("On a pas la réponse");
+			//System.out.println("On a pas la réponse");
 			do {
 				synchronized(TalkTalk.friends)
 				{
@@ -108,7 +106,7 @@ public class DistantImpl implements Distant {
 						if (!jeton.getNoeuds().contains(pseudo)){ //Pas deja passé par là
 							suivant = TalkTalk.friends.get(pseudo);
 							if (suivant.getAddress() != null){ //L'adresse est renseigné
-								System.out.println("On a trouve :"+pseudo);
+								//System.out.println("On a trouve :"+pseudo);
 								found = true;
 								break;
 							}
@@ -119,6 +117,7 @@ public class DistantImpl implements Distant {
 					Distant d = suivant.getDistant();
 					boolean lookup=false;
 					boolean done=false;
+					jeton.addNoeud(suivant.getPseudo());
 					while (!lookup && !done){ //On réessaye si on a pas encore fait de lookup
 						if (d == null ) {//On a pas encore cherché l'interface distante
 							try {
@@ -126,13 +125,10 @@ public class DistantImpl implements Distant {
 								d = (Distant)Naming.lookup("rmi://"+suivant.getAddress().toString()+"/TalkTalk");
 								suivant.setDistant(d); //On a cherché la reference, on stocke
 							} catch (MalformedURLException e) {
-								jeton.addNoeud(suivant.getPseudo()); //Il ne répond pas on le rajoute pour pas redemander
 								suivant.setDistant(null);
 							} catch (NotBoundException e) {
-								jeton.addNoeud(suivant.getPseudo()); //Il ne répond pas on le rajoute pour pas redemander
 								suivant.setDistant(null);
 							} catch (RemoteException e) {
-								jeton.addNoeud(suivant.getPseudo()); //Il ne répond pas on le rajoute pour pas redemander
 								suivant.setDistant(null);
 							}
 						}
@@ -141,7 +137,6 @@ public class DistantImpl implements Distant {
 								jeton = d.searchContact(jeton);
 								done=true;
 							} catch (RemoteException e) {
-								jeton.addNoeud(suivant.getPseudo()); //Il ne répond pas on le rajoute pour pas redemander
 								suivant.setDistant(null);
 							}
 						} else {

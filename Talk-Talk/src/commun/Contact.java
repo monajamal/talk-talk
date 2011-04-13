@@ -133,7 +133,6 @@ public abstract class Contact {
 					}
 					fout.println();
 				}
-				fout.close();
 			}
 			// On sauvegarde les personnes bloquées
 			fout.println("#;Nom");
@@ -143,6 +142,7 @@ public abstract class Contact {
 					fout.println(b);
 				}
 			}
+			fout.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
