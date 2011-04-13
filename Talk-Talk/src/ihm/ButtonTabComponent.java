@@ -25,6 +25,7 @@ import javax.swing.plaf.basic.BasicButtonUI;
 @SuppressWarnings("serial")
 public class ButtonTabComponent extends JPanel {
 	private final JTabbedPane pane;
+	protected JLabel label;
 
 	public ButtonTabComponent(ImageIcon ii,final JTabbedPane pane) {
 		//unset default FlowLayout' gaps
@@ -36,7 +37,7 @@ public class ButtonTabComponent extends JPanel {
 		setOpaque(false);
 
 		//make JLabel read titles from JTabbedPane
-		JLabel label = new JLabel() {
+		label = new JLabel() {
 			public String getText() {
 				int i = pane.indexOfTabComponent(ButtonTabComponent.this);
 				if (i != -1) {
@@ -55,6 +56,9 @@ public class ButtonTabComponent extends JPanel {
 		add(button);
 		//add more space to the top of the component
 		setBorder(BorderFactory.createEmptyBorder(2, 0, 0, 0));
+	}
+	public void bidule(ImageIcon ii) {
+		label.setIcon(ii);
 	}
 
 	private class TabButton extends JButton implements ActionListener {

@@ -125,6 +125,7 @@ public class Affich implements Affichage {
 				addLog(res,i);
 			}
 		}
+		ihm.createDataListContact();
 	}
 	@Override
 	public void changerMessagePerso(Personne personne) {
@@ -160,7 +161,8 @@ public class Affich implements Affichage {
 				addLog(res,i);
 			}
 		}
-	}	
+		ihm.createDataListContact();
+	}
 	@Override
 	public void start() {
 		addLog(start);
