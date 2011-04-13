@@ -52,9 +52,12 @@ public class JConversation extends JPanel {
 			protected JSmiley[] js_smiley;
 			protected JCoolButton jb_send;
 	
+	private ActionListener actionListener;
+			
 	public JConversation(Contact c) {
 		this.setContact(c);
 		this.setCouleur(Color.BLACK);
+		this.addActionListener(null);
 		/** Évènement **/
 		ActionListener action = new Event_JConversation(this);
 		KeyListener key = new Event_JConversation(this);
@@ -176,6 +179,12 @@ public class JConversation extends JPanel {
 	public Color getCouleur() {
 		return couleur;
 	}
+	public void addActionListener(ActionListener actionListener) {
+		this.actionListener = actionListener;
+	}
+	public ActionListener getActionListener() {
+		return actionListener;
+	}
 }
 class Event_JConversation implements ActionListener, KeyListener {
 	JConversation jc;
@@ -204,12 +213,7 @@ class Event_JConversation implements ActionListener, KeyListener {
 			}
 		} else if (obj instanceof JSmiley) {	// Si on insere un smiley
 			JSmiley js = (JSmiley)obj;
-			
-			jc.jtp_ecrire.insertIcon(js.getIcon());//FIXME : cette fonction empeche de mettre 2 fois de suite le même smiley
-			//Component c =new JButton("plop");
-			//jc.jtp_ecrire.insertComponent(c);
-			//jc.jtp_ecrire.getDocument().insertString(jc.jtp_ecrire.getDocument().getLength(), js.getToolTipText(), null);
-			
+			jc.jtp_ecrire.insertIcon(js.getIcon());
 		} else if (obj instanceof JButton) {
 			JButton jb = (JButton)obj;
 			if (jb==jc.jb_wizz) {
@@ -257,6 +261,9 @@ class Event_JConversation implements ActionListener, KeyListener {
 					TalkTalk.bloques.put(this.jc.getContact().getName(),((Personne)(this.jc.getContact())));
 					((Personne)(this.jc.getContact())).setStatut(Personne.BLOQUE);
 				}
+				// je declenche un évènement de plus high level
+				ActionEvent e = new ActionEvent(jc,1,"JCOnversation_Bloquer");
+				jc.getActionListener().actionPerformed(e);
 			}
 		}
 	}

@@ -87,10 +87,10 @@ public class Event implements ActionListener, ListSelectionListener, MouseListen
 				}
 			}
 			else if (jmi == ihm.jmi_rechercher) {
-				System.out.println("rechercher");
+				
 			}
 			else if (jmi == ihm.jmi_preferences) {
-				System.out.println("Préférences");
+				
 			}
 			else if (jmi == ihm.jckmi_contact) { // Afficher/masquer de panneau de contact
 				if (ihm.jckmi_contact.isSelected()) ihm.jslip.setDividerLocation(ihm.size_split);
@@ -125,7 +125,8 @@ public class Event implements ActionListener, ListSelectionListener, MouseListen
 		} else if (obj instanceof JComboBox) {
 			JComboBox jcb = (JComboBox)obj;
 			TalkTalk.setStatut(jcb.getSelectedIndex());
-			
+		} else if (obj instanceof JConversation) {
+			ihm.createDataListContact();
 		}
 	}
 	@Override
@@ -153,6 +154,8 @@ public class Event implements ActionListener, ListSelectionListener, MouseListen
 					select=ihm.jtabp_onglet.getTabCount()-1;
 					// action wizz
 					jc.jb_wizz.addActionListener(this);
+					jc.addActionListener(this);
+					//jc.jb_bloque.addActionListener(this);
 					// Image onglet + croix pour fermer
 					ihm.jtabp_onglet.setTabComponentAt(select,btc);
 				}

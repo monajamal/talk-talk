@@ -113,6 +113,30 @@ public class IHM extends JFrame {
 		ComboBoxRenderer renderer2 = new ComboBoxRenderer(lstContactAmis,TalkTalk.class);
 		renderer2.setPreferredSize(new Dimension(16,16));
 		this.jlst_contacts.setCellRenderer(renderer2);
+		
+		for (i=0;i<this.jtabp_onglet.getTabCount();i++) {
+			ButtonTabComponent btc=(ButtonTabComponent)this.jtabp_onglet.getTabComponentAt(i);
+			String name=this.jtabp_onglet.getTitleAt(i);
+			Contact c = null;
+			for (Personne suivant : TalkTalk.friends.values()) {
+				if (name.equals(suivant.getName())) {
+					c=suivant;
+				}
+			}
+			for (Groupe suivant : TalkTalk.groupes.values()) {
+				if (name.equals(suivant.getName())) {
+					c=suivant;
+				}
+			}
+			for (Personne suivant : TalkTalk.bloques.values()) {
+				if (name.equals(suivant.getName())) {
+					c=suivant;
+				}
+			}
+			if (c!=null) {
+				btc.bidule(Resources.getImageIcon(c.getImg(), TalkTalk.class));
+			}
+		}
 	}
 	public void creeBarreDeMenu(ActionListener action) {
 		/** Création des éléments     **/
