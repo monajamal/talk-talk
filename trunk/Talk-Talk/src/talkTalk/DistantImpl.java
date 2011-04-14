@@ -195,7 +195,6 @@ public class DistantImpl implements Distant {
 		p.setAddress(adressePerso);
 		TalkTalk.ihm.afficherFichierRecu(p,fichier);
 		File f = new File(Config.DOSSIER_DOWNLOAD+fichier);
-		
 		try {
 			f.createNewFile();
 			DataOutputStream d = new DataOutputStream(new FileOutputStream(f));
@@ -212,11 +211,9 @@ public class DistantImpl implements Distant {
 		Personne p = TalkTalk.friends.get(pseudo);
 		if (p!=null){
 			File f = new File(Config.DOSSIER_IMAGES+pseudo);
-			System.out.println("Fichier "+f.getAbsolutePath());
 			try {
 				if (!f.exists()){
 					f.createNewFile();
-					System.out.println("Fichier "+f.getAbsolutePath());
 				}
 				DataOutputStream d = new DataOutputStream(new FileOutputStream(f));
 				d.write(img);
