@@ -91,6 +91,33 @@ public class IHM extends JFrame {
 		/** Fenêtre **/
 		creeFenetre();
 	}
+	public void addToList(String name) {
+		Integer[] dataContacts = new Integer[1+TalkTalk.friends.size()+TalkTalk.groupes.size()+TalkTalk.bloques.size()];
+		lstContactAmis = new Contact[1+TalkTalk.friends.size()+TalkTalk.groupes.size()+TalkTalk.bloques.size()];
+		int i=0;
+		for (Personne suivant : TalkTalk.friends.values()) {
+			dataContacts[i]=i;
+			lstContactAmis[i]=suivant;
+			i++;
+		}
+		for (Groupe suivant : TalkTalk.groupes.values()) {
+			dataContacts[i]=i;
+			lstContactAmis[i]=suivant;
+			i++;
+		}
+		for (Personne suivant : TalkTalk.bloques.values()) {
+			dataContacts[i]=i;
+			lstContactAmis[i]=suivant;
+			i++;
+		}
+		dataContacts[i]=i;
+		lstContactAmis[i] = new Personne(name,null);
+		this.jlst_contacts.setListData(dataContacts);
+		// Liste de contact
+		ComboBoxRenderer renderer2 = new ComboBoxRenderer(lstContactAmis,TalkTalk.class);
+		renderer2.setPreferredSize(new Dimension(16,16));
+		this.jlst_contacts.setCellRenderer(renderer2);
+	}
 	public void createDataListContact() {
 		Integer[] dataContacts = new Integer[TalkTalk.friends.size()+TalkTalk.groupes.size()+TalkTalk.bloques.size()];
 		lstContactAmis = new Contact[TalkTalk.friends.size()+TalkTalk.groupes.size()+TalkTalk.bloques.size()];
