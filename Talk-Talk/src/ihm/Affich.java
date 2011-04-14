@@ -200,10 +200,19 @@ public class Affich implements Affichage {
 		res=res.replace("%personne",personne.getPseudo());
 		res=res.replace("%fichier",fichier);
 		addLog(res);
-		for (int i=1;i<ihm.jtabp_onglet.getTabCount();i++) {
+		int i;
+		boolean found = false;
+		for (i=1;i<ihm.jtabp_onglet.getTabCount();i++) {
 			if (personne.getPseudo().equals(ihm.jtabp_onglet.getTitleAt(i))) {
 				addLog(res,i);
+				found = true;
 			}
+		}
+		if (!found)
+		{
+			//Ouvrir si ya pas ?
+			i = ihm.ouvrirOngletContact(personne);
+			addLog(res,i);
 		}
 	}
 	@Override
