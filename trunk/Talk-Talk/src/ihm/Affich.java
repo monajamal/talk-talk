@@ -1,5 +1,7 @@
 package ihm;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.util.Map;
 import java.util.Set;
 
@@ -10,6 +12,9 @@ import commun.Personne;
 
 import talkTalk.Affichage;
 import talkTalk.TalkTalk;
+import utils.Resources;
+import utils.Sound;
+import utils.Wizz;
 
 public class Affich implements Affichage {
 	IHM ihm;
@@ -22,10 +27,20 @@ public class Affich implements Affichage {
 		res=res.replace("%expediteur",expediteur.getPseudo());
 		res=res.replace("%message",message);
 		addLog(res);
-		for (int i=1;i<ihm.jtabp_onglet.getTabCount();i++) {
-			if (expediteur.getPseudo().equals(((JConversation)(ihm.jtabp_onglet.getComponentAt(i))).getName())) {
+				
+		int i;
+		boolean found = false;
+		for (i=1;i<ihm.jtabp_onglet.getTabCount();i++) {
+			if (expediteur.getPseudo().equals(ihm.jtabp_onglet.getTitleAt(i))) {
 				addLog(res,i);
+				found = true;
 			}
+		}
+		if (!found)
+		{
+			//Ouvrir si ya pas ?
+			i = ihm.ouvrirOngletContact(expediteur);
+			addLog(res,i);
 		}
 	}
 	@Override
@@ -35,10 +50,18 @@ public class Affich implements Affichage {
 		res=res.replace("%message",message);
 		res=res.replace("%groupe",groupe.getName());
 		addLog(res);
-		for (int i=1;i<ihm.jtabp_onglet.getTabCount();i++) {
-			if (expediteur.getPseudo().equals(((JConversation)(ihm.jtabp_onglet.getComponentAt(i))).getName())) {
+		boolean found = false;
+		int i;
+		for (i=1;i<ihm.jtabp_onglet.getTabCount();i++) {
+			if (groupe.getName().equals(ihm.jtabp_onglet.getTitleAt(i))) {
 				addLog(res,i);
+				found = true;
 			}
+		}
+		if (!found)
+		{
+			i = ihm.ouvrirOngletContact(groupe);
+			addLog(res,i);
 		}
 	}
 	@Override
@@ -46,11 +69,27 @@ public class Affich implements Affichage {
 		String res=afficherWizzRecu;
 		res=res.replace("%expediteur",expediteur.getPseudo());
 		addLog(res);
-		for (int i=1;i<ihm.jtabp_onglet.getTabCount();i++) {
-			if (expediteur.getPseudo().equals(((JConversation)(ihm.jtabp_onglet.getComponentAt(i))).getName())) {
+		boolean found = false;
+		int i;
+		for (i=1;i<ihm.jtabp_onglet.getTabCount();i++) {
+			if (expediteur.getPseudo().equals(ihm.jtabp_onglet.getTitleAt(i))) {
 				addLog(res,i);
+				found = true;
 			}
 		}
+		if (!found)
+		{
+			i = ihm.ouvrirOngletContact(expediteur);
+			addLog(res,i);
+		}
+		new Thread() {
+			public void run() {
+				Sound player = new Sound(Resources.getFile("son/wizz.wav", TalkTalk.class));
+				InputStream stream = new ByteArrayInputStream(player.getSamples());
+				player.play(stream);
+			}
+		}.start();
+		Wizz.creerWizz(ihm,40,3);
 	}
 	@Override
 	public void afficherWizzRecuGrp(Groupe groupe, Personne expediteur) {
@@ -58,11 +97,27 @@ public class Affich implements Affichage {
 		res=res.replace("%expediteur",expediteur.getPseudo());
 		res=res.replace("%groupe",groupe.getName());
 		addLog(res);
-		for (int i=1;i<ihm.jtabp_onglet.getTabCount();i++) {
-			if (expediteur.getPseudo().equals(((JConversation)(ihm.jtabp_onglet.getComponentAt(i))).getName())) {
+		boolean found = false;
+		int i;
+		for (i=1;i<ihm.jtabp_onglet.getTabCount();i++) {
+			if (groupe.getName().equals(ihm.jtabp_onglet.getTitleAt(i))) {
 				addLog(res,i);
+				found = true;
 			}
 		}
+		if (!found)
+		{
+			i = ihm.ouvrirOngletContact(groupe);
+			addLog(res,i);
+		}
+		new Thread() {
+			public void run() {
+				Sound player = new Sound(Resources.getFile("son/wizz.wav", TalkTalk.class));
+				InputStream stream = new ByteArrayInputStream(player.getSamples());
+				player.play(stream);
+			}
+		}.start();
+		Wizz.creerWizz(ihm,40,3);
 	}
 	@Override
 	public void afficherMessageEnvoye(Personne destinataire, String message) {
@@ -98,7 +153,7 @@ public class Affich implements Affichage {
 		}
 		addLog(res);
 		for (int i=1;i<ihm.jtabp_onglet.getTabCount();i++) {
-			if (destinataire.equals(((JConversation)(ihm.jtabp_onglet.getComponentAt(i))).getName())) {
+			if (destinataire.equals(ihm.jtabp_onglet.getTitleAt(i))) {
 				addLog(res,i);
 			}
 		}
@@ -109,7 +164,7 @@ public class Affich implements Affichage {
 		res=res.replace("%destinataire",destinataire);
 		addLog(res);
 		for (int i=1;i<ihm.jtabp_onglet.getTabCount();i++) {
-			if (destinataire.equals(((JConversation)(ihm.jtabp_onglet.getComponentAt(i))).getName())) {
+			if (destinataire.equals(ihm.jtabp_onglet.getTitleAt(i))) {
 				addLog(res,i);
 			}
 		}
@@ -121,7 +176,7 @@ public class Affich implements Affichage {
 		res=res.replace("%statut",personne.getStatutName());
 		addLog(res);
 		for (int i=1;i<ihm.jtabp_onglet.getTabCount();i++) {
-			if (personne.getPseudo().equals(((JConversation)(ihm.jtabp_onglet.getComponentAt(i))).getName())) {
+			if (personne.getPseudo().equals(ihm.jtabp_onglet.getTitleAt(i))) {
 				addLog(res,i);
 			}
 		}
@@ -131,10 +186,10 @@ public class Affich implements Affichage {
 	public void changerMessagePerso(Personne personne) {
 		String res=changerMessage;
 		res=res.replace("%pseudo",personne.getPseudo());
-		res=res.replace("%statut",personne.getMsg_perso());
+		res=res.replace("%message",personne.getMsg_perso());
 		addLog(res);
 		for (int i=1;i<ihm.jtabp_onglet.getTabCount();i++) {
-			if (personne.getPseudo().equals(((JConversation)(ihm.jtabp_onglet.getComponentAt(i))).getName())) {
+			if (personne.getPseudo().equals(ihm.jtabp_onglet.getTitleAt(i))) {
 				addLog(res,i);
 			}
 		}
@@ -154,11 +209,12 @@ public class Affich implements Affichage {
 	@Override
 	public void changerImage(Personne p) {
 		String res=changerImage;
-		res=res.replace("%personne",p.getPseudo());
+		res=res.replace("%pseudo",p.getPseudo());
 		addLog(res);
 		for (int i=1;i<ihm.jtabp_onglet.getTabCount();i++) {
 			if (p.getPseudo().equals(ihm.jtabp_onglet.getTitleAt(i))) {
 				addLog(res,i);
+				((JConversation) ihm.jtabp_onglet.getComponentAt(i)).changerImageAmi();
 			}
 		}
 		ihm.createDataListContact();

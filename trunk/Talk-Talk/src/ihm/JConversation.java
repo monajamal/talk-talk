@@ -76,9 +76,12 @@ public class JConversation extends JPanel {
 	}
 	public void creeInterface(ActionListener action,KeyListener key) {
 		String[] smile = {":)","<3","ø","(","()","!","*"};
-		ImageIcon ii;
+		ImageIcon ii,iami;
 		if (TalkTalk.image.equals("null")) ii = Resources.getImageIcon("images/profil.png", TalkTalk.class);
 		else ii = new ImageIcon(TalkTalk.image);
+		if (this.ami.getType()==Contact.PERSONNE && ((Personne)this.ami).getImage_perso()!=null) {
+			 iami = new ImageIcon(((Personne)this.ami).getImage_perso());
+		} else iami = Resources.getImageIcon("images/profil.png", TalkTalk.class);
 		String infos;
 		String bloque = "";
 		if (ami.getType()==Contact.PERSONNE) {
@@ -106,7 +109,7 @@ public class JConversation extends JPanel {
 		/** Création des éléments     **/
 		this.jtp_conversation = new JTextPane();this.jsp_conversation = new JScrollPane(this.jtp_conversation);
 		this.jp_right = new JPanel(new BorderLayout());
-			this.jl_image_ami = new JLabel(Resources.getImageIcon("images/profil.png",TalkTalk.class),SwingConstants.CENTER);
+			this.jl_image_ami = new JLabel(iami,SwingConstants.CENTER);
 			this.jp_dfsdfgdsg = new JPanel(new BorderLayout());
 				this.jb_bloque = new JButton(bloque);
 				this.jl_infos = new JLabel(infos);
@@ -160,6 +163,7 @@ public class JConversation extends JPanel {
 				this.jp_cmd.add(this.jb_couleur);
 				for (int i=0;i<this.js_smiley.length;i++) this.jp_cmd.add(this.js_smiley[i]);
 				this.jp_cmd.add(this.jb_send);
+				
 	}
 	public void menuContextuel() {
 		/** Création des éléments     **/
@@ -184,6 +188,10 @@ public class JConversation extends JPanel {
 	}
 	public ActionListener getActionListener() {
 		return actionListener;
+	}
+	public void changerImageAmi(){
+		ImageIcon ii = new ImageIcon(((Personne)this.ami).getImage_perso());
+		this.jl_image_ami.setIcon(ii);
 	}
 }
 class Event_JConversation implements ActionListener, KeyListener {
