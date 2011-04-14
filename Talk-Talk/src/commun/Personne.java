@@ -8,10 +8,10 @@ import talkTalk.TalkTalk;
 
 public class Personne extends Contact {
 	
-	public static final int AVAILABLE = 1;
+	public static final int AVAILABLE = 0;
 	public static final int BUSY = 2;
-	public static final int IDLE = 3;
-	public static final int OFFLINE = 4;
+	public static final int IDLE = 1;
+	public static final int OFFLINE = 3;
 	public static final int BLOQUE = 5;
 	
 	private String pseudo;

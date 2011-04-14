@@ -159,7 +159,7 @@ public class DistantImpl implements Distant {
 		if (!TalkTalk.bloques.containsKey(pseudo)) {
 			Personne p = TalkTalk.ajouterContact(pseudo);
 			p.setAddress(addr);
-			TalkTalk.abonnes.add(p);
+			if (! TalkTalk.abonnes.contains(p)) TalkTalk.abonnes.add(p);
 			//On lui envoie directement le statut et l'image perso
 			Envoi env = new Envoi(p,TalkTalk.statut);
 			env.start();
@@ -212,9 +212,11 @@ public class DistantImpl implements Distant {
 		Personne p = TalkTalk.friends.get(pseudo);
 		if (p!=null){
 			File f = new File(Config.DOSSIER_IMAGES+pseudo);
+			System.out.println("Fichier "+f.getAbsolutePath());
 			try {
 				if (!f.exists()){
 					f.createNewFile();
+					System.out.println("Fichier "+f.getAbsolutePath());
 				}
 				DataOutputStream d = new DataOutputStream(new FileOutputStream(f));
 				d.write(img);

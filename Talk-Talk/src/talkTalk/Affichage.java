@@ -77,14 +77,14 @@ public interface Affichage {
 	 * Changement d'image de notre ami
 	 * @param p 
 	 */
-	String changerImage = "%pseudo change d'image perso";
+	String changerImage = "%pseudo change d'image perso\n";
 	public void changerImage(Personne personne);
 	/**
 	 * Affichage de la reception d'un fichier
 	 * @param p
 	 * @param fichier
 	 */
-	String afficherFichierRecu = "Fichier %fichier recu de %personne";
+	String afficherFichierRecu = "Fichier %fichier recu de %personne\n";
 	public void afficherFichierRecu(Personne personne, String fichier);
 	/**
 	 * Appelée pour lancer l'ihm

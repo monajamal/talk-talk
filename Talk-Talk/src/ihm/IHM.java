@@ -65,6 +65,7 @@ public class IHM extends JFrame {
 		protected JHyperTextLink jl_pub;
 		protected JLabel jl_temp;
 		protected JCheckBox jchk_fastwriting;
+		protected ActionListener action;
 	
 	int size_split=200;
 	Contact[] lstContactAmis;	//Pour afficher la liste des contacts
@@ -78,7 +79,7 @@ public class IHM extends JFrame {
 		/** Look & Feel **/
 		//Divers.setLookAndFeel(this);
 		/** Événement **/
-		ActionListener action = new Event(this);
+		action = new Event(this);
 		MouseListener mouse = new Event(this);
 		ListSelectionListener listSelection = new Event(this);
 		/** Barre de Menu **/
@@ -297,5 +298,26 @@ public class IHM extends JFrame {
 		this.setLocationRelativeTo(null);									// Positionner la fenêtre
 		this.setIconImage(Resources.getImage("images/icon.png",TalkTalk.class));// Image dans la barre des tâches
 		this.setVisible(true);												// Rendre la fenêtre visible
+	}
+	public int ouvrirOngletContact(Contact ct)
+	{
+		JConversation jc = new JConversation(ct);
+		ButtonTabComponent btc = new ButtonTabComponent(Resources.getImageIcon(ct.getImg(),TalkTalk.class),jtabp_onglet);
+			
+		// Ajout d'un onglet
+		jtabp_onglet.addTab(ct.getName(),null,jc);
+		// indice de l'onglet a selectionner
+		int select=jtabp_onglet.getTabCount()-1;
+		// action wizz
+		jc.jb_wizz.addActionListener(action);
+		jc.addActionListener(action);
+		//jc.jb_bloque.addActionListener(ihm.getActionListener());
+		// Image onglet + croix pour fermer
+		jtabp_onglet.setTabComponentAt(select,btc);
+
+		// selectionne l'onglet
+		jtabp_onglet.setSelectedIndex(select);
+		((JConversation)jtabp_onglet.getComponentAt(select)).jtp_ecrire.requestFocusInWindow();
+		return(select);
 	}
 }
