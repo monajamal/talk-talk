@@ -25,12 +25,12 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.JTextComponent;
 
-import commun.Personne;
-
 import talkTalk.TalkTalk;
 import utils.Resources;
 import utils.Sound;
 import utils.Wizz;
+
+import commun.Personne;
 
 public class Event implements ActionListener, ListSelectionListener, MouseListener {//TODO : extends MouseAdapter plutot que implements MouseListener ??
 	IHM ihm;
@@ -121,6 +121,7 @@ public class Event implements ActionListener, ListSelectionListener, MouseListen
 			if (jb==ihm.jb_add) {
 				String name=JOptionPane.showInputDialog("Nom du contact ?");
 				TalkTalk.searchAdresse(new Personne(name,null));
+				ihm.addToList(name);
 			}
 		} else if (obj instanceof JComboBox) {
 			JComboBox jcb = (JComboBox)obj;
