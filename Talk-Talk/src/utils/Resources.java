@@ -11,8 +11,6 @@ package utils;
 
 import java.awt.Image;
 import java.awt.Toolkit;
-import java.io.File;
-import java.net.URISyntaxException;
 
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
@@ -53,25 +51,5 @@ public class Resources {
 			e.printStackTrace();
 		}
 		return img;
-	}
-	/** Pour ouvrir un fichier en ressource interne à l'exécutable
-	 * @param adresse : adresse ddu fichier (avec des "/")
-	 * @param c       : le nom de class principale (qui contient l'image)
-	 * @return        : l'image
-	 */
-	public static File getFile(String adresse,Class<?> c) {
-		
-		if (adresse.contains("\\"))
-			JOptionPane.showMessageDialog(null, "Attention ! Vous avez utiliser un \\ pour l'ImageIcon d'adresse : "+adresse);
-		
-		File f = null;
-		try {
-			f = new File(c.getResource(adresse).toURI());
-		} catch(NullPointerException e) {
-			e.printStackTrace();
-		} catch (URISyntaxException e) {
-			e.printStackTrace();
-		}
-		return f;
 	}
 }

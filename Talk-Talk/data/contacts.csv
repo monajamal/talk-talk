@@ -1,12 +1,11 @@
-
 #;Pseudo;IP;Port;imgPerso;
-C;TeeTux;194.254.52.154;1099;images/tux.png;
-C;Plop;194.254.52.152;22222;images/schtroumpfette.png;
-C;Jonathan;194.254.52.153;1099;;
-
-
-C;MH;191.168.8.23;1099;images/schtroumpfette.png;
-
+C;sterne;130.79.80.40;1099;;
+C;phoenix;130.79.81.6;1099;images/schtroumpfette.png;
+C;pic;130.79.80.11;1099;;
+C;canette;130.79.81.5;1099;;
 
 #;Nom;Membre A,Membre B,Membre C, ...;
-G;/dev/null;Plop,Jonathan
+G;WorkTeam;sterne,phoenix,pic
+
+#;Bloquer
+B;MéchantLoup;130.79.80.42;1099;;

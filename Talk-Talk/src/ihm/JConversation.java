@@ -77,7 +77,7 @@ public class JConversation extends JPanel {
 	public void creeInterface(ActionListener action,KeyListener key) {
 		String[] smile = {":)","<3","ø","(","()","!","*"};
 		ImageIcon ii,iami;
-		if (TalkTalk.image.equals("null")) ii = Resources.getImageIcon("images/profil.png", TalkTalk.class);
+		if (TalkTalk.image==null || TalkTalk.image.equals("null")) ii = Resources.getImageIcon("images/profil.png", TalkTalk.class);
 		else ii = new ImageIcon(TalkTalk.image);
 		if (this.ami.getType()==Contact.PERSONNE && ((Personne)this.ami).getImage_perso()!=null) {
 			 iami = new ImageIcon(((Personne)this.ami).getImage_perso());
@@ -90,9 +90,11 @@ public class JConversation extends JPanel {
 			infos+="<p>Pseudo : "+p.getName()+"</p>";
 			if (p.getStatut()!=Personne.BLOQUE) {
 				bloque="Bloquer";
-				infos+="<p>Alias : "+p.getAlias()+"</p>";
-				infos+="<p>IP : "+p.getAddress().getAddr()+"</p>";
-				infos+="<p>Port : "+p.getAddress().getPort()+"</p>";
+				//infos+="<p>Alias : "+p.getAlias()+"</p>";
+				if (p.getAddress()!=null) {
+					infos+="<p>IP : "+p.getAddress().getAddr()+"</p>";
+					infos+="<p>Port : "+p.getAddress().getPort()+"</p>";
+				}
 			} else bloque="Débloquer";
 			infos+="</html>";
 		} else {

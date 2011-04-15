@@ -56,6 +56,7 @@ public class TalkTalk {
 		Config.lireConfig();
 		pseudo=config.get("Utilisateur").get("Pseudo").toString();
 		image=config.get("Utilisateur").get("Image").toString();
+		if (image.equals("null")) image=null;
 		
 		
 
