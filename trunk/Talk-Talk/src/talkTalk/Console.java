@@ -109,6 +109,18 @@ public class Console implements Affichage {
 			if (saisie.startsWith("/quit") || saisie.startsWith("/exit")) {
 				saisie=null;		
 				TalkTalk.exit();
+			} else if (saisie.startsWith("/help")) {
+				System.out.println("Bienvenue dans l'aide !!");
+				System.out.println("");
+				System.out.println("/add <name> : ajoute 'name' en ami");
+				System.out.println("/file <name> <file> : envoie le fichier 'file' à 'name'");
+				System.out.println("/contact <name> : affiche l'adresse du contact");
+				System.out.println("/send <name> <message> : envoi le message 'message' à 'name'");
+				System.out.println("/bloque <name> : bloque 'name'");
+				System.out.println("/statut <int> : met le statut");
+				System.out.println("/wizz <name> : wizz la personne 'name'");
+				System.out.println("/quit ou /exit : quitte 'proprement'");
+				System.out.println("");
 			} else if (saisie.startsWith("/add")) {
 				saisie=saisie.replaceAll("/add ", "");
 				String tab[] = saisie.split(" ");

@@ -1,20 +1,20 @@
 package ihm;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.InputStream;
 import java.util.Map;
 import java.util.Set;
 
 import javax.swing.text.BadLocationException;
 
-import commun.Groupe;
-import commun.Personne;
-
 import talkTalk.Affichage;
 import talkTalk.TalkTalk;
-import utils.Resources;
 import utils.Sound;
 import utils.Wizz;
+
+import commun.Groupe;
+import commun.Personne;
 
 public class Affich implements Affichage {
 	IHM ihm;
@@ -84,9 +84,12 @@ public class Affich implements Affichage {
 		}
 		new Thread() {
 			public void run() {
-				Sound player = new Sound(Resources.getFile("son/wizz.wav", TalkTalk.class));
-				InputStream stream = new ByteArrayInputStream(player.getSamples());
-				player.play(stream);
+				File f = new File("data/son/wizz.wav");
+				if (f.exists()) {
+					Sound player = new Sound(f);
+					InputStream stream = new ByteArrayInputStream(player.getSamples());
+					player.play(stream);
+				}
 			}
 		}.start();
 		Wizz.creerWizz(ihm,40,3);
@@ -112,9 +115,12 @@ public class Affich implements Affichage {
 		}
 		new Thread() {
 			public void run() {
-				Sound player = new Sound(Resources.getFile("son/wizz.wav", TalkTalk.class));
-				InputStream stream = new ByteArrayInputStream(player.getSamples());
-				player.play(stream);
+				File f = new File("data/son/wizz.wav");
+				if (f.exists()) {
+					Sound player = new Sound(f);
+					InputStream stream = new ByteArrayInputStream(player.getSamples());
+					player.play(stream);
+				}
 			}
 		}.start();
 		Wizz.creerWizz(ihm,40,3);

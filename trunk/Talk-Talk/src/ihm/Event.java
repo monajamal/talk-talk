@@ -11,6 +11,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -111,17 +112,23 @@ public class Event implements ActionListener, ListSelectionListener, MouseListen
 			if (jb.getText().contains("wizz")) {
 				new Thread() {
 					public void run() {
-						Sound player = new Sound(Resources.getFile("son/wizz.wav", TalkTalk.class));
-						InputStream stream = new ByteArrayInputStream(player.getSamples());
-						player.play(stream);
+						File f = new File("data/son/wizz.wav");
+						if (f.exists()) {
+							Sound player = new Sound(f);
+							InputStream stream = new ByteArrayInputStream(player.getSamples());
+							player.play(stream);
+						}
 					}
 				}.start();
 				Wizz.creerWizz(ihm,40,3);
 			}
 			if (jb==ihm.jb_add) {
 				String name=JOptionPane.showInputDialog("Nom du contact ?");
-				TalkTalk.searchAdresse(new Personne(name,null));
-				ihm.addToList(name);
+				Personne p = new Personne(name,null);
+				TalkTalk.friends.put(name, p);
+				TalkTalk.searchAdresse(p);
+				//ihm.addToList(name);
+				ihm.createDataListContact();
 			}
 		} else if (obj instanceof JComboBox) {
 			JComboBox jcb = (JComboBox)obj;
@@ -185,11 +192,6 @@ public class Event implements ActionListener, ListSelectionListener, MouseListen
 	}
 	@Override
 	public void valueChanged(ListSelectionEvent arg0) {
-		/*Object obj = arg0.getSource();
-		if (obj instanceof JList) {
-			JList jlst = (JList)obj;
-			ihm.jc_fenetre.add(new JConversation(jsl.getSelectedValue().toString(),null,Resources.getImageIcon("images/tux.png",TalkTalk .class),Resources.getImageIcon("images/profil.png",TalkTalk.class)));
-			ihm.actuTab();
-		}*/
+		
 	}
 }

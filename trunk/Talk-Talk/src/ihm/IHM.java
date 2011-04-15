@@ -8,7 +8,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseListener;
 
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
@@ -64,7 +63,7 @@ public class IHM extends JFrame {
 	protected JPanel jp_bottom;
 		protected JHyperTextLink jl_pub;
 		protected JLabel jl_temp;
-		protected JCheckBox jchk_fastwriting;
+		//protected JCheckBox jchk_fastwriting;
 		protected ActionListener action;
 	
 	int size_split=200;
@@ -121,6 +120,7 @@ public class IHM extends JFrame {
 	public void createDataListContact() {
 		Integer[] dataContacts = new Integer[TalkTalk.friends.size()+TalkTalk.groupes.size()+TalkTalk.bloques.size()];
 		lstContactAmis = new Contact[TalkTalk.friends.size()+TalkTalk.groupes.size()+TalkTalk.bloques.size()];
+		
 		int i=0;
 		for (Personne suivant : TalkTalk.friends.values()) {
 			dataContacts[i]=i;
@@ -137,6 +137,7 @@ public class IHM extends JFrame {
 			lstContactAmis[i]=suivant;
 			i++;
 		}
+		this.jlst_contacts.setListData(dataContacts);
 		// Liste de contact
 		ComboBoxRenderer renderer2 = new ComboBoxRenderer(lstContactAmis,TalkTalk.class);
 		renderer2.setPreferredSize(new Dimension(16,16));
@@ -271,8 +272,8 @@ public class IHM extends JFrame {
 				this.jta_log = new JTextArea("\t\tFenêtre de log\n\t\t-----------------------\n");
 		this.jp_bottom = new JPanel(new BorderLayout());
 			this.jl_pub = new JHyperTextLink("Publicité de nos partenaires !","http://code.google.com/p/talk-talk/");
-			this.jl_temp = new JLabel("   ["+TalkTalk.pseudo+"-"+TalkTalk.adressePerso+"-"+TalkTalk.portRegistry+"]   ");
-			this.jchk_fastwriting = new JCheckBox("Utiliser FastWriting");
+			this.jl_temp = new JLabel("   [  "+TalkTalk.pseudo+"  -  "+TalkTalk.adressePerso+"  ]   ");
+			//this.jchk_fastwriting = new JCheckBox("Utiliser FastWriting");
 		this.jslip = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,this.jp_left,this.jp_center);/* JSplitPane à la fin */
 		
 		/** Paramétrage des éléments  **/
@@ -302,8 +303,8 @@ public class IHM extends JFrame {
 			this.jp_center.add(this.jtabp_onglet,BorderLayout.CENTER);
 		this.add(this.jp_bottom,BorderLayout.SOUTH);
 			this.jp_bottom.add(this.jl_pub,BorderLayout.WEST);
-			this.jp_bottom.add(this.jl_temp,BorderLayout.CENTER);
-			this.jp_bottom.add(this.jchk_fastwriting,BorderLayout.EAST);
+			this.jp_bottom.add(this.jl_temp,BorderLayout.EAST);
+			//this.jp_bottom.add(this.jchk_fastwriting,BorderLayout.EAST);
 		this.add(this.jslip,BorderLayout.CENTER);
 	}
 	public void menuContextuel() {

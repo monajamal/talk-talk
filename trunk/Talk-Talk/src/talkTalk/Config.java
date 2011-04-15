@@ -32,6 +32,12 @@ public class Config {
 		File data = new File(DOSSIER_DATA);
 		if (!data.exists())
 			data.mkdir();
+		File data1 = new File(DOSSIER_IMAGES);
+		if (!data1.exists())
+			data1.mkdir();
+		File data2 = new File(DOSSIER_DOWNLOAD);
+		if (!data2.exists())
+			data2.mkdir();
 		
 		File config = new File(FICHIER_CONFIG);
 		if (!config.exists()) {
