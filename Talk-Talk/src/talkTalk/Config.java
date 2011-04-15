@@ -165,9 +165,6 @@ public class Config {
 		try {
 			fout = new PrintWriter(new FileWriter(FICHIER_CONTACTS,false));
 			fout.println("#;Pseudo;IP;Port;imgPerso;");
-			fout.println("C;TeeTux;194.254.52.154;1099;images/tux.png;");
-			fout.println("C;Plop;194.254.52.152;22222;images/schtroumpfette.png;");
-			fout.println("C;Jonathan;194.254.52.153;1099;;");
 			fout.close();
 		} catch (IOException e) {
 			e.printStackTrace();
