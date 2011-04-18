@@ -1,11 +1,9 @@
-#;Pseudo;IP;Port;imgPerso;
-C;sterne;130.79.80.40;1099;;
-C;phoenix;130.79.81.6;1099;images/schtroumpfette.png;
-C;pic;130.79.80.11;1099;;
-C;canette;130.79.81.5;1099;;
-
-#;Nom;Membre A,Membre B,Membre C, ...;
+#;Pseudo;IP;Port
+C;pic;130.79.80.11;1099
+C;phoenix;130.79.81.6;1099
+C;sterne;130.79.80.40;1099
+C;canette;130.79.81.5;1099
+#;Nom;Membre A,Membre B,Membre C, ...
 G;WorkTeam;sterne,phoenix,pic
-
-#;Bloquer
-B;MéchantLoup;130.79.80.42;1099;;
+#;Nom
+B;MéchantLoup
