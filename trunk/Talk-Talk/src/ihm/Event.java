@@ -33,7 +33,7 @@ import utils.Wizz;
 
 import commun.Personne;
 
-public class Event implements ActionListener, ListSelectionListener, MouseListener {//TODO : extends MouseAdapter plutot que implements MouseListener ??
+public class Event implements ActionListener, ListSelectionListener, MouseListener {//T O D O : extends MouseAdapter plutot que implements MouseListener ??
 	IHM ihm;
 	public Event(IHM ihm) {
 		this.ihm=ihm;
