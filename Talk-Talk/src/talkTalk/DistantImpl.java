@@ -54,7 +54,7 @@ public class DistantImpl implements Distant {
 			}
 			TalkTalk.groupes.put(grp_name,groupe);
 		} 
-		//TODO : verifier les membres ?
+		//T O D O : verifier les membres ?
 		TalkTalk.ihm.afficherMessageRecuGrp(groupe,exp, m); 
 
 	}
@@ -201,7 +201,6 @@ public class DistantImpl implements Distant {
 			d.write(donnees);
 			d.close();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -220,7 +219,6 @@ public class DistantImpl implements Distant {
 				d.close();
 				p.setImage_perso(Config.DOSSIER_IMAGES+pseudo); 
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}

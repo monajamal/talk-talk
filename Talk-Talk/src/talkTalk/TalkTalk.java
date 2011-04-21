@@ -89,7 +89,7 @@ public class TalkTalk {
 		messagePerso = "";
 		
 		// Les collections doivent etre synchronisé
-		//TODO : choisir l'implémentation de ces trucs...
+		//T O D O : choisir l'implémentation de ces trucs...
 		friends = Collections.synchronizedMap(new Hashtable<String,Personne>());
 		groupes = Collections.synchronizedMap(new Hashtable<String,Groupe>());
 		abonnes = new Vector<Personne>();

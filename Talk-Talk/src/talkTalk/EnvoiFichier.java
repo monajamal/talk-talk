@@ -81,13 +81,11 @@ public class EnvoiFichier extends Thread {
 					i++;
 				} while (i<NB_TENTATIVES && !res);
 				if (!res){ 
-					//TODO : Erreur envoi fichier
+					//T O D O : Erreur envoi fichier
 				}
 			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			
